@@ -184,15 +184,12 @@ public class MainWindow implements LineListener {
 
 		    if (type.equals("audio"))
 		    {
-			    //val = save.get(key);
-		    	//suffix=".aifc";
-		    	val = data.get(key);
-		    	suffix=".wav";
-		    	
+			val = save.get(key);
+		    	suffix=".aifc";
 		    }
-		    else
+		    else if (!type.equals("qheader"))
 		    {
-			    val = data.get(key);
+			val = data.get(key);
 		    	suffix=".txt";
 		    }
 			try {
