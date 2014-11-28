@@ -93,8 +93,8 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{113, 6, 153, 133, 0};
         gridBagLayout.rowHeights = new int[]{16, 22, 105, 23, 5, 15, 12, 23, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+        gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         frmYdkjExtractor.getContentPane().setLayout(gridBagLayout);
         
         JLabel lblResourcesInSrf = new JLabel("Resources in SRF");
@@ -140,27 +140,27 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
         gbc_scrollPane.weightx = 1.0;
         gbc_scrollPane.gridwidth = 2;
         gbc_scrollPane.fill = GridBagConstraints.BOTH;
-        gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
+        gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
         gbc_scrollPane.gridheight = 6;
         gbc_scrollPane.gridx = 0;
         gbc_scrollPane.gridy = 1;
         frmYdkjExtractor.getContentPane().add(scrollPane, gbc_scrollPane);
         
         makeTree();
+        
+        JScrollPane scrollPane_1 = new JScrollPane();
+        GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
+        gbc_scrollPane_1.gridheight = 4;
+        gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
+        gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
+        gbc_scrollPane_1.gridx = 3;
+        gbc_scrollPane_1.gridy = 1;
+        frmYdkjExtractor.getContentPane().add(scrollPane_1, gbc_scrollPane_1);
         textArea = new JTextArea();
         textArea.setFont(UIManager.getFont("TextField.font"));
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        GridBagConstraints gbc_textArea = new GridBagConstraints();
-        gbc_textArea.weighty = 1.0;
-        gbc_textArea.weightx = 1.0;
-        gbc_textArea.anchor = GridBagConstraints.WEST;
-        gbc_textArea.fill = GridBagConstraints.VERTICAL;
-        gbc_textArea.insets = new Insets(0, 0, 5, 0);
-        gbc_textArea.gridheight = 4;
-        gbc_textArea.gridx = 3;
-        gbc_textArea.gridy = 1;
-        frmYdkjExtractor.getContentPane().add(textArea, gbc_textArea);
+        scrollPane_1.setViewportView(textArea);
         
         JButton btnSetOutputDirectory = new JButton("Set Output Directory");
         btnSetOutputDirectory.addActionListener(new ActionListener() {
@@ -190,12 +190,14 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
         gbc_lblNewLabel.gridy = 5;
         frmYdkjExtractor.getContentPane().add(lblNewLabel, gbc_lblNewLabel);
         
-        JButton btnSaveResources = new JButton("Save All Resources");
-        btnSaveResources.addActionListener(new ActionListener() {
+        JButton btnLoadSrf = new JButton("Load SRF");
+        btnLoadSrf.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                SRFSave(srfp);
+                scrollPane.setVisible(false);
+                makeTree();
             }
         });
+        ButtonGroup group = new ButtonGroup();
         
         JButton btnSaveSelectedResource = new JButton("Save Selected Resource");
         btnSaveSelectedResource.addActionListener(new ActionListener() {
@@ -212,15 +214,6 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
         gbc_btnSaveSelectedResource.gridx = 2;
         gbc_btnSaveSelectedResource.gridy = 6;
         frmYdkjExtractor.getContentPane().add(btnSaveSelectedResource, gbc_btnSaveSelectedResource);
-        
-        JButton btnLoadSrf = new JButton("Load SRF");
-        btnLoadSrf.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                scrollPane.setVisible(false);
-                makeTree();
-            }
-        });
-        ButtonGroup group = new ButtonGroup();
         JRadioButton rdbtnPcmwav = new JRadioButton("PCM (Wav)");
         rdbtnPcmwav.setActionCommand("PCM");
         rdbtnPcmwav.setHorizontalAlignment(SwingConstants.LEFT);
@@ -244,6 +237,13 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
         gbc_btnLoadSrf.gridx = 0;
         gbc_btnLoadSrf.gridy = 7;
         frmYdkjExtractor.getContentPane().add(btnLoadSrf, gbc_btnLoadSrf);
+        
+        JButton btnSaveResources = new JButton("Save All Resources");
+        btnSaveResources.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SRFSave(srfp);
+            }
+        });
         GridBagConstraints gbc_btnSaveResources = new GridBagConstraints();
         gbc_btnSaveResources.weighty = 0.8;
         gbc_btnSaveResources.weightx = 0.8;
