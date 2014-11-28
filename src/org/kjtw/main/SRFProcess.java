@@ -149,6 +149,14 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
     									parents.put(ftype, "audio");
     								}
     							}
+    							else
+    							{
+                                    if (!parents.containsKey(ftype))
+                                    {
+                                        stuff = new String(stuff).getBytes();
+                                        parents.put(ftype, "string");
+                                    }
+    							}
     						}
     						Byte[] recall = new Byte[stuff.length];
     						for (int i=0; i < stuff.length; i++)
