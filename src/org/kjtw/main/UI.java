@@ -33,10 +33,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.swing.JScrollPane;
-import javax.swing.border.BevelBorder;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -377,7 +377,7 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
         while (!playCompleted) {
             // wait for the playback completes
             try {
-                Thread.sleep(1000);
+                Thread.sleep(200);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }         
@@ -489,7 +489,7 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
                   }
                   else
                   {
-                      textArea.setText(new String(recall));
+						textArea.setText(new String(recall));
                   }
               }
           }

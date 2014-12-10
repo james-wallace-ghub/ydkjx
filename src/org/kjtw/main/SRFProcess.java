@@ -52,17 +52,21 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
     			}
     			
     				for (int type : rp.getTypes()) {
+   						byte[] stuff = new byte[0];
+   						byte[] save = new byte[0];
+
     					String ftype = KSFLUtilities.fccs(type).trim();
     					DefaultMutableTreeNode ti = new DefaultMutableTreeNode(ftype);
     					top.add(ti);
-    					for (short id : rp.getIDs(type)) {
-    						byte[] stuff = new byte[0];
-    						byte[] save = new byte[0];
-    						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+id);
-    						ti.add(ti2);
-    
-    						if (ftype.equals("qhdr"))
-    						{
+
+    					if (ftype.equals("qhdr"))
+   						{
+	    					for (int id : rp.getfullIDs(type)) 
+	    					{
+    	    					String qheadnm = KSFLUtilities.fccs(id);
+        						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+qheadnm);
+        						ti.add(ti2);
+
     							//special case for question header strings
     							int qtotal = rp.readInt(16);
     							for (int qhd =0; qhd < qtotal; qhd++)
@@ -101,70 +105,83 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
     								last but one short = 3f
     								last int 0000*/
     							}
+	    						Byte[] recall = new Byte[stuff.length];
+	    						for (int i=0; i < stuff.length; i++)
+	    						{
+	    							recall[i] = stuff[i];
+	    						}
+	    						recalldata.put(ftype+'_'+id, recall);
     						}
+   						}
     						else
     						{
-    							MacResource r = rp.get(type, id);
-    //							n = r.name;
-    							stuff = r.data;
-    							if (( ftype.equals("3SEx") || ftype.contains("#")) && !ftype.equals("ANS#"))
-    							{
-    								StringListResource rstr = r.shallowRecast(StringListResource.class);
-    								String[] strs = rstr.getStrings();
-    								String master="";
-    								for (String result : strs)
-    								{
-    									master+=result+System.lineSeparator();
-    								}
-    								stuff=master.getBytes();
-    								if (!parents.containsKey(ftype))
-    								{
-    									parents.put(ftype, "string");
-    								}
-    
-    							}
-    							if (isstring(stuff))
-    							{
-    								stuff = new String(stuff).getBytes("ASCII");
-    								if (!parents.containsKey(ftype))
-    								{
-    									parents.put(ftype, "string");
-    								}								
-    							}
-    							else if (isaudio(stuff))
-    							{
-    								SoundResource rsnd = r.shallowRecast(SoundResource.class);
-    								stuff = convert(rsnd);
-    								save = toAIFF(rsnd);
-    								
-    								Byte[] recall = new Byte[save.length];
-    								for (int i=0; i < save.length; i++)
-    								{
-    									recall[i] = save[i];
-    								}
-    
-    								recallsave.put(ftype+'_'+id, recall);
-    								if (!parents.containsKey(ftype))
-    								{
-    									parents.put(ftype, "audio");
-    								}
-    							}
-    							else
-    							{
-                                    if (!parents.containsKey(ftype))
-                                    {
-                                        stuff = new String(stuff).getBytes();
-                                        parents.put(ftype, "string");
-                                    }
-    							}
-    						}
-    						Byte[] recall = new Byte[stuff.length];
-    						for (int i=0; i < stuff.length; i++)
-    						{
-    							recall[i] = stuff[i];
-    						}
-    						recalldata.put(ftype+'_'+id, recall);
-    					}
+    	    					for (short id : rp.getIDs(type)) 
+    	    					{
+	        						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+id);
+	        						ti.add(ti2);
+	
+	    							MacResource r = rp.get(type, id);
+	    //							n = r.name;
+	    							stuff = r.data;
+	    							if (( ftype.equals("3SEx") || ftype.contains("#")) && !ftype.equals("ANS#"))
+	    							{
+	    								StringListResource rstr = r.shallowRecast(StringListResource.class);
+	    								String[] strs = rstr.getStrings();
+	    								String master="";
+	    								for (String result : strs)
+	    								{
+	    									master+=result+System.lineSeparator();
+	    								}
+	    								stuff=master.getBytes();
+	    								if (!parents.containsKey(ftype))
+	    								{
+	    									parents.put(ftype, "string");
+	    								}
+	    
+	    							}
+	    							if (isstring(stuff))
+	    							{
+	    								stuff = new String(stuff,"MACROMAN").getBytes();
+	    								if (!parents.containsKey(ftype))
+	    								{
+	    									parents.put(ftype, "string");
+	    								}								
+	    							}
+	    							else if (isaudio(stuff))
+	    							{
+	    								SoundResource rsnd = r.shallowRecast(SoundResource.class);
+	    								stuff = convert(rsnd);
+	    								save = toAIFF(rsnd);
+	    								
+	    								Byte[] recall = new Byte[save.length];
+	    								for (int i=0; i < save.length; i++)
+	    								{
+	    									recall[i] = save[i];
+	    								}
+	    
+	    								recallsave.put(ftype+'_'+id, recall);
+	    								if (!parents.containsKey(ftype))
+	    								{
+	    									parents.put(ftype, "audio");
+	    								}
+	    							}
+	    							else
+	    							{
+	                                    if (!parents.containsKey(ftype))
+	                                    {
+	                                        stuff = new String(stuff,"MACROMAN").getBytes();
+	                                        parents.put(ftype, "string");
+	                                    }
+	    							}
+	    							
+	    						Byte[] recall = new Byte[stuff.length];
+	    						for (int i=0; i < stuff.length; i++)
+	    						{
+	    							recall[i] = stuff[i];
+	    						}
+	    						recalldata.put(ftype+'_'+id, recall);
+	    					}
+	    				}
     				}
     		        tree = new JTree(top);
     		        tree.setShowsRootHandles(true);

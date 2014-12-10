@@ -224,7 +224,28 @@ public class BerkeleyResourceFile extends MacResourceProvider {
 		} catch (IOException e) {}
 		return null;
 	}
-	
+
+	public synchronized MacResource getFromFullID(int type, int id) {
+		try {
+			int[] l = locate(type,id);
+			if (l != null) {
+				raf.seek(l[0]);
+				int t = raf.readInt();
+				short i = (short) id;
+				raf.seek(l[3]+4);
+				byte a = raf.readByte();
+				raf.seek(l[4]+4);
+				int dl = raf.readInt();
+				return new MacResource(
+						t, i, a,
+						String.valueOf(i),
+						(l[5]>0)?KSFLUtilities.copy(raf, l[5], dl):(new byte[0])
+				);
+			}
+		} catch (IOException e) {}
+		return null;
+	}
+
 	@Override
 	public synchronized byte[] getData(int type, short id) {
 		try {
@@ -313,6 +334,21 @@ public class BerkeleyResourceFile extends MacResourceProvider {
 		} catch (IOException e) {}
 		return new short[0];
 	}
+	public synchronized int[] getfullIDs(int type) {
+		try {
+			int[] t = locateType(type);
+			if (t != null) {
+				int[] a = new int[t[1]];
+				for (int i=0; i<t[1]; i++) {
+					raf.seek(t[0]+4+(12*i));
+					a[i] = raf.readInt();
+				}
+				return a;
+			}
+		} catch (IOException e) {}
+		return new int[0];
+	}
+
 	@Override
 	public synchronized String getName(int type, int index) {
 		try {
