@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
@@ -27,6 +29,7 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
 
 	public SRFProcess(File file) throws IOException
 	{
+		boolean showanswer = true;
 	    DefaultMutableTreeNode top = new DefaultMutableTreeNode("Resources");
         
 		RandomAccessFile raf = null;
@@ -63,55 +66,122 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
    						{
 	    					for (int id : rp.getfullIDs(type)) 
 	    					{
-    	    					String qheadnm = KSFLUtilities.fccs(id);
+    							MacResource r = rp.getFromFullID(type, id);
+    							stuff = r.data;
+    							
+    							String qheadnm = KSFLUtilities.fccs(id).trim();
+    							
         						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+qheadnm);
         						ti.add(ti2);
 
     							//special case for question header strings
-    							int qtotal = rp.readInt(16);
-    							for (int qhd =0; qhd < qtotal; qhd++)
-    							{
-    								if (!parents.containsKey(ftype))
-    								{
-    									parents.put(ftype, "qheader");
-    								}
-    								String apology ="We don't handle this yet, because the format is frankly painful.";
-    								stuff = apology.getBytes();
-    								int startoff = (20+(qhd*12));
-    								String shortfname = KSFLUtilities.fccs(rp.readInt(startoff)).trim();
-    								int headoffset = rp.readInt(startoff+4)+1;//skip checksum bits
-    								int version = rp.readInt(startoff+8);
-    								
-    /*								in header pos 0 first int is -'shortfname'
-    								pos 4,5 first short is unknown (category a has 0041 - has preamble opening byte?, others are blank)
-    								pos 6,7 second short is cash value in round 1 as thousands of dollars 
-    								pos 8,9 10, 11 unknown
-    								pos 12,13,14,15 is 0
-    								Can't see string length code
-    								Seek 2a, next string is location (2A = root, 3a = /)
-    								last but two short = correct answer value
-    								last but one short unknown
-    								last int 0000*/
-    								
-    /*								For AAA
-    								in header pos 0 first int is 97414141
-    								pos 4,5 first short is 0041
-    								pos 6,7 second short is 0002 
-    								pos 8,9 10, 11 00010100
-    								pos 12,13,14,15 is 0
-    								Can't see string length code
-    								Seek 2a, next string is location (2A = root, 3a = /)
-    								last but two short = 02
-    								last but one short = 3f
-    								last int 0000*/
-    							}
+        						int value = stuff[8]; // equals value in 1000's of question in Round 1
+        						int qtype = stuff[9];// 0 = Standard Question, 1 is skipped?, 2 = Gib, 3 = DisOrDat/3Way, 4 = JackAttack/HeadRush, 5 = Fiber/CCC/PubQuiz
+        						String qtypedef="";
+        						switch (qtype)
+        						{
+        							case 0:
+        								qtypedef = "standard";
+        								break;
+        							case 1:
+        								qtypedef = "unknown";
+        								break;
+        							case 2:
+        								qtypedef = "Gibberish";
+        								break;
+        							case 3:
+        								qtypedef = "Dis or Dat / 3Way";
+        								break;
+        							case 4:
+        								qtypedef = "Jack Attack / HeadRush";
+        								break;
+        							case 5:
+        								qtypedef = "Fiber Optic Field Trip/ Pub Quiz / Celebrity Collect Call";
+        								break;
+        						}
+        						int subtype = stuff[11];// 0 = pas une question normale, 1 = question normale, 2 = bouche-trou, 3 = qui c'est celui là, 4 = ouvrez les yeux
+        						String subtypedef="";
+        						switch (subtype)
+        						{
+        							case 0:
+        								subtypedef = "standard";
+        								break;
+        							case 1:
+        								subtypedef = "unknown";
+        								break;
+        							case 2:
+        								subtypedef = "Gibberish";
+        								break;
+        							case 3:
+        								subtypedef = "Dis or Dat / 3Way";
+        								break;
+        							case 4:
+        								subtypedef = "Jack Attack / HeadRush";
+        								break;
+        							case 5:
+        								subtypedef = "Fiber Optic Field Trip/ Pub Quiz / Celebrity Collect Call";
+        								break;
+        						}
+        						List<Byte> construct = new ArrayList<Byte>();
+        						
+        						byte[] titleconst = KSFLUtilities.copy(stuff, 16, 64);
+        						
+        						for (int i =0; i < titleconst.length; i++)
+        						{
+        							if (titleconst[i] != 0)
+        							{
+        								construct.add(titleconst[i]);
+        							}
+        						}
+        						byte[] title2 = new byte[construct.size()];
+	    						for (int i=0; i < construct.size(); i++)
+	    						{
+	    							title2[i] = construct.get(i);
+	    						}
+        						String title = new String(title2, "MACROMAN");
+        						
+        						
+        						construct.clear();
+        						
+        						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 64);
+        						
+        						for (int i =0; i < pathconst.length; i++)
+        						{
+        							if (pathconst[i] != 0)
+        							{
+        								construct.add(pathconst[i]);
+        							}
+        						}
+        						byte[] path2 = new byte[construct.size()];
+	    						for (int i=0; i < construct.size(); i++)
+	    						{
+	    							path2[i] = construct.get(i);
+	    						}        						
+        						String path = new String(path2, "MACROMAN");
+        						int rightanswer = stuff[146];//relates to correct choice, or position of right answer for FITB
+        		
+        						String qdata = "Question title: "+title+System.lineSeparator()+
+        								"location : "+path+System.lineSeparator()+
+        								"Round 1 Value ="+value+",000"+System.lineSeparator()+
+        								"Question type ="+qtypedef+System.lineSeparator()+
+        								"Subtype ="+subtypedef+System.lineSeparator();
+        						
+        						if (showanswer)
+        						{
+        							qdata +="Correct answer number ="+rightanswer+System.lineSeparator();
+        						}
+        						stuff = qdata.getBytes();
 	    						Byte[] recall = new Byte[stuff.length];
 	    						for (int i=0; i < stuff.length; i++)
 	    						{
 	    							recall[i] = stuff[i];
 	    						}
-	    						recalldata.put(ftype+'_'+id, recall);
+	    						recalldata.put(ftype+'_'+qheadnm, recall);
     						}
+							if (!parents.containsKey(ftype))
+							{
+								parents.put(ftype, "string");
+							}								
    						}
     						else
     						{
@@ -121,12 +191,11 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
 	        						ti.add(ti2);
 	
 	    							MacResource r = rp.get(type, id);
-	    //							n = r.name;
 	    							stuff = r.data;
 	    							if (( ftype.equals("3SEx") || ftype.contains("#")) && !ftype.equals("ANS#"))
 	    							{
 	    								StringListResource rstr = r.shallowRecast(StringListResource.class);
-	    								String[] strs = rstr.getStrings();
+	    								String[] strs = rstr.getStrings("MACROMAN");
 	    								String master="";
 	    								for (String result : strs)
 	    								{
