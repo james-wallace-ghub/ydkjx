@@ -99,27 +99,24 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
         								qtypedef = "Fiber Optic Field Trip/ Pub Quiz / Celebrity Collect Call";
         								break;
         						}
-        						int subtype = stuff[11];// 0 = pas une question normale, 1 = question normale, 2 = bouche-trou, 3 = qui c'est celui là, 4 = ouvrez les yeux
+        						int subtype = stuff[11];
         						String subtypedef="";
         						switch (subtype)
         						{
         							case 0:
-        								subtypedef = "standard";
+        								subtypedef = "Special type";
         								break;
         							case 1:
-        								subtypedef = "unknown";
+        								subtypedef = "Normal 4 answer question";
         								break;
         							case 2:
-        								subtypedef = "Gibberish";
+        								subtypedef = "Fill in the blank";
         								break;
         							case 3:
-        								subtypedef = "Dis or Dat / 3Way";
+        								subtypedef = "Whatshisname?";
         								break;
         							case 4:
-        								subtypedef = "Jack Attack / HeadRush";
-        								break;
-        							case 5:
-        								subtypedef = "Fiber Optic Field Trip/ Pub Quiz / Celebrity Collect Call";
+        								subtypedef = "Picture question";
         								break;
         						}
         						List<Byte> construct = new ArrayList<Byte>();
