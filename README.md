@@ -1,4 +1,4 @@
-The YDKJ Extractor is a Swing based reader for the SRF files used in the YDKJ engines. 
+The jack Player is a Swing based reader for the SRF files used in the YDKJ engines. 
 For now, we only support the text and audio resources, but the plan is to ultimately
 make the tool recognise the different resource types and it possible to parse questions directly.
 
