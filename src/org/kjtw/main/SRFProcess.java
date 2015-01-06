@@ -61,7 +61,10 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
     					String ftype = KSFLUtilities.fccs(type).trim();
     					DefaultMutableTreeNode ti = new DefaultMutableTreeNode(ftype);
     					top.add(ti);
+    					if (ftype.equals("off4"))
+   						{
 
+   						}
     					if (ftype.equals("qhdr"))
    						{
 	    					for (int id : rp.getfullIDs(type)) 
@@ -119,54 +122,45 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
         								subtypedef = "Picture question";
         								break;
         						}
-        						List<Byte> construct = new ArrayList<Byte>();
         						
         						byte[] titleconst = KSFLUtilities.copy(stuff, 16, 64);
+        						        						
+        						String title = new String(titleconst, "MACROMAN").trim();
         						
-        						for (int i =0; i < titleconst.length; i++)
-        						{
-        							if (titleconst[i] != 0)
-        							{
-        								construct.add(titleconst[i]);
-        							}
-        						}
-        						byte[] title2 = new byte[construct.size()];
-	    						for (int i=0; i < construct.size(); i++)
-	    						{
-	    							title2[i] = construct.get(i);
-	    						}
-        						String title = new String(title2, "MACROMAN");
-        						
-        						
-        						construct.clear();
         						
         						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 64);
         						
-        						for (int i =0; i < pathconst.length; i++)
-        						{
-        							if (pathconst[i] != 0)
-        							{
-        								construct.add(pathconst[i]);
-        							}
-        						}
-        						byte[] path2 = new byte[construct.size()];
-	    						for (int i=0; i < construct.size(); i++)
-	    						{
-	    							path2[i] = construct.get(i);
-	    						}        						
-        						String path = new String(path2, "MACROMAN");
+        						String path = new String(pathconst, "MACROMAN").trim().replace(':', File.separatorChar);
         						int rightanswer = stuff[146];//relates to correct choice, or position of right answer for FITB
-        		
         						String qdata = "Question title: "+title+System.lineSeparator()+
         								"location : "+path+System.lineSeparator()+
         								"Round 1 Value ="+value+",000"+System.lineSeparator()+
         								"Question type ="+qtypedef+System.lineSeparator()+
         								"Subtype ="+subtypedef+System.lineSeparator();
-        						
         						if (showanswer)
         						{
         							qdata +="Correct answer number ="+rightanswer+System.lineSeparator();
         						}
+
+        						if (stuff.length >150)
+        						{
+	        						if (stuff[150] != 0)
+	        						{
+	        							//forcing a question after this one.
+	            						byte[] forceconst = KSFLUtilities.copy(stuff, 150, 4);
+	            						String forcestr = new String(forceconst, "MACROMAN").trim();
+	            						
+	        							qdata +="This question forces "+forcestr+" to appear next"+System.lineSeparator();
+	        						}
+	        						if (stuff[154] != 0)
+	        						{
+	        							//This was a forced question, don't display it.
+	            						byte[] forceconst = KSFLUtilities.copy(stuff, 154, 4);
+	            						String forcestr = new String(forceconst, "MACROMAN").trim();
+	            						
+	        							qdata +="This question is forced by "+forcestr+System.lineSeparator();
+	        						}
+        						}        						
         						stuff = qdata.getBytes();
 	    						Byte[] recall = new Byte[stuff.length];
 	    						for (int i=0; i < stuff.length; i++)

@@ -2,13 +2,6 @@ package org.kjtw.main;
 
 import java.awt.EventQueue;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -42,7 +35,7 @@ import java.awt.Insets;
 import javax.swing.SwingConstants;
 import javax.swing.ScrollPaneConstants;
 
-public class UI implements LineListener, TreeSelectionListener, ActionListener {
+public class UI implements TreeSelectionListener, ActionListener {
 
     private JFrame frmYdkjExtractor;
     static JTextArea textArea;
@@ -342,7 +335,7 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
                 File output = new File(dir, key+suffix);
                 output.createNewFile();
                 FileOutputStream fos = new FileOutputStream(output);
-                fos.write(byteconvert(val));
+                fos.write(Converter.byteconvert(val));
                 fos.close();
             } catch (IOException e) {
                 System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
@@ -351,52 +344,6 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
         }
     }
     
-    protected byte[] byteconvert(Byte[] data) {
-        if (data != null)
-        {
-            byte[] recall = new byte[data.length];
-            for (int i=0; i < data.length; i++)
-            {
-                recall[i] = data[i];
-            }
-            return recall;
-        }
-        return null;
-    }
-
-    private void playSound(byte[] bytes) {
-        try {
-        InputStream audio = new ByteArrayInputStream(bytes);
-        playCompleted = false;
-        AudioInputStream ais = AudioSystem.getAudioInputStream(audio);
-        Clip clip = AudioSystem.getClip();
-        clip.addLineListener(this);
-        clip.open(ais);
-        clip.start(); 
-        while (!playCompleted) {
-            // wait for the playback completes
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }         
-        }
-        clip.close();
-    } catch (UnsupportedAudioFileException
-            | IOException | LineUnavailableException e) {
-        e.printStackTrace();
-    }
-    }
-
-        public void update(LineEvent event) {
-            LineEvent.Type type = event.getType();
-             
-         if (type == LineEvent.Type.STOP) {
-                playCompleted = true;
-            }
-     
-        }
-        
         private void SRFSave1(String currentselect) {
             Hashtable<String, Byte[]> data = srfp.getData();
             Hashtable<String, Byte[]> save = srfp.getSaves();
@@ -430,7 +377,7 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
                     File output = new File(dir, currentselect+suffix);
                     output.createNewFile();
                     FileOutputStream fos = new FileOutputStream(output);
-                    fos.write(byteconvert(val));
+                    fos.write(Converter.byteconvert(val));
                     fos.close();
                 } catch (IOException e) {
                     System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
@@ -477,18 +424,16 @@ public class UI implements LineListener, TreeSelectionListener, ActionListener {
               String type = srfp.getParents().get(parent.toString());
               currentselect = parent.toString()+'_'+node.toString();
               Byte[] data = srfp.getData().get(currentselect); 
-              
-              byte[] recall = byteconvert(data);
-              
-              if (recall != null)
+                            
+              if (data != null)
               {
                   if (type.equals("audio"))
                   {
-                      playSound(recall);
+      				new Thread(new AudioPlayer(data)).start();
                   }
                   else
                   {
-						textArea.setText(new String(recall));
+						textArea.setText(new String(Converter.byteconvert(data)));
                   }
               }
           }
