@@ -1,88 +1,123 @@
 package org.kjtw.main;
 
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.JOptionPane;
+
+import com.kreative.ksfl.KSFLUtilities;
 
 public class JackGraphic {
+	private int imagestart;
+	private int fpsnum;
+	private int fpsden;
+	private double fps;
+	private int frames;
+	private List<JackFrame> visframes;
+	private List<JackRawImage> jri;
 
-	Color[] JACKPALETTE = {
-	new Color(0, 0, 0)      , new Color(128, 0, 0)    ,new Color(0, 128, 0)    ,new Color(128, 128, 0), 
-	new Color(0, 0, 128)    , new Color(128, 0, 128)  ,new Color(0, 128, 128)  ,new Color(192, 192, 192),
-	new Color(192, 220, 192), new Color(166, 202, 240),new Color(255, 255, 204),new Color(255, 255, 153),
-	new Color(255, 255, 102), new Color(255, 255, 51),new Color(255, 204, 255),new Color(255, 204, 204),
-	new Color(255, 204, 153), new Color(255, 204, 102),new Color(255, 204, 51),new Color(255, 204, 0),
-	new Color(255, 153, 255), new Color(255, 153, 204),new Color(255, 153, 153),new Color(255, 153, 102),
-	new Color(255, 153, 51), new Color(255, 153, 0)  ,new Color(255, 102, 255),new Color(255, 102, 204),
-	new Color(255, 102, 153), new Color(255, 102, 102),new Color(255, 102, 51),new Color(255, 102, 0),
-	new Color(255, 51, 255), new Color(255, 51, 204),new Color(255, 51, 153),new Color(255, 51, 102),
-	new Color(255, 51, 51), new Color(255, 51, 0)  ,new Color(255, 0,   204),new Color(255, 0, 153),
-	new Color(255, 0, 102)  , new Color(255, 0, 51)  ,new Color(204, 255, 255),new Color(204, 255, 204),
-	new Color(204, 255, 153), new Color(204, 255, 102),new Color(204, 255, 51),new Color(204, 255, 0),
-	new Color(204, 204, 255), new Color(204, 204, 204),new Color(204, 204, 153),new Color(204, 204, 102),
-	new Color(204, 204, 51), new Color(204, 204, 0)  ,new Color(204, 153, 255),new Color(204, 153, 204),
-	new Color(204, 153, 153), new Color(204, 153, 102),new Color(204, 153, 51),new Color(204, 153, 0),
-	new Color(204, 102, 255), new Color(204, 102, 204),new Color(204, 102, 153),new Color(204, 102, 102),
-	new Color(204, 102, 51), new Color(204, 102, 0)  ,new Color(204, 51, 255),new Color(204, 51, 204),
-	new Color(204, 51, 153), new Color(204, 51, 102),new Color(204, 51, 51),new Color(204, 51, 0),
-	new Color(204, 0, 255)  , new Color(204, 0, 204)  ,new Color(204, 0, 153)  ,new Color(204, 0, 102),
-	new Color(204, 0, 51)  , new Color(204, 0, 0)    ,new Color(153, 255, 255),new Color(153, 255, 204),
-	new Color(153, 255, 153), new Color(153, 255, 102),new Color(153, 255, 51),new Color(153, 255, 0),
-	new Color(153, 204, 255), new Color(153, 204, 204),new Color(153, 204, 153),new Color(153, 204, 102),
-	new Color(153, 204, 51), new Color(153, 204, 0)  ,new Color(153, 153, 255),new Color(153, 153, 204),
-	new Color(153, 153, 153), new Color(153, 153, 102),new Color(153, 153, 51),new Color(153, 153, 0),
-	new Color(153, 102, 255), new Color(153, 102, 204),new Color(153, 102, 153),new Color(153, 102, 102),
-	new Color(153, 102, 51), new Color(153, 102, 0)  ,new Color(153, 51, 255),new Color(153, 51, 204),
-	new Color(153, 51, 153), new Color(153, 51, 102),new Color(153, 51, 51),new Color(153, 51, 0),
-	new Color(153, 0, 255)  , new Color(153, 0, 204)  ,new Color(153, 0, 153)  ,new Color(153, 0, 102),
-	new Color(153, 0, 51)  , new Color(153, 0, 0)    ,new Color(102, 255, 255),new Color(102, 255, 204),
-	new Color(102, 255, 153), new Color(102, 255, 102),new Color(102, 255, 51),new Color(102, 255, 0),
-	new Color(102, 204, 255), new Color(102, 204, 204),new Color(102, 204, 153),new Color(102, 204, 102),
-	new Color(102, 204, 51), new Color(102, 204, 0)  ,new Color(102, 153, 255),new Color(102, 153, 204),
-	new Color(102, 153, 153), new Color(102, 153, 102),new Color(102, 153, 51),new Color(102, 153, 0),
-	new Color(102, 102, 255), new Color(102, 102, 204),new Color(102, 102, 153),new Color(102, 102, 102),
-	new Color(102, 102, 51), new Color(102, 102, 0)  ,new Color(102, 51, 255),new Color(102, 51, 204),
-	new Color(102, 51, 153), new Color(102, 51, 102),new Color(102, 51, 51),new Color(102, 51, 0),
-	new Color(102, 0, 255)  , new Color(102, 0, 204)  ,new Color(102, 0, 153)  ,new Color(102, 0, 102),
-	new Color(102, 0, 51)  , new Color(102, 0, 0)    ,new Color(51, 51, 255),new Color(51, 51, 204),
-	new Color(51, 255, 153), new Color(51, 255, 102),new Color(51, 255, 51),new Color(51, 255, 0),
-	new Color(51, 204, 255), new Color(51, 204, 204),new Color(51, 204, 153),new Color(51, 204, 102),
-	new Color(51, 204, 51), new Color(51, 204, 0)  ,new Color(51, 153, 255),new Color(51, 153, 204),
+	public JackGraphic(byte[] data) {
+		visframes = new ArrayList<JackFrame>();
+		imagestart = (KSFLUtilities.getInt(data, 0));
+		fpsnum = KSFLUtilities.getShort(data, 4);
+		fpsden = KSFLUtilities.getShort(data, 6);
+		jri = (new ArrayList <JackRawImage>());
 
-	new Color(51, 153, 153), new Color(51, 153, 102),new Color(51, 153, 51),new Color(51, 153, 0),
-	new Color(51, 102, 255), new Color(51, 102, 204),new Color(51, 102, 153),new Color(51, 102, 102),
-	new Color(51, 102, 51), new Color(51, 102, 0)  ,new Color(51, 51, 255),new Color(51, 51, 204),
-
-	new Color(51, 51, 153), new Color(51, 51, 102),new Color(51, 51, 51),new Color(51, 51, 0),
-	new Color(51, 0, 255)  , new Color(51, 0, 204)  ,new Color(51, 0, 153)  ,new Color(51, 0, 102),
-	new Color(51, 0, 51)  , new Color(51, 0, 0)    ,new Color(0, 255, 204)  ,new Color(0, 255, 153),
-
-	new Color(0, 255, 102)  , new Color(0, 255, 51)  ,new Color(0, 204, 255)  ,new Color(0, 204, 204),
-	new Color(0, 204, 153)  , new Color(0, 204, 102)  ,new Color(0, 204, 51)  ,new Color(0, 204, 0),
-	new Color(0, 153, 255)  , new Color(0, 153, 204)  ,new Color(0, 153, 153)  ,new Color(0, 153, 102),
-	new Color(0, 153, 51)  , new Color(0, 153, 0)    ,new Color(0, 102, 255)  ,new Color(0, 102, 204),
-	new Color(0, 102, 153)  , new Color(0, 102, 102)  ,new Color(0, 102, 51)  ,new Color(0, 102, 0),
-	
-	new Color(0, 51, 255)  , new Color(0, 51, 204)  ,new Color(0, 51, 153)  ,new Color(0, 51, 102),
-	new Color(0, 51, 51)  , new Color(0, 51, 0)    ,new Color(0, 0, 204)    ,new Color(0, 0, 153),
-	new Color(0, 0, 102)    , new Color(0, 0, 51)    ,new Color(238,0, 0)     ,new Color(221,0, 0),
-	new Color(187,0, 0)     , new Color(170,0, 0)     ,new Color(119,0, 0)     ,new Color(68,0, 0),
-	
-	new Color(0,238, 0)     , new Color(0,221, 0)     ,new Color(0,187, 0)     ,new Color(0,170, 0),
-	new Color(0,119, 0)     , new Color(0,68, 0)     ,new Color(0,0, 238)     ,new Color(0,0, 221),
-	new Color(0,0, 187)     , new Color(0,0,170)     ,new Color(0,0,119)     ,new Color(0,0,68),
-	
-	new Color(238,238,238)  , new Color(221,221,221)     ,new Color(187,187,187)     ,new Color(170,170,170),
-	new Color(136,136,136)  ,new Color(119,119,119)     , new Color(85,85, 85)     , new Color(68,68,68)     ,
-	new Color(34,34,34)  ,new Color(0,0,1)     , new Color(255,251,240)  ,new Color(160,160,164)     ,
-	new Color(128,128,128)  ,new Color(255,0,0)     , new Color(0,255,0)  ,new Color(255,255,0)     ,
-	new Color(0,0,255)  ,new Color(255,0,255)     , new Color(0,255,255)  ,new Color(255,255,255)
-	};
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		fps = fpsnum/fpsden;
+		frames =KSFLUtilities.getShort(data, 8);
+		int seekpos =10;
+		int oldseek =10;
+		if (frames >0)
+		{
+			for (int i =0; i < frames;i++)
+			{
+				int frameoffset = KSFLUtilities.getShort(data, seekpos);
+				if (frameoffset ==0)
+				{
+					visframes.add(new JackFrame());					
+				}
+				else
+				{
+					List<JackSubFrame> jsflist = new ArrayList<JackSubFrame>();
+					seekpos = (10+frames*2+(frameoffset-1)*12);
+					int sameoffset = KSFLUtilities.getShort(data, seekpos);
+					seekpos+=2;
+					int xoffset = KSFLUtilities.getShort(data, seekpos);
+					seekpos+=2;
+					int yoffset = KSFLUtilities.getShort(data, seekpos);
+					seekpos+=2;
+					int xsize = KSFLUtilities.getShort(data, seekpos);
+					seekpos+=2;
+					int ysize = KSFLUtilities.getShort(data, seekpos);
+					seekpos+=2;
+					int frameimgs =  KSFLUtilities.getShort(data, seekpos);
+					seekpos+=2;
+					jsflist.add(new JackSubFrame(sameoffset,xoffset,yoffset,xsize,ysize));
+					if (sameoffset !=0)
+					{
+						seekpos = (10+frames*2+(sameoffset)*12);
+					}
+					if (frameimgs > 0)
+					{
+						for (int j =1; (j < frameimgs+1); j++)
+						{
+							int subimgnum = KSFLUtilities.getByte(data, seekpos);
+							seekpos++;
+							int valflag= KSFLUtilities.getByte(data, seekpos);//what is this?
+							seekpos++;
+							xoffset = KSFLUtilities.getShort(data, seekpos);
+							seekpos+=2;
+							yoffset = KSFLUtilities.getShort(data, seekpos);
+							seekpos+=2;
+							xsize = KSFLUtilities.getShort(data, seekpos);
+							seekpos+=2;
+							ysize = KSFLUtilities.getShort(data, seekpos);
+							seekpos+=2;
+							frameimgs =  KSFLUtilities.getShort(data, seekpos);
+							seekpos+=2;
+							jsflist.add(new JackSubFrame(valflag,xoffset,yoffset,xsize,ysize));							
+						}
+					}
+				}
+				seekpos =oldseek;
+			}
+		}
+		//image list
+		seekpos = imagestart;
+		int numimages = KSFLUtilities.getShort(data,seekpos);
+		seekpos+=2;
+		int altnumimages = KSFLUtilities.getShort(data,seekpos);
+		seekpos+=2;
+		if (numimages >0)
+		{
+			for (int i=0; (i < numimages); i++)
+			{
+				int offset = KSFLUtilities.getInt(data, seekpos);
+				seekpos+=4;
+				int width = KSFLUtilities.getShort(data,seekpos);
+				seekpos +=2;
+				int height = KSFLUtilities.getShort(data,seekpos);
+				seekpos+=2;
+				System.out.println("W"+width+"H"+height);
+				jri.add(new JackRawImage(data,offset,width,height));
+			}
+		}
 	}
+
+	public List<JackRawImage> getJri() {
+		return jri;
+	}
+
+	public void setJri(List<JackRawImage> jri) {
+		this.jri = jri;
+	}
+
 
 }

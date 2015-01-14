@@ -18,16 +18,15 @@ import org.kjtw.main.SRFLoad;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.JToggleButton;
-import java.awt.event.ItemListener;
 
-public class Whatshisname extends JPanel {
+public class PictureQuestion extends JPanel {
 	private JLabel Title;
 	private JLabel Qtext;
 	private JLabel txt1;
@@ -37,7 +36,7 @@ public class Whatshisname extends JPanel {
 	private JButton btnPlayTitle;
 	private JButton btnPlaypreamble;
 	private JButton btnPlayQ;
-	private JLabel btnAnswers;
+	private JButton btnAnswers;
 	private JButton button_1;
 	private JButton button_2;
 	private JButton button_3;
@@ -50,12 +49,11 @@ public class Whatshisname extends JPanel {
 	private JLabel lblNewLabel;
 	private JButton btnToggleAltTitles;
 	private int titleval;
-	private int hintval;
 	/**
 	 * Create the panel.
 	 * @throws IOException 
 	 */
-	public Whatshisname(final QHeader qhd) throws IOException {
+	public PictureQuestion(final QHeader qhd) throws IOException {
 		supplements = new Hashtable<String, Byte[]>();
 		QData = new SRFLoad(qhd.path);
 		supplements = QData.getData(); 
@@ -65,7 +63,6 @@ public class Whatshisname extends JPanel {
 			qhd.titleb= new String(Converter.byteconvert(supplements.get("STR_19")));
 		}
 		titleval =0;
-		hintval=0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] {70, 187, 161, 2};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -137,86 +134,14 @@ public class Whatshisname extends JPanel {
 		gbc_btnPlaypreamble.gridy = 2;
 		add(btnPlaypreamble, gbc_btnPlaypreamble);
 		
-		btnAnswers = new JLabel("Hints");
-		GridBagConstraints gbc_btnAnswers = new GridBagConstraints();
-		gbc_btnAnswers.insets = new Insets(0, 0, 5, 5);
-		gbc_btnAnswers.gridx = 0;
-		gbc_btnAnswers.gridy = 4;
-		add(btnAnswers, gbc_btnAnswers);
-
-		txt1 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_7"))));
-		GridBagConstraints gbc_txt1 = new GridBagConstraints();
-		gbc_txt1.gridwidth = 2;
-		gbc_txt1.insets = new Insets(0, 0, 5, 0);
-		gbc_txt1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt1.gridx = 1;
-		gbc_txt1.gridy = 5;
-		add(txt1, gbc_txt1);
-
-		txt2 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_8"))));
-		GridBagConstraints gbc_txt2 = new GridBagConstraints();
-		gbc_txt2.gridwidth = 2;
-		gbc_txt2.insets = new Insets(0, 0, 5, 0);
-		gbc_txt2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt2.gridx = 1;
-		gbc_txt2.gridy = 6;
-		add(txt2, gbc_txt2);
-
-		txt3 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_9"))));
-		GridBagConstraints gbc_txt3 = new GridBagConstraints();
-		gbc_txt3.gridwidth = 2;
-		gbc_txt3.insets = new Insets(0, 0, 5, 0);
-		gbc_txt3.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt3.gridx = 1;
-		gbc_txt3.gridy = 7;
-		add(txt3, gbc_txt3);
-
-		txt4 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_10"))));
-		GridBagConstraints gbc_txt4 = new GridBagConstraints();
-		gbc_txt4.gridwidth = 2;
-		gbc_txt4.insets = new Insets(0, 0, 5, 0);
-		gbc_txt4.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt4.gridx = 1;
-		gbc_txt4.gridy = 8;
-		add(txt4, gbc_txt4);
-		
-		btnPlayQ = new JButton("Hints/Ans");
+		btnPlayQ = new JButton("Play Q");
 		btnPlayQ.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				hintval++;
-				if (hintval>1)
-				{
-					hintval=0;
-				}
-				switch (hintval)
-				{
-					case 0:
-					default:
-					{
-						btnAnswers.setText("Hints");
-						txt1.setText(new String(Converter.byteconvert(supplements.get("STR_7"))));
-						txt2.setText(new String(Converter.byteconvert(supplements.get("STR_8"))));
-						txt3.setText(new String(Converter.byteconvert(supplements.get("STR_9"))));
-						txt4.setText(new String(Converter.byteconvert(supplements.get("STR_10"))));
-						break;
-					}
-					case 1:
-					{
-						btnAnswers.setText("Answers");
-						txt1.setText(new String(Converter.byteconvert(supplements.get("STR_3"))));
-						txt2.setText(new String(Converter.byteconvert(supplements.get("STR_4"))));
-						txt3.setText(new String(Converter.byteconvert(supplements.get("STR_5"))));
-						txt4.setText(new String(Converter.byteconvert(supplements.get("STR_6"))));
-						break;
-					}
-				}				
-				
+				new Thread(new AudioPlayer(supplements.get("snd_3"))).start();
 			}
 		});
-		final String spelltext = "<html><body style='width:100%'>"+"Alternate spellings: "+new String(Converter.byteconvert(supplements.get("Wrds_128")));
-		final String questiontext = "<html><body style='width:100%'>"+new String(Converter.byteconvert(supplements.get("STR_2")));
-
-		Qtext = new JLabel(questiontext);
+		
+		Qtext = new JLabel("<html><body style='width:100%'>"+new String(Converter.byteconvert(supplements.get("STR_2"))));
 		GridBagConstraints gbc_Qtext = new GridBagConstraints();
 		gbc_Qtext.gridheight = 2;
 		gbc_Qtext.gridwidth = 2;
@@ -232,21 +157,25 @@ public class Whatshisname extends JPanel {
 		gbc_btnPlayQ.gridy = 3;
 		add(btnPlayQ, gbc_btnPlayQ);
 		
+		btnAnswers = new JButton("Answers");
+		btnAnswers.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new AudioPlayer(supplements.get("snd_5"))).start();
+			}
+		});
+		GridBagConstraints gbc_btnAnswers = new GridBagConstraints();
+		gbc_btnAnswers.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnAnswers.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAnswers.gridx = 0;
+		gbc_btnAnswers.gridy = 4;
+		add(btnAnswers, gbc_btnAnswers);
 		
 		button_1 = new JButton("1");
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (hintval ==0)
-				{
-					new Thread(new AudioPlayer(supplements.get("snd_14"))).start();					
-				}
-				else
-				{
-					new Thread(new AudioPlayer(supplements.get("snd_7"))).start();
-				}
+				new Thread(new AudioPlayer(supplements.get("snd_7"))).start();
 			}
 		});
-		
 		GridBagConstraints gbc_button_1 = new GridBagConstraints();
 		gbc_button_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_button_1.insets = new Insets(0, 0, 5, 5);
@@ -254,18 +183,19 @@ public class Whatshisname extends JPanel {
 		gbc_button_1.gridy = 5;
 		add(button_1, gbc_button_1);
 		
+		txt1 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_3"))));
+		GridBagConstraints gbc_txt1 = new GridBagConstraints();
+		gbc_txt1.gridwidth = 2;
+		gbc_txt1.insets = new Insets(0, 0, 5, 0);
+		gbc_txt1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txt1.gridx = 1;
+		gbc_txt1.gridy = 5;
+		add(txt1, gbc_txt1);
 		
 		button_2 = new JButton("2");
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (hintval ==0)
-				{
-					new Thread(new AudioPlayer(supplements.get("snd_15"))).start();					
-				}
-				else
-				{
-					new Thread(new AudioPlayer(supplements.get("snd_8"))).start();
-				}
+				new Thread(new AudioPlayer(supplements.get("snd_8"))).start();
 			}
 		});
 		GridBagConstraints gbc_button_2 = new GridBagConstraints();
@@ -274,18 +204,20 @@ public class Whatshisname extends JPanel {
 		gbc_button_2.gridx = 0;
 		gbc_button_2.gridy = 6;
 		add(button_2, gbc_button_2);
-				
+		
+		txt2 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_4"))));
+		GridBagConstraints gbc_txt2 = new GridBagConstraints();
+		gbc_txt2.gridwidth = 2;
+		gbc_txt2.insets = new Insets(0, 0, 5, 0);
+		gbc_txt2.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txt2.gridx = 1;
+		gbc_txt2.gridy = 6;
+		add(txt2, gbc_txt2);
+		
 		button_3 = new JButton("3");
 		button_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (hintval ==0)
-				{
-					new Thread(new AudioPlayer(supplements.get("snd_16"))).start();					
-				}
-				else
-				{
-					new Thread(new AudioPlayer(supplements.get("snd_9"))).start();
-				}
+				new Thread(new AudioPlayer(supplements.get("snd_9"))).start();
 			}
 		});
 		GridBagConstraints gbc_button_3 = new GridBagConstraints();
@@ -295,18 +227,19 @@ public class Whatshisname extends JPanel {
 		gbc_button_3.gridy = 7;
 		add(button_3, gbc_button_3);
 		
+		txt3 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_5"))));
+		GridBagConstraints gbc_txt3 = new GridBagConstraints();
+		gbc_txt3.gridwidth = 2;
+		gbc_txt3.insets = new Insets(0, 0, 5, 0);
+		gbc_txt3.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txt3.gridx = 1;
+		gbc_txt3.gridy = 7;
+		add(txt3, gbc_txt3);
 		
 		button_4 = new JButton("4");
 		button_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (hintval ==0)
-				{
-					new Thread(new AudioPlayer(supplements.get("snd_17"))).start();					
-				}
-				else
-				{
-					new Thread(new AudioPlayer(supplements.get("snd_10"))).start();
-				}
+				new Thread(new AudioPlayer(supplements.get("snd_10"))).start();
 			}
 		});
 		GridBagConstraints gbc_button_4 = new GridBagConstraints();
@@ -315,7 +248,16 @@ public class Whatshisname extends JPanel {
 		gbc_button_4.gridx = 0;
 		gbc_button_4.gridy = 8;
 		add(button_4, gbc_button_4);
-
+		
+		txt4 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_6"))));
+		GridBagConstraints gbc_txt4 = new GridBagConstraints();
+		gbc_txt4.gridwidth = 2;
+		gbc_txt4.insets = new Insets(0, 0, 5, 0);
+		gbc_txt4.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txt4.gridx = 1;
+		gbc_txt4.gridy = 8;
+		add(txt4, gbc_txt4);
+		
 		chckbxNewCheckBox = new JCheckBox("Show answer");
 		chckbxNewCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -325,15 +267,9 @@ public class Whatshisname extends JPanel {
 				txt4.setForeground(Color.BLACK);
 				if (e.getStateChange() == ItemEvent.DESELECTED)
 				{
-					Qtext.setText(questiontext);
-					validate();
-
 				}
 				else
 				{
-					Qtext.setText(spelltext);
-					validate();
-
 					switch (qhd.answer)
 					{
 						case 1:

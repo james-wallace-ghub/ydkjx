@@ -34,6 +34,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.SwingConstants;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.JPanel;
 
 public class UI implements TreeSelectionListener, ActionListener {
 
@@ -49,6 +50,8 @@ public class UI implements TreeSelectionListener, ActionListener {
     JScrollPane scrollPane;
     boolean playCompleted;
     String AIFCmode = "AIFC";
+	private JPanel gfxpanel;
+	private GridBagConstraints gbc_gfxpanel;
     /**
      * Launch the application.
      */
@@ -78,15 +81,15 @@ public class UI implements TreeSelectionListener, ActionListener {
     private void initialize() {
         frmYdkjExtractor = new JFrame();
         frmYdkjExtractor.setTitle("YDKJ Extractor");
-        frmYdkjExtractor.setBounds(100, 100, 434, 327);
+        frmYdkjExtractor.setBounds(100, 100, 1162, 748);
         frmYdkjExtractor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
 
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{113, 6, 153, 133, 0};
-        gridBagLayout.rowHeights = new int[]{16, 22, 105, 23, 5, 15, 12, 23, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        gridBagLayout.columnWidths = new int[]{113, 796, 133, 0};
+        gridBagLayout.rowHeights = new int[]{16, 22, 500, 26, 29, 23, 0};
+        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+        gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         frmYdkjExtractor.getContentPane().setLayout(gridBagLayout);
         
         JLabel lblResourcesInSrf = new JLabel("Resources in SRF");
@@ -94,7 +97,6 @@ public class UI implements TreeSelectionListener, ActionListener {
         gbc_lblResourcesInSrf.anchor = GridBagConstraints.SOUTH;
         gbc_lblResourcesInSrf.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblResourcesInSrf.insets = new Insets(0, 0, 5, 5);
-        gbc_lblResourcesInSrf.gridwidth = 2;
         gbc_lblResourcesInSrf.gridx = 0;
         gbc_lblResourcesInSrf.gridy = 0;
         frmYdkjExtractor.getContentPane().add(lblResourcesInSrf, gbc_lblResourcesInSrf);
@@ -105,14 +107,14 @@ public class UI implements TreeSelectionListener, ActionListener {
         txtrSelectAResource.setFont(UIManager.getFont("TextField.font"));
         txtrSelectAResource.setTabSize(4);
         txtrSelectAResource.setLineWrap(true);
-        txtrSelectAResource.setText("Select a resource to preview it  (sounds will autoplay)");
+        txtrSelectAResource.setText("Select a resource to preview it  (sounds will autoplay, graphics will show in centre");
         GridBagConstraints gbc_txtrSelectAResource = new GridBagConstraints();
         gbc_txtrSelectAResource.weighty = 1.0;
         gbc_txtrSelectAResource.weightx = 1.0;
         gbc_txtrSelectAResource.fill = GridBagConstraints.BOTH;
         gbc_txtrSelectAResource.insets = new Insets(0, 0, 5, 5);
         gbc_txtrSelectAResource.gridheight = 2;
-        gbc_txtrSelectAResource.gridx = 2;
+        gbc_txtrSelectAResource.gridx = 1;
         gbc_txtrSelectAResource.gridy = 0;
         frmYdkjExtractor.getContentPane().add(txtrSelectAResource, gbc_txtrSelectAResource);
         
@@ -121,7 +123,7 @@ public class UI implements TreeSelectionListener, ActionListener {
         gbc_lblTextContent.anchor = GridBagConstraints.SOUTH;
         gbc_lblTextContent.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblTextContent.insets = new Insets(0, 0, 5, 0);
-        gbc_lblTextContent.gridx = 3;
+        gbc_lblTextContent.gridx = 2;
         gbc_lblTextContent.gridy = 0;
         frmYdkjExtractor.getContentPane().add(lblTextContent, gbc_lblTextContent);
         
@@ -130,10 +132,9 @@ public class UI implements TreeSelectionListener, ActionListener {
         GridBagConstraints gbc_scrollPane = new GridBagConstraints();
         gbc_scrollPane.weighty = 1.0;
         gbc_scrollPane.weightx = 1.0;
-        gbc_scrollPane.gridwidth = 2;
         gbc_scrollPane.fill = GridBagConstraints.BOTH;
         gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
-        gbc_scrollPane.gridheight = 6;
+        gbc_scrollPane.gridheight = 2;
         gbc_scrollPane.gridx = 0;
         gbc_scrollPane.gridy = 1;
         frmYdkjExtractor.getContentPane().add(scrollPane, gbc_scrollPane);
@@ -142,10 +143,10 @@ public class UI implements TreeSelectionListener, ActionListener {
         
         JScrollPane scrollPane_1 = new JScrollPane();
         GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
-        gbc_scrollPane_1.gridheight = 4;
+        gbc_scrollPane_1.gridheight = 2;
         gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
         gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
-        gbc_scrollPane_1.gridx = 3;
+        gbc_scrollPane_1.gridx = 2;
         gbc_scrollPane_1.gridy = 1;
         frmYdkjExtractor.getContentPane().add(scrollPane_1, gbc_scrollPane_1);
         textArea = new JTextArea();
@@ -154,21 +155,46 @@ public class UI implements TreeSelectionListener, ActionListener {
         textArea.setWrapStyleWord(true);
         scrollPane_1.setViewportView(textArea);
         
+        gfxpanel = new JPanel();
+        gbc_gfxpanel = new GridBagConstraints();
+        gbc_gfxpanel.fill = GridBagConstraints.BOTH;
+        gbc_gfxpanel.insets = new Insets(0, 0, 5, 5);
+        gbc_gfxpanel.gridx = 1;
+        gbc_gfxpanel.gridy = 2;
+        frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
+        
+        JButton btnSaveSelectedResource = new JButton("Save Selected Resource");
+        btnSaveSelectedResource.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SRFSave1(currentselect);
+            }
+        });
+        
         JButton btnSetOutputDirectory = new JButton("Set Output Directory");
         btnSetOutputDirectory.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 SRFSetOutDirectory();
             }
         });
-        GridBagConstraints gbc_btnSetOutputDirectory = new GridBagConstraints();
-        gbc_btnSetOutputDirectory.weighty = 0.8;
-        gbc_btnSetOutputDirectory.weightx = 0.8;
-        gbc_btnSetOutputDirectory.anchor = GridBagConstraints.NORTH;
-        gbc_btnSetOutputDirectory.fill = GridBagConstraints.HORIZONTAL;
-        gbc_btnSetOutputDirectory.insets = new Insets(0, 0, 5, 5);
-        gbc_btnSetOutputDirectory.gridx = 2;
-        gbc_btnSetOutputDirectory.gridy = 5;
-        frmYdkjExtractor.getContentPane().add(btnSetOutputDirectory, gbc_btnSetOutputDirectory);
+        
+                GridBagConstraints gbc_btnSetOutputDirectory = new GridBagConstraints();
+                gbc_btnSetOutputDirectory.weighty = 0.8;
+                gbc_btnSetOutputDirectory.weightx = 0.8;
+                gbc_btnSetOutputDirectory.anchor = GridBagConstraints.NORTH;
+                gbc_btnSetOutputDirectory.fill = GridBagConstraints.HORIZONTAL;
+                gbc_btnSetOutputDirectory.insets = new Insets(0, 0, 5, 5);
+                gbc_btnSetOutputDirectory.gridx = 0;
+                gbc_btnSetOutputDirectory.gridy = 3;
+                frmYdkjExtractor.getContentPane().add(btnSetOutputDirectory, gbc_btnSetOutputDirectory);
+        GridBagConstraints gbc_btnSaveSelectedResource = new GridBagConstraints();
+        gbc_btnSaveSelectedResource.weighty = 0.8;
+        gbc_btnSaveSelectedResource.weightx = 0.8;
+        gbc_btnSaveSelectedResource.anchor = GridBagConstraints.NORTH;
+        gbc_btnSaveSelectedResource.fill = GridBagConstraints.HORIZONTAL;
+        gbc_btnSaveSelectedResource.insets = new Insets(0, 0, 5, 5);
+        gbc_btnSaveSelectedResource.gridx = 1;
+        gbc_btnSaveSelectedResource.gridy = 3;
+        frmYdkjExtractor.getContentPane().add(btnSaveSelectedResource, gbc_btnSaveSelectedResource);
         
         
         JLabel lblNewLabel = new JLabel("Format of exported audio");
@@ -178,9 +204,10 @@ public class UI implements TreeSelectionListener, ActionListener {
         gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
         gbc_lblNewLabel.fill = GridBagConstraints.VERTICAL;
         gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
-        gbc_lblNewLabel.gridx = 3;
-        gbc_lblNewLabel.gridy = 5;
+        gbc_lblNewLabel.gridx = 2;
+        gbc_lblNewLabel.gridy = 3;
         frmYdkjExtractor.getContentPane().add(lblNewLabel, gbc_lblNewLabel);
+        ButtonGroup group = new ButtonGroup();
         
         JButton btnLoadSrf = new JButton("Load SRF");
         btnLoadSrf.addActionListener(new ActionListener() {
@@ -189,45 +216,14 @@ public class UI implements TreeSelectionListener, ActionListener {
                 makeTree();
             }
         });
-        ButtonGroup group = new ButtonGroup();
-        
-        JButton btnSaveSelectedResource = new JButton("Save Selected Resource");
-        btnSaveSelectedResource.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SRFSave1(currentselect);
-            }
-        });
-        GridBagConstraints gbc_btnSaveSelectedResource = new GridBagConstraints();
-        gbc_btnSaveSelectedResource.weighty = 0.8;
-        gbc_btnSaveSelectedResource.weightx = 0.8;
-        gbc_btnSaveSelectedResource.anchor = GridBagConstraints.NORTH;
-        gbc_btnSaveSelectedResource.fill = GridBagConstraints.HORIZONTAL;
-        gbc_btnSaveSelectedResource.insets = new Insets(0, 0, 5, 5);
-        gbc_btnSaveSelectedResource.gridx = 2;
-        gbc_btnSaveSelectedResource.gridy = 6;
-        frmYdkjExtractor.getContentPane().add(btnSaveSelectedResource, gbc_btnSaveSelectedResource);
-        JRadioButton rdbtnPcmwav = new JRadioButton("PCM (Wav)");
-        rdbtnPcmwav.setActionCommand("PCM");
-        rdbtnPcmwav.setHorizontalAlignment(SwingConstants.LEFT);
-        GridBagConstraints gbc_rdbtnPcmwav = new GridBagConstraints();
-        gbc_rdbtnPcmwav.weighty = 1.0;
-        gbc_rdbtnPcmwav.weightx = 1.0;
-        gbc_rdbtnPcmwav.insets = new Insets(0, 0, 5, 0);
-        gbc_rdbtnPcmwav.anchor = GridBagConstraints.NORTH;
-        gbc_rdbtnPcmwav.fill = GridBagConstraints.HORIZONTAL;
-        gbc_rdbtnPcmwav.gridx = 3;
-        gbc_rdbtnPcmwav.gridy = 6;
-        frmYdkjExtractor.getContentPane().add(rdbtnPcmwav, gbc_rdbtnPcmwav);
-        group.add(rdbtnPcmwav);
-        rdbtnPcmwav.addActionListener(this);
         GridBagConstraints gbc_btnLoadSrf = new GridBagConstraints();
         gbc_btnLoadSrf.weighty = 1.0;
         gbc_btnLoadSrf.weightx = 1.0;
         gbc_btnLoadSrf.anchor = GridBagConstraints.NORTH;
         gbc_btnLoadSrf.fill = GridBagConstraints.HORIZONTAL;
-        gbc_btnLoadSrf.insets = new Insets(0, 0, 0, 5);
+        gbc_btnLoadSrf.insets = new Insets(0, 0, 5, 5);
         gbc_btnLoadSrf.gridx = 0;
-        gbc_btnLoadSrf.gridy = 7;
+        gbc_btnLoadSrf.gridy = 4;
         frmYdkjExtractor.getContentPane().add(btnLoadSrf, gbc_btnLoadSrf);
         
         JButton btnSaveResources = new JButton("Save All Resources");
@@ -241,10 +237,24 @@ public class UI implements TreeSelectionListener, ActionListener {
         gbc_btnSaveResources.weightx = 0.8;
         gbc_btnSaveResources.anchor = GridBagConstraints.NORTH;
         gbc_btnSaveResources.fill = GridBagConstraints.HORIZONTAL;
-        gbc_btnSaveResources.insets = new Insets(0, 0, 0, 5);
-        gbc_btnSaveResources.gridx = 2;
-        gbc_btnSaveResources.gridy = 7;
+        gbc_btnSaveResources.insets = new Insets(0, 0, 5, 5);
+        gbc_btnSaveResources.gridx = 1;
+        gbc_btnSaveResources.gridy = 4;
         frmYdkjExtractor.getContentPane().add(btnSaveResources, gbc_btnSaveResources);
+        JRadioButton rdbtnPcmwav = new JRadioButton("PCM (Wav)");
+        rdbtnPcmwav.setActionCommand("PCM");
+        rdbtnPcmwav.setHorizontalAlignment(SwingConstants.LEFT);
+        GridBagConstraints gbc_rdbtnPcmwav = new GridBagConstraints();
+        gbc_rdbtnPcmwav.weighty = 1.0;
+        gbc_rdbtnPcmwav.weightx = 1.0;
+        gbc_rdbtnPcmwav.insets = new Insets(0, 0, 5, 0);
+        gbc_rdbtnPcmwav.anchor = GridBagConstraints.NORTH;
+        gbc_rdbtnPcmwav.fill = GridBagConstraints.HORIZONTAL;
+        gbc_rdbtnPcmwav.gridx = 2;
+        gbc_rdbtnPcmwav.gridy = 4;
+        frmYdkjExtractor.getContentPane().add(rdbtnPcmwav, gbc_rdbtnPcmwav);
+        group.add(rdbtnPcmwav);
+        rdbtnPcmwav.addActionListener(this);
         
         JRadioButton rdbtnNativeaifc = new JRadioButton("Native (AIFC)");
         rdbtnNativeaifc.setSelected(true);
@@ -253,8 +263,8 @@ public class UI implements TreeSelectionListener, ActionListener {
         gbc_rdbtnNativeaifc.weightx = 1.0;
         gbc_rdbtnNativeaifc.weighty = 1.0;
         gbc_rdbtnNativeaifc.anchor = GridBagConstraints.NORTHWEST;
-        gbc_rdbtnNativeaifc.gridx = 3;
-        gbc_rdbtnNativeaifc.gridy = 7;
+        gbc_rdbtnNativeaifc.gridx = 2;
+        gbc_rdbtnNativeaifc.gridy = 5;
         frmYdkjExtractor.getContentPane().add(rdbtnNativeaifc, gbc_rdbtnNativeaifc);
 
         //Register a listener for the radio buttons.
@@ -423,18 +433,29 @@ public class UI implements TreeSelectionListener, ActionListener {
 
               String type = srfp.getParents().get(parent.toString());
               currentselect = parent.toString()+'_'+node.toString();
-              Byte[] data = srfp.getData().get(currentselect); 
-                            
-              if (data != null)
+              
+              if (type.equals("gfx"))
               {
-                  if (type.equals("audio"))
-                  {
-      				new Thread(new AudioPlayer(data)).start();
-                  }
-                  else
-                  {
-						textArea.setText(new String(Converter.byteconvert(data)));
-                  }
+            	  gfxpanel.removeAll();
+            	  gfxpanel = new JackGfxStrip(srfp.getGfx().get(currentselect).getJri());
+                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
+                  frmYdkjExtractor.revalidate();
+              }
+              else
+              {
+	              Byte[] data = srfp.getData().get(currentselect); 
+	                            
+	              if (data != null)
+	              {
+	            	  if (type.equals("audio"))
+	                  {
+	      				new Thread(new AudioPlayer(data)).start();
+	                  }
+	                  else
+	                  {
+							textArea.setText(new String(Converter.byteconvert(data)));
+	                  }
+	              }
               }
           }
 

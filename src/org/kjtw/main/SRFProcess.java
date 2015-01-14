@@ -24,7 +24,7 @@ public class SRFProcess {
 Hashtable<String,String> parents = new Hashtable<String,String>();
 Hashtable<String, Byte[]> recallsave = new Hashtable<String, Byte[]>();
 Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
-
+Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
 	JTree tree = null;
 
 	public SRFProcess(File file) throws IOException
@@ -61,10 +61,7 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
     					String ftype = KSFLUtilities.fccs(type).trim();
     					DefaultMutableTreeNode ti = new DefaultMutableTreeNode(ftype);
     					top.add(ti);
-    					if (ftype.equals("off4"))
-   						{
 
-   						}
     					if (ftype.equals("qhdr"))
    						{
 	    					for (int id : rp.getfullIDs(type)) 
@@ -183,6 +180,18 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
 	
 	    							MacResource r = rp.get(type, id);
 	    							stuff = r.data;
+	    							if (ftype.equals("off4"))
+	    							{
+	    								JackGraphic jgfx = new JackGraphic(r.data);
+	    								String warn =  "this is gfx";
+	    								gfx.put(ftype+'_'+id, jgfx);
+	    								stuff = warn.getBytes();
+	    								if (!parents.containsKey(ftype))
+	    								{
+	    									parents.put(ftype, "gfx");
+	    								}
+	    								
+	    							}
 	    							if (( ftype.equals("3SEx") || ftype.contains("#")) && !ftype.equals("ANS#"))
 	    							{
 	    								StringListResource rstr = r.shallowRecast(StringListResource.class);
@@ -307,6 +316,10 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
 	public Hashtable<String, Byte[]> getData() {
 		return recalldata;
 	}
+	public Hashtable<String, JackGraphic> getGfx() {
+		return gfx;
+	}
+
 	public Hashtable<String, Byte[]> getSaves() {
 		return recallsave;
 	}
