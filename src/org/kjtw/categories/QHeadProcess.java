@@ -147,9 +147,16 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
         						qh.setTitle(title);
         						qh.setPath(fpath+path);
 
-        						qh.setAnswer((int)stuff[146]);
+        						if (stuff.length > 146)
+        						{
+            						qh.setAnswer((int)stuff[146]);
+        						}
+        						else
+        						{
+        							qh.setAnswer(0);
+        						}
 
-        						if (stuff.length >150)
+        						if (stuff.length >152)
         						{
 	
 	        						if (stuff[150] != 0)

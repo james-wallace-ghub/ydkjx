@@ -1,16 +1,13 @@
 package org.kjtw.main;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.kreative.ksfl.KSFLUtilities;
 import com.kreative.rsrc.BerkeleyResourceFile;
@@ -22,8 +19,8 @@ import com.kreative.rsrc.StringListResource;
 public class SRFLoad {
 
 Hashtable<String,String> parents = new Hashtable<String,String>();
-Hashtable<String, Byte[]> recallsave = new Hashtable<String, Byte[]>();
-Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
+Hashtable<String, BufferedImage> recallsave = new Hashtable<String, BufferedImage>();
+Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 
 	JTree tree = null;
 
@@ -35,8 +32,8 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
 		try {
 			raf = new RandomAccessFile(path, "r");
 		} catch (FileNotFoundException e) {
-		    JOptionPane.showMessageDialog(null, "Resource tree can't be made, that file doesn't exist.");
-			e.printStackTrace();
+//		    JOptionPane.showMessageDialog(null, "Resource tree can't be made, that file doesn't exist.");
+//			e.printStackTrace();
 		}
 		if (raf != null)
 		{
@@ -54,20 +51,20 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
     			
     				for (int type : rp.getTypes()) {
    						byte[] stuff = new byte[0];
-   						byte[] save = new byte[0];
 
     					String ftype = KSFLUtilities.fccs(type).trim();
-    					if (ftype.equals("off4"))
-   						{
+    					for (short id : rp.getIDs(type)) 
+    					{
+							MacResource r = rp.get(type, id);
+							stuff = r.data;
 
-   						}
-    					else	for (short id : rp.getIDs(type)) 
-    	    					{
+    						if (ftype.equals("off4"))
+       						{
+	    						recallsave.put(ftype+'_'+id, new JackGraphic(r.data).getJri().get(0).getImgout());
+       						}
 	
-	    							MacResource r = rp.get(type, id);
-	    							stuff = r.data;
-	    							if (( ftype.equals("3SEx") || ftype.contains("#")) && !ftype.equals("ANS#"))
-	    							{
+    							if (( ftype.equals("3SEx") || ftype.contains("#")) && !ftype.equals("ANS#"))
+    							{
 	    								StringListResource rstr = r.shallowRecast(StringListResource.class);
 	    								String[] strs = rstr.getStrings("MACROMAN");
 	    								String master="";
@@ -102,15 +99,7 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
 	    							{
 	    								SoundResource rsnd = r.shallowRecast(SoundResource.class);
 	    								stuff = convert(rsnd);
-	    								save = toAIFF(rsnd);
 	    								
-	    								Byte[] recall = new Byte[save.length];
-	    								for (int i=0; i < save.length; i++)
-	    								{
-	    									recall[i] = save[i];
-	    								}
-	    
-	    								recallsave.put(ftype+'_'+id, recall);
 	    								if (!parents.containsKey(ftype))
 	    								{
 	    									parents.put(ftype, "audio");
@@ -125,12 +114,7 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
 	                                    }
 	    							}
 	    							
-	    						Byte[] recall = new Byte[stuff.length];
-	    						for (int i=0; i < stuff.length; i++)
-	    						{
-	    							recall[i] = stuff[i];
-	    						}
-	    						recalldata.put(ftype+'_'+id, recall);
+	    						recalldata.put(ftype+'_'+id, stuff);
 	    					}
 	    				}
     				}
@@ -179,9 +163,6 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
 			return false;
 		}
 	}
-	public byte[] toAIFF(SoundResource r) {
-		return r.toAiff();
-}
 	
 	public byte[] convert(SoundResource r) {
 		return r.toWav();
@@ -189,10 +170,12 @@ Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
 	public Hashtable<String,String> getParents() {
 		return parents;
 	}
-	public Hashtable<String, Byte[]> getData() {
+	public Hashtable<String, byte[]> getData() {
 		return recalldata;
 	}
-	public Hashtable<String, Byte[]> getSaves() {
+
+	public Hashtable<String, BufferedImage> getGfx() {
+		// TODO Auto-generated method stub
 		return recallsave;
 	}
 	}

@@ -2,17 +2,14 @@ package org.kjtw.categories;
 
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
-import javax.swing.JTextField;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import org.kjtw.main.AudioPlayer;
-import org.kjtw.main.Converter;
 import org.kjtw.main.SRFLoad;
 
 import java.awt.event.ActionListener;
@@ -23,10 +20,12 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
 public class StandardQuestion extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2970935854547118125L;
 	private JLabel Title;
 	private JLabel Qtext;
 	private JLabel txt1;
@@ -44,7 +43,7 @@ public class StandardQuestion extends JPanel {
 	private JButton btnAllWrongAnswers;
 	private JButton btnClosingRemark;
 	private JCheckBox chckbxNewCheckBox;
-	private Hashtable <String, Byte[]> supplements;
+	private Hashtable <String, byte[]> supplements;
 	private SRFLoad QData;
 	private JLabel lblNewLabel;
 	private JButton btnToggleAltTitles;
@@ -54,13 +53,13 @@ public class StandardQuestion extends JPanel {
 	 * @throws IOException 
 	 */
 	public StandardQuestion(final QHeader qhd) throws IOException {
-		supplements = new Hashtable<String, Byte[]>();
+		supplements = new Hashtable<String, byte[]>();
 		QData = new SRFLoad(qhd.path);
 		supplements = QData.getData(); 
 		if (qhd.forced != null)
 		{
-			qhd.titlea= new String(Converter.byteconvert(supplements.get("STR_18")));
-			qhd.titleb= new String(Converter.byteconvert(supplements.get("STR_19")));
+			qhd.titlea= new String(supplements.get("STR_18"));
+			qhd.titleb= new String(supplements.get("STR_19"));
 		}
 		titleval =0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -141,7 +140,7 @@ public class StandardQuestion extends JPanel {
 			}
 		});
 		
-		Qtext = new JLabel("<html><body style='width:100%'>"+new String(Converter.byteconvert(supplements.get("STR_2"))));
+		Qtext = new JLabel("<html><body style='width:100%'>"+new String(supplements.get("STR_2")));
 		GridBagConstraints gbc_Qtext = new GridBagConstraints();
 		gbc_Qtext.gridheight = 2;
 		gbc_Qtext.gridwidth = 2;
@@ -183,7 +182,7 @@ public class StandardQuestion extends JPanel {
 		gbc_button_1.gridy = 5;
 		add(button_1, gbc_button_1);
 		
-		txt1 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_3"))));
+		txt1 = new JLabel(new String(supplements.get("STR_3")));
 		GridBagConstraints gbc_txt1 = new GridBagConstraints();
 		gbc_txt1.gridwidth = 2;
 		gbc_txt1.insets = new Insets(0, 0, 5, 0);
@@ -205,7 +204,7 @@ public class StandardQuestion extends JPanel {
 		gbc_button_2.gridy = 6;
 		add(button_2, gbc_button_2);
 		
-		txt2 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_4"))));
+		txt2 = new JLabel(new String(supplements.get("STR_4")));
 		GridBagConstraints gbc_txt2 = new GridBagConstraints();
 		gbc_txt2.gridwidth = 2;
 		gbc_txt2.insets = new Insets(0, 0, 5, 0);
@@ -227,7 +226,7 @@ public class StandardQuestion extends JPanel {
 		gbc_button_3.gridy = 7;
 		add(button_3, gbc_button_3);
 		
-		txt3 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_5"))));
+		txt3 = new JLabel(new String(supplements.get("STR_5")));
 		GridBagConstraints gbc_txt3 = new GridBagConstraints();
 		gbc_txt3.gridwidth = 2;
 		gbc_txt3.insets = new Insets(0, 0, 5, 0);
@@ -249,7 +248,7 @@ public class StandardQuestion extends JPanel {
 		gbc_button_4.gridy = 8;
 		add(button_4, gbc_button_4);
 		
-		txt4 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_6"))));
+		txt4 = new JLabel(new String(supplements.get("STR_6")));
 		GridBagConstraints gbc_txt4 = new GridBagConstraints();
 		gbc_txt4.gridwidth = 2;
 		gbc_txt4.insets = new Insets(0, 0, 5, 0);
@@ -322,10 +321,17 @@ public class StandardQuestion extends JPanel {
 		gbc_btnClosingRemark.gridy = 9;
 		add(btnClosingRemark, gbc_btnClosingRemark);
 
+		btnToggleAltTitles = new JButton("Toggle alt titles");
+		GridBagConstraints gbc_btnToggleAltTitles = new GridBagConstraints();
+		gbc_btnToggleAltTitles.insets = new Insets(0, 0, 5, 5);
+		gbc_btnToggleAltTitles.gridx = 0;
+		gbc_btnToggleAltTitles.gridy = 0;
+		add(btnToggleAltTitles, gbc_btnToggleAltTitles);
+		btnToggleAltTitles.setEnabled(false);
 		if (qhd.titlea != null)
 		{
+			btnToggleAltTitles.setEnabled(true);
 			btnPlayTitle.setText("Play Title 1");
-			btnToggleAltTitles = new JButton("Toggle alt titles");
 			btnToggleAltTitles.addActionListener(new ActionListener() 
 			{
 				public void actionPerformed(ActionEvent e) 
@@ -360,11 +366,6 @@ public class StandardQuestion extends JPanel {
 				}
 				
 			});
-			GridBagConstraints gbc_btnToggleAltTitles = new GridBagConstraints();
-			gbc_btnToggleAltTitles.insets = new Insets(0, 0, 5, 5);
-			gbc_btnToggleAltTitles.gridx = 0;
-			gbc_btnToggleAltTitles.gridy = 0;
-			add(btnToggleAltTitles, gbc_btnToggleAltTitles);
 		}		
 
 	

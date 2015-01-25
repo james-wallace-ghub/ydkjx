@@ -8,17 +8,31 @@ import javax.swing.JPanel;
 
 public class JackGFXPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2291934827966122735L;
 	private Image image;
+	private boolean scaleflag = false;
 	public JackGFXPanel(BufferedImage imgout) {
 		image = imgout;
+		if ( (imgout.getWidth() >639)|| (imgout.getHeight() >479))
+		{
+			scaleflag=true;
+		}
 		setBounds(0, 0, 640, 480);
 	}
 	@Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(image, 0, 0, 640, 480, null);
-
-//        g.drawImage(image, 0, 0, null); // see javadoc for more info on the parameters            
+        if (scaleflag)
+        {
+        	g.drawImage(image,0,0,640,480,null);
+        }
+        else
+        {
+        	g.drawImage(image, 0, 0, null);            
+        }
     }
 	public void setImage(BufferedImage imgout) {
 		image = imgout;

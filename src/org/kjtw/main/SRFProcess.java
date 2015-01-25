@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
@@ -22,11 +20,10 @@ import com.kreative.rsrc.StringListResource;
 public class SRFProcess {
 
 Hashtable<String,String> parents = new Hashtable<String,String>();
-Hashtable<String, Byte[]> recallsave = new Hashtable<String, Byte[]>();
-Hashtable<String, Byte[]> recalldata = new Hashtable<String, Byte[]>();
-Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
+Hashtable<String, byte[]> recallsave = new Hashtable<String, byte[]>();
+Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	JTree tree = null;
-
+	BerkeleyResourceFile rp;
 	public SRFProcess(File file) throws IOException
 	{
 		boolean showanswer = true;
@@ -46,7 +43,7 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
     		raf.read(packet, 0, 4);
     		if (issrf(packet))
     		{
-    			BerkeleyResourceFile rp = null;
+    			rp = null;
     			try {
     				rp = new BerkeleyResourceFile(file, "r", MacResourceFile.CREATE_NEVER);
     			} catch (IOException e) {
@@ -56,7 +53,6 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
     			
     				for (int type : rp.getTypes()) {
    						byte[] stuff = new byte[0];
-   						byte[] save = new byte[0];
 
     					String ftype = KSFLUtilities.fccs(type).trim();
     					DefaultMutableTreeNode ti = new DefaultMutableTreeNode(ftype);
@@ -90,7 +86,7 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
         								qtypedef = "Gibberish";
         								break;
         							case 3:
-        								qtypedef = "Dis or Dat / 3Way";
+        								qtypedef = "Dis or Dat";
         								break;
         							case 4:
         								qtypedef = "Jack Attack / HeadRush";
@@ -98,6 +94,9 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
         							case 5:
         								qtypedef = "Fiber Optic Field Trip/ Pub Quiz / Celebrity Collect Call";
         								break;
+        							case 12:
+        								qtypedef = "3Way";
+        								break;            								
         						}
         						int subtype = stuff[11];
         						String subtypedef="";
@@ -128,7 +127,12 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
         						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 64);
         						
         						String path = new String(pathconst, "MACROMAN").trim().replace(':', File.separatorChar);
-        						int rightanswer = stuff[146];//relates to correct choice, or position of right answer for FITB
+
+        						int rightanswer=0;
+        						if (stuff.length > 146)
+        						{
+        							rightanswer = stuff[146];//relates to correct choice, or position of right answer for FITB
+        						}
         						String qdata = "Question title: "+title+System.lineSeparator()+
         								"location : "+path+System.lineSeparator()+
         								"Round 1 Value ="+value+",000"+System.lineSeparator()+
@@ -139,7 +143,7 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
         							qdata +="Correct answer number ="+rightanswer+System.lineSeparator();
         						}
 
-        						if (stuff.length >150)
+        						if (stuff.length >152)
         						{
 	        						if (stuff[150] != 0)
 	        						{
@@ -159,16 +163,11 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
 	        						}
         						}        						
         						stuff = qdata.getBytes();
-	    						Byte[] recall = new Byte[stuff.length];
-	    						for (int i=0; i < stuff.length; i++)
-	    						{
-	    							recall[i] = stuff[i];
-	    						}
-	    						recalldata.put(ftype+'_'+qheadnm, recall);
+	    						recalldata.put(ftype+'_'+qheadnm, stuff);
     						}
 							if (!parents.containsKey(ftype))
 							{
-								parents.put(ftype, "string");
+								parents.put(ftype, "qhdr");
 							}								
    						}
     						else
@@ -182,10 +181,6 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
 	    							stuff = r.data;
 	    							if (ftype.equals("off4"))
 	    							{
-	    								JackGraphic jgfx = new JackGraphic(r.data);
-	    								String warn =  "this is gfx";
-	    								gfx.put(ftype+'_'+id, jgfx);
-	    								stuff = warn.getBytes();
 	    								if (!parents.containsKey(ftype))
 	    								{
 	    									parents.put(ftype, "gfx");
@@ -218,17 +213,6 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
 	    							}
 	    							else if (isaudio(stuff))
 	    							{
-	    								SoundResource rsnd = r.shallowRecast(SoundResource.class);
-	    								stuff = convert(rsnd);
-	    								save = toAIFF(rsnd);
-	    								
-	    								Byte[] recall = new Byte[save.length];
-	    								for (int i=0; i < save.length; i++)
-	    								{
-	    									recall[i] = save[i];
-	    								}
-	    
-	    								recallsave.put(ftype+'_'+id, recall);
 	    								if (!parents.containsKey(ftype))
 	    								{
 	    									parents.put(ftype, "audio");
@@ -243,12 +227,7 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
 	                                    }
 	    							}
 	    							
-	    						Byte[] recall = new Byte[stuff.length];
-	    						for (int i=0; i < stuff.length; i++)
-	    						{
-	    							recall[i] = stuff[i];
-	    						}
-	    						recalldata.put(ftype+'_'+id, recall);
+	    						recalldata.put(ftype+'_'+id, stuff);
 	    					}
 	    				}
     				}
@@ -313,14 +292,14 @@ Hashtable<String, JackGraphic> gfx = new Hashtable<String, JackGraphic>();
 	public Hashtable<String,String> getParents() {
 		return parents;
 	}
-	public Hashtable<String, Byte[]> getData() {
+	public Hashtable<String, byte[]> getData() {
 		return recalldata;
 	}
-	public Hashtable<String, JackGraphic> getGfx() {
-		return gfx;
+	public BerkeleyResourceFile getBRF() {
+		return rp;
 	}
 
-	public Hashtable<String, Byte[]> getSaves() {
+	public Hashtable<String, byte[]> getSaves() {
 		return recallsave;
 	}
 	}

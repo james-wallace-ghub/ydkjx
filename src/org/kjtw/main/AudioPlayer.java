@@ -32,11 +32,12 @@ public class AudioPlayer implements Runnable{
     {
     }
     
-    public AudioPlayer(Byte[] bytes)
+
+    public AudioPlayer(byte[] bytes)
     {
-    	this.audio = Converter.byteconvert(bytes);
+    	this.audio = bytes;
     }
-    
+
     /**
      * @param filename the name of the file that is going to be played
      * @throws IOException 
@@ -53,8 +54,8 @@ public class AudioPlayer implements Runnable{
 
         		InputStream snd = new ByteArrayInputStream(audio);
         	
-            audioStream = AudioSystem.getAudioInputStream(snd);
-            audioFormat = audioStream.getFormat();
+        		audioStream = AudioSystem.getAudioInputStream(snd);
+        		audioFormat = audioStream.getFormat();
 
             final byte[] data = new byte[4096];  
             try{

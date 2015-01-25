@@ -2,17 +2,14 @@ package org.kjtw.categories;
 
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
-import javax.swing.JTextField;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import org.kjtw.main.AudioPlayer;
-import org.kjtw.main.Converter;
 import org.kjtw.main.SRFLoad;
 
 import java.awt.event.ActionListener;
@@ -22,12 +19,13 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.JToggleButton;
 import java.awt.event.ItemListener;
 
 public class Whatshisname extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4135380558219022262L;
 	private JLabel Title;
 	private JLabel Qtext;
 	private JLabel txt1;
@@ -45,7 +43,7 @@ public class Whatshisname extends JPanel {
 	private JButton btnAllWrongAnswers;
 	private JButton btnClosingRemark;
 	private JCheckBox chckbxNewCheckBox;
-	private Hashtable <String, Byte[]> supplements;
+	private Hashtable <String, byte[]> supplements;
 	private SRFLoad QData;
 	private JLabel lblNewLabel;
 	private JButton btnToggleAltTitles;
@@ -56,13 +54,13 @@ public class Whatshisname extends JPanel {
 	 * @throws IOException 
 	 */
 	public Whatshisname(final QHeader qhd) throws IOException {
-		supplements = new Hashtable<String, Byte[]>();
+		supplements = new Hashtable<String, byte[]>();
 		QData = new SRFLoad(qhd.path);
 		supplements = QData.getData(); 
 		if (qhd.forced != null)
 		{
-			qhd.titlea= new String(Converter.byteconvert(supplements.get("STR_18")));
-			qhd.titleb= new String(Converter.byteconvert(supplements.get("STR_19")));
+			qhd.titlea= new String(supplements.get("STR_18"));
+			qhd.titleb= new String(supplements.get("STR_19"));
 		}
 		titleval =0;
 		hintval=0;
@@ -144,7 +142,7 @@ public class Whatshisname extends JPanel {
 		gbc_btnAnswers.gridy = 4;
 		add(btnAnswers, gbc_btnAnswers);
 
-		txt1 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_7"))));
+		txt1 = new JLabel(new String(supplements.get("STR_7")));
 		GridBagConstraints gbc_txt1 = new GridBagConstraints();
 		gbc_txt1.gridwidth = 2;
 		gbc_txt1.insets = new Insets(0, 0, 5, 0);
@@ -153,7 +151,7 @@ public class Whatshisname extends JPanel {
 		gbc_txt1.gridy = 5;
 		add(txt1, gbc_txt1);
 
-		txt2 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_8"))));
+		txt2 = new JLabel(new String(supplements.get("STR_8")));
 		GridBagConstraints gbc_txt2 = new GridBagConstraints();
 		gbc_txt2.gridwidth = 2;
 		gbc_txt2.insets = new Insets(0, 0, 5, 0);
@@ -162,7 +160,7 @@ public class Whatshisname extends JPanel {
 		gbc_txt2.gridy = 6;
 		add(txt2, gbc_txt2);
 
-		txt3 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_9"))));
+		txt3 = new JLabel(new String(supplements.get("STR_9")));
 		GridBagConstraints gbc_txt3 = new GridBagConstraints();
 		gbc_txt3.gridwidth = 2;
 		gbc_txt3.insets = new Insets(0, 0, 5, 0);
@@ -171,7 +169,7 @@ public class Whatshisname extends JPanel {
 		gbc_txt3.gridy = 7;
 		add(txt3, gbc_txt3);
 
-		txt4 = new JLabel(new String(Converter.byteconvert(supplements.get("STR_10"))));
+		txt4 = new JLabel(new String(supplements.get("STR_10")));
 		GridBagConstraints gbc_txt4 = new GridBagConstraints();
 		gbc_txt4.gridwidth = 2;
 		gbc_txt4.insets = new Insets(0, 0, 5, 0);
@@ -194,27 +192,27 @@ public class Whatshisname extends JPanel {
 					default:
 					{
 						btnAnswers.setText("Hints");
-						txt1.setText(new String(Converter.byteconvert(supplements.get("STR_7"))));
-						txt2.setText(new String(Converter.byteconvert(supplements.get("STR_8"))));
-						txt3.setText(new String(Converter.byteconvert(supplements.get("STR_9"))));
-						txt4.setText(new String(Converter.byteconvert(supplements.get("STR_10"))));
+						txt1.setText(new String(supplements.get("STR_7")));
+						txt2.setText(new String(supplements.get("STR_8")));
+						txt3.setText(new String(supplements.get("STR_9")));
+						txt4.setText(new String(supplements.get("STR_10")));
 						break;
 					}
 					case 1:
 					{
 						btnAnswers.setText("Answers");
-						txt1.setText(new String(Converter.byteconvert(supplements.get("STR_3"))));
-						txt2.setText(new String(Converter.byteconvert(supplements.get("STR_4"))));
-						txt3.setText(new String(Converter.byteconvert(supplements.get("STR_5"))));
-						txt4.setText(new String(Converter.byteconvert(supplements.get("STR_6"))));
+						txt1.setText(new String(supplements.get("STR_3")));
+						txt2.setText(new String(supplements.get("STR_4")));
+						txt3.setText(new String(supplements.get("STR_5")));
+						txt4.setText(new String(supplements.get("STR_6")));
 						break;
 					}
 				}				
 				
 			}
 		});
-		final String spelltext = "<html><body style='width:100%'>"+"Alternate spellings: "+new String(Converter.byteconvert(supplements.get("Wrds_128")));
-		final String questiontext = "<html><body style='width:100%'>"+new String(Converter.byteconvert(supplements.get("STR_2")));
+		final String spelltext = "<html><body style='width:100%'>"+"Alternate spellings: "+new String(supplements.get("Wrds_128"));
+		final String questiontext = "<html><body style='width:100%'>"+new String(supplements.get("STR_2"));
 
 		Qtext = new JLabel(questiontext);
 		GridBagConstraints gbc_Qtext = new GridBagConstraints();

@@ -1,16 +1,7 @@
 package org.kjtw.main;
 
-import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import javax.swing.JOptionPane;
 
 import com.kreative.ksfl.KSFLUtilities;
 
@@ -105,7 +96,6 @@ public class JackGraphic {
 				seekpos +=2;
 				int height = KSFLUtilities.getShort(data,seekpos);
 				seekpos+=2;
-				System.out.println("W"+width+"H"+height);
 				jri.add(new JackRawImage(data,offset,width,height));
 			}
 		}

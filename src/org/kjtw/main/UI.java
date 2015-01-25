@@ -2,6 +2,7 @@ package org.kjtw.main;
 
 import java.awt.EventQueue;
 
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -19,22 +20,26 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.kjtw.main.SRFProcess;
 
+import com.kreative.ksfl.KSFLUtilities;
+import com.kreative.rsrc.BerkeleyResourceFile;
+import com.kreative.rsrc.MacResource;
+import com.kreative.rsrc.SoundResource;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
+
 import javax.swing.JScrollPane;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.SwingConstants;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.JPanel;
 
 public class UI implements TreeSelectionListener, ActionListener {
 
@@ -50,8 +55,9 @@ public class UI implements TreeSelectionListener, ActionListener {
     JScrollPane scrollPane;
     boolean playCompleted;
     String AIFCmode = "AIFC";
-	private JPanel gfxpanel;
+	private JackGfxStrip gfxpanel;
 	private GridBagConstraints gbc_gfxpanel;
+	JackGraphic jgfx= null;
     /**
      * Launch the application.
      */
@@ -155,7 +161,7 @@ public class UI implements TreeSelectionListener, ActionListener {
         textArea.setWrapStyleWord(true);
         scrollPane_1.setViewportView(textArea);
         
-        gfxpanel = new JPanel();
+        gfxpanel = new JackGfxStrip();
         gbc_gfxpanel = new GridBagConstraints();
         gbc_gfxpanel.fill = GridBagConstraints.BOTH;
         gbc_gfxpanel.insets = new Insets(0, 0, 5, 5);
@@ -313,86 +319,165 @@ public class UI implements TreeSelectionListener, ActionListener {
         {
             SRFSetOutDirectory();
         }
-        Hashtable<String, Byte[]> data = srfp.getData();
-        Hashtable<String, Byte[]> save = srfp.getSaves();
+        Hashtable<String, byte[]> data = srfp.getData();
         Hashtable<String, String> parents = srfp.getParents();
         Enumeration<String> enumKey = data.keys();
         while(enumKey.hasMoreElements()) {
             String key = enumKey.nextElement();
-            String type = parents.get(key.substring(0, key.indexOf('_')));
+            String nametype = key.substring(0, key.indexOf('_'));
+            String type = parents.get(nametype);
             String suffix="";
-            Byte[] val = null;
+            byte[] val = null;
 
             if (type.equals("audio"))
             {
-                if (AIFCmode.equals("AIFC"))
+            	int ftype = KSFLUtilities.fcc(nametype);
+            	BerkeleyResourceFile rp = srfp.getBRF();
+            	String id = key.substring(key.indexOf('_')+1);
+            	MacResource r = rp.get(ftype, Short.parseShort(id));
+            	SoundResource rsnd = r.shallowRecast(SoundResource.class);
+            	if (AIFCmode.equals("AIFC"))
                 {
-                    val = save.get(key);
-                    suffix=".aifc";
+    	            try {
+    	                File output = new File(dir, key+".aifc");
+    	                output.createNewFile();
+    	                FileOutputStream fos = new FileOutputStream(output);
+    	                fos.write(rsnd.toAiff());
+    	                fos.close();
+    	            } catch (IOException e) {
+    	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+    	            }
                 }
-                else
+            	else
                 {
-                    val = data.get(key);
-                    suffix=".wav";                        
+    	            try {
+    	                File output = new File(dir, key+".aifc");
+    	                output.createNewFile();
+    	                FileOutputStream fos = new FileOutputStream(output);
+    	                fos.write(rsnd.toWav());
+    	                fos.close();
+    	            } catch (IOException e) {
+    	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+    	            }
                 }
+            }
+            else if (type.equals("gfx"))
+            {
+
+              int ftype = KSFLUtilities.fcc(nametype);
+
+          	  BerkeleyResourceFile rp = srfp.getBRF();
+          	  String id = key.substring(key.indexOf('_')+1);
+          	  MacResource r = rp.get(ftype, Short.parseShort(id));
+
+          	  jgfx = new JackGraphic(r.data);
+
+          	  List<JackRawImage> list = jgfx.getJri();
+          	  int canvas =0;
+          	  for (JackRawImage jri : list)
+          	  {
+          		  File outputimage = new File(dir, key+"_"+canvas+".png");
+          		  try {
+						ImageIO.write(jri.getImgout(), "png", outputimage);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            	canvas++;
+            	}
             }
             else if (!type.equals("qheader"))
             {
-            val = data.get(key);
+            	val = data.get(key);
                 suffix=".txt";
             }
-            try {
-                File output = new File(dir, key+suffix);
-                output.createNewFile();
-                FileOutputStream fos = new FileOutputStream(output);
-                fos.write(Converter.byteconvert(val));
-                fos.close();
-            } catch (IOException e) {
-                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+            if (val != null)
+            { 
+	            try {
+	                File output = new File(dir, key+suffix);
+	                output.createNewFile();
+	                FileOutputStream fos = new FileOutputStream(output);
+	                fos.write(val);
+	                fos.close();
+	            } catch (IOException e) {
+	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+	            }
             }
-
         }
     }
     
         private void SRFSave1(String currentselect) {
-            Hashtable<String, Byte[]> data = srfp.getData();
-            Hashtable<String, Byte[]> save = srfp.getSaves();
+            Hashtable<String, byte[]> data = srfp.getData();
             Hashtable<String, String> parents = srfp.getParents();
             
             if (!(currentselect.equals("")) && currentselect!=null)
             {
-                String type = parents.get(currentselect.substring(0, currentselect.indexOf('_')));
+            	String resname = currentselect.substring(0, currentselect.indexOf('_'));
+            	String type = parents.get(resname);
                 String suffix="";
-                Byte[] val = null;
+                byte[] val = null;
 
                 if (type.equals("audio"))
                 {
-                    if (AIFCmode.equals("AIFC"))
+                	int ftype = KSFLUtilities.fcc(resname);
+                	BerkeleyResourceFile rp = srfp.getBRF();
+                	String id = currentselect.substring(currentselect.indexOf('_')+1);
+                	MacResource r = rp.get(ftype, Short.parseShort(id));
+                	SoundResource rsnd = r.shallowRecast(SoundResource.class);
+                	if (AIFCmode.equals("AIFC"))
                     {
-                        val = save.get(currentselect);
-                        suffix=".aifc";
+        	            try {
+        	                File output = new File(dir, currentselect+".aifc");
+        	                output.createNewFile();
+        	                FileOutputStream fos = new FileOutputStream(output);
+        	                fos.write(rsnd.toAiff());
+        	                fos.close();
+        	            } catch (IOException e) {
+        	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+        	            }
                     }
-                    else
+                	else
                     {
-                        val = data.get(currentselect);
-                        suffix=".wav";                        
+        	            try {
+        	                File output = new File(dir, currentselect+".aifc");
+        	                output.createNewFile();
+        	                FileOutputStream fos = new FileOutputStream(output);
+        	                fos.write(rsnd.toWav());
+        	                fos.close();
+        	            } catch (IOException e) {
+        	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+        	            }
                     }
+                }
+                else if (type.equals("gfx"))
+                {
+                	int canvas = gfxpanel.getCanvasCount();
+                	
+                	File outputimage = new File(dir, currentselect+"_"+canvas+".png");
+                	try {
+						ImageIO.write(gfxpanel.getImage(), "png", outputimage);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
                 }
                 else if (!type.equals("qheader"))
                 {
                 val = data.get(currentselect);
                     suffix=".txt";
                 }
-                try {
-                    File output = new File(dir, currentselect+suffix);
-                    output.createNewFile();
-                    FileOutputStream fos = new FileOutputStream(output);
-                    fos.write(Converter.byteconvert(val));
-                    fos.close();
-                } catch (IOException e) {
-                    System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
-                }
-                
+                if (val != null)
+                {
+	                try {
+	                    File output = new File(dir, currentselect+suffix);
+	                    output.createNewFile();
+	                    FileOutputStream fos = new FileOutputStream(output);
+	                    fos.write(val);
+	                    fos.close();
+	                } catch (IOException e) {
+	                    System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+	                }
+                }                
             }
         }
         private void makeTree() {
@@ -432,28 +517,39 @@ public class UI implements TreeSelectionListener, ActionListener {
               DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
 
               String type = srfp.getParents().get(parent.toString());
-              currentselect = parent.toString()+'_'+node.toString();
-              
-              if (type.equals("gfx"))
+              String id = node.toString();
+              String nametype = parent.toString();
+              currentselect = nametype+'_'+id;
+        	  int ftype = KSFLUtilities.fcc(nametype);
+        	  MacResource r=null;
+        	  if (!type.equals("qhdr"))
+        	  {
+	        	  BerkeleyResourceFile rp = srfp.getBRF();
+	        	  r = rp.get(ftype, Short.parseShort(id));
+        	  }              
+              if (type.equals("audio"))
+              {
+					SoundResource rsnd = r.shallowRecast(SoundResource.class);
+      				new Thread(new AudioPlayer(rsnd.toWav())).start();
+              }
+              else if (type.equals("gfx"))
               {
             	  gfxpanel.removeAll();
-            	  gfxpanel = new JackGfxStrip(srfp.getGfx().get(currentselect).getJri());
+
+					jgfx = new JackGraphic(r.data);
+							 
+            	  gfxpanel = new JackGfxStrip(jgfx.getJri());
                   frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
                   frmYdkjExtractor.revalidate();
               }
               else
               {
-	              Byte[] data = srfp.getData().get(currentselect); 
+	              byte[] data = srfp.getData().get(currentselect); 
 	                            
 	              if (data != null)
 	              {
-	            	  if (type.equals("audio"))
 	                  {
-	      				new Thread(new AudioPlayer(data)).start();
-	                  }
-	                  else
-	                  {
-							textArea.setText(new String(Converter.byteconvert(data)));
+							textArea.setText(new String(data));
 	                  }
 	              }
               }
@@ -465,5 +561,3 @@ public class UI implements TreeSelectionListener, ActionListener {
             }
         }
     
-    
-
