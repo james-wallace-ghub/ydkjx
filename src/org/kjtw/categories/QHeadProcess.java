@@ -39,14 +39,16 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 	    DefaultMutableTreeNode pic = new DefaultMutableTreeNode("Picture question");
 	    std.add(pic);
 
-	    DefaultMutableTreeNode dod = new DefaultMutableTreeNode("Dis or Dat (3 Way)");
+	    DefaultMutableTreeNode dod = new DefaultMutableTreeNode("Dis or Dat");
 	    DefaultMutableTreeNode fof = new DefaultMutableTreeNode("Fiber Optic Field Trip");
 	    DefaultMutableTreeNode gib = new DefaultMutableTreeNode("Gibberish Questions");
 	    DefaultMutableTreeNode jat = new DefaultMutableTreeNode("Jack Attack (HeadRush)");
+	    DefaultMutableTreeNode twy = new DefaultMutableTreeNode("3Way");
 	    top.add(dod);
 	    top.add(fof);
 	    top.add(gib);
 	    top.add(jat);
+	    top.add(twy);
 	    
         
 		RandomAccessFile raf = null;
@@ -111,6 +113,9 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 		    							case 5:
 		    								fof.add(q);
 		    								break;
+		    							case 12:
+		    								twy.add(q);
+		    								break;
             						}
             						qfound=true;
     							}
@@ -136,11 +141,11 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
     							}
     							List<Byte> construct = new ArrayList<Byte>();
         						
-        						byte[] titleconst = KSFLUtilities.copy(stuff, 16, 64);
+        						byte[] titleconst = KSFLUtilities.copy(stuff, 16, 63);
         						
         						String title = new String(titleconst, "MACROMAN").trim();
         						
-        						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 64);
+        						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 63);
         						
         						String path = new String(pathconst, "MACROMAN").trim().replace(':', File.separatorChar);
 

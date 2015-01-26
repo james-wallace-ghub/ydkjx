@@ -11,8 +11,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.kjtw.categories.DisorDat;
 import org.kjtw.categories.FiberOpticFieldTrip;
 import org.kjtw.categories.FillInTheBlank;
+import org.kjtw.categories.Gibberish;
+import org.kjtw.categories.JackAttack;
 import org.kjtw.categories.PictureQuestion;
 import org.kjtw.categories.QHeadProcess;
 import org.kjtw.categories.QHeader;
@@ -262,6 +265,48 @@ public class QHeaderLoader implements TreeSelectionListener {
 			        	  }
 			        	  break;
       	  			}
+      	      	  	case 2:
+      	      	  	{
+      	      	  		try {
+      			            	  if (panel != null)
+      			            	  {
+      			            		  panel.removeAll();
+      			            	  }
+      							panel = new Gibberish(qdat);
+      						} catch (IOException e1) {
+      							// TODO Auto-generated catch block
+      							e1.printStackTrace();
+      						}
+      			              break;
+      	      	  	}
+      	      	  	case 3:
+      	      	  	{
+      	      	  		try {
+      			            	  if (panel != null)
+      			            	  {
+      			            		  panel.removeAll();
+      			            	  }
+      							panel = new DisorDat(qdat);
+      						} catch (IOException e1) {
+      							// TODO Auto-generated catch block
+      							e1.printStackTrace();
+      						}
+      			              break;
+      	      	  	}
+      	      	  	case 4:
+      	      	  	{
+      	      	  		try {
+      			            	  if (panel != null)
+      			            	  {
+      			            		  panel.removeAll();
+      			            	  }
+      							panel = new JackAttack(qdat);
+      						} catch (IOException e1) {
+      							// TODO Auto-generated catch block
+      							e1.printStackTrace();
+      						}
+      			              break;
+      	      	  	}
       	      	  	case 5:
       	      	  	{
       	      	  		try {

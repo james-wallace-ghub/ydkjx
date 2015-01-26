@@ -20,6 +20,7 @@ public class SRFLoad {
 
 Hashtable<String,String> parents = new Hashtable<String,String>();
 Hashtable<String, BufferedImage> recallsave = new Hashtable<String, BufferedImage>();
+Hashtable<String, String[]> recallstr = new Hashtable<String, String[]>();
 Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 
 	JTree tree = null;
@@ -32,8 +33,6 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 		try {
 			raf = new RandomAccessFile(path, "r");
 		} catch (FileNotFoundException e) {
-//		    JOptionPane.showMessageDialog(null, "Resource tree can't be made, that file doesn't exist.");
-//			e.printStackTrace();
 		}
 		if (raf != null)
 		{
@@ -62,23 +61,30 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
        						{
 	    						recallsave.put(ftype+'_'+id, new JackGraphic(r.data).getJri().get(0).getImgout());
        						}
-	
-    							if (( ftype.equals("3SEx") || ftype.contains("#")) && !ftype.equals("ANS#"))
+    						if ( ftype.equals("Dcoy") || ( ftype.equals("Mtch") || ( ftype.equals("Root") || ( ftype.equals("STR")))))
+    						{
+    							String str = new String(stuff,"MACROMAN").replaceAll("\\{", "");
+								recallstr.put(ftype+'_'+id, str.split("\0"));
+    						}
+    							if (  ( ftype.equals("3SEx") || (ftype.contains("#") && !ftype.equals("ANS#"))))
     							{
 	    								StringListResource rstr = r.shallowRecast(StringListResource.class);
 	    								String[] strs = rstr.getStrings("MACROMAN");
-	    								String master="";
-	    								for (String result : strs)
-	    								{
-	    									master+=result+System.lineSeparator();
-	    								}
-	    								stuff=master.getBytes();
+	    								recallstr.put(ftype+'_'+id, strs);
 	    								if (!parents.containsKey(ftype))
 	    								{
-	    									parents.put(ftype, "string");
+	    									parents.put(ftype, "stringlist");
 	    								}
 	    
 	    							}
+    							if ( ftype.equals("ANS#"))
+    							{
+    								if (!parents.containsKey(ftype))
+    								{
+    									parents.put(ftype, "ansstr");
+    								}									    								
+    							}
+
 	    							if ( ftype.equals("Wrds"))
 	    							{
 	    								stuff = new String(stuff,"MACROMAN").replaceAll("\\{", "").getBytes();
@@ -177,5 +183,9 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	public Hashtable<String, BufferedImage> getGfx() {
 		// TODO Auto-generated method stub
 		return recallsave;
+	}
+	public Hashtable<String, String[]> getStrs() {
+		// TODO Auto-generated method stub
+		return recallstr;
 	}
 	}
