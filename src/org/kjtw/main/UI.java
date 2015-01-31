@@ -44,7 +44,6 @@ import javax.swing.ScrollPaneConstants;
 public class UI implements TreeSelectionListener, ActionListener {
 
     private JFrame frmYdkjExtractor;
-    static JTextArea textArea;
     static JTree tree;
     static File file;
     static String indir = null;    
@@ -58,6 +57,7 @@ public class UI implements TreeSelectionListener, ActionListener {
 	private JackGfxStrip gfxpanel;
 	private GridBagConstraints gbc_gfxpanel;
 	JackGraphic jgfx= null;
+	private JLabel lblSavingPleaseWait;
     /**
      * Launch the application.
      */
@@ -87,13 +87,13 @@ public class UI implements TreeSelectionListener, ActionListener {
     private void initialize() {
         frmYdkjExtractor = new JFrame();
         frmYdkjExtractor.setTitle("YDKJ Extractor");
-        frmYdkjExtractor.setBounds(100, 100, 1162, 748);
+        frmYdkjExtractor.setBounds(100, 100, 1162, 611);
         frmYdkjExtractor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
 
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{113, 796, 133, 0};
-        gridBagLayout.rowHeights = new int[]{16, 22, 500, 26, 29, 23, 0};
+        gridBagLayout.columnWidths = new int[]{200, 796, 133, 0};
+        gridBagLayout.rowHeights = new int[]{16, 22, 400, 26, 29, 23, 0};
         gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         frmYdkjExtractor.getContentPane().setLayout(gridBagLayout);
@@ -113,7 +113,7 @@ public class UI implements TreeSelectionListener, ActionListener {
         txtrSelectAResource.setFont(UIManager.getFont("TextField.font"));
         txtrSelectAResource.setTabSize(4);
         txtrSelectAResource.setLineWrap(true);
-        txtrSelectAResource.setText("Select a resource to preview it  (sounds will autoplay, graphics will show in centre");
+        txtrSelectAResource.setText("Select a resource to preview it  (sounds will autoplay)");
         GridBagConstraints gbc_txtrSelectAResource = new GridBagConstraints();
         gbc_txtrSelectAResource.weighty = 1.0;
         gbc_txtrSelectAResource.weightx = 1.0;
@@ -123,15 +123,6 @@ public class UI implements TreeSelectionListener, ActionListener {
         gbc_txtrSelectAResource.gridx = 1;
         gbc_txtrSelectAResource.gridy = 0;
         frmYdkjExtractor.getContentPane().add(txtrSelectAResource, gbc_txtrSelectAResource);
-        
-        JLabel lblTextContent = new JLabel("Text content");
-        GridBagConstraints gbc_lblTextContent = new GridBagConstraints();
-        gbc_lblTextContent.anchor = GridBagConstraints.SOUTH;
-        gbc_lblTextContent.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblTextContent.insets = new Insets(0, 0, 5, 0);
-        gbc_lblTextContent.gridx = 2;
-        gbc_lblTextContent.gridy = 0;
-        frmYdkjExtractor.getContentPane().add(lblTextContent, gbc_lblTextContent);
         
         scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -147,20 +138,6 @@ public class UI implements TreeSelectionListener, ActionListener {
         
         makeTree();
         
-        JScrollPane scrollPane_1 = new JScrollPane();
-        GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
-        gbc_scrollPane_1.gridheight = 2;
-        gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
-        gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
-        gbc_scrollPane_1.gridx = 2;
-        gbc_scrollPane_1.gridy = 1;
-        frmYdkjExtractor.getContentPane().add(scrollPane_1, gbc_scrollPane_1);
-        textArea = new JTextArea();
-        textArea.setFont(UIManager.getFont("TextField.font"));
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        scrollPane_1.setViewportView(textArea);
-        
         gfxpanel = new JackGfxStrip();
         gbc_gfxpanel = new GridBagConstraints();
         gbc_gfxpanel.fill = GridBagConstraints.BOTH;
@@ -172,7 +149,9 @@ public class UI implements TreeSelectionListener, ActionListener {
         JButton btnSaveSelectedResource = new JButton("Save Selected Resource");
         btnSaveSelectedResource.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                lblSavingPleaseWait.setText("Saving, Please Wait");
                 SRFSave1(currentselect);
+                lblSavingPleaseWait.setText("");
             }
         });
         
@@ -235,7 +214,9 @@ public class UI implements TreeSelectionListener, ActionListener {
         JButton btnSaveResources = new JButton("Save All Resources");
         btnSaveResources.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                lblSavingPleaseWait.setText("Saving all files, Please Wait - this may take a while");
                 SRFSave(srfp);
+                lblSavingPleaseWait.setText("");
             }
         });
         GridBagConstraints gbc_btnSaveResources = new GridBagConstraints();
@@ -261,6 +242,13 @@ public class UI implements TreeSelectionListener, ActionListener {
         frmYdkjExtractor.getContentPane().add(rdbtnPcmwav, gbc_rdbtnPcmwav);
         group.add(rdbtnPcmwav);
         rdbtnPcmwav.addActionListener(this);
+        
+        lblSavingPleaseWait = new JLabel("");
+        GridBagConstraints gbc_lblSavingPleaseWait = new GridBagConstraints();
+        gbc_lblSavingPleaseWait.insets = new Insets(0, 0, 0, 5);
+        gbc_lblSavingPleaseWait.gridx = 1;
+        gbc_lblSavingPleaseWait.gridy = 5;
+        frmYdkjExtractor.getContentPane().add(lblSavingPleaseWait, gbc_lblSavingPleaseWait);
         
         JRadioButton rdbtnNativeaifc = new JRadioButton("Native (AIFC)");
         rdbtnNativeaifc.setSelected(true);
@@ -328,18 +316,19 @@ public class UI implements TreeSelectionListener, ActionListener {
             String type = parents.get(nametype);
             String suffix="";
             byte[] val = null;
-
+        	String id = key.substring(key.indexOf('_')+1);
+        	File typedir = new File (dir+File.separator+filenameunq+File.separator+nametype);
+       		typedir.mkdirs();
             if (type.equals("audio"))
             {
             	int ftype = KSFLUtilities.fcc(nametype);
             	BerkeleyResourceFile rp = srfp.getBRF();
-            	String id = key.substring(key.indexOf('_')+1);
             	MacResource r = rp.get(ftype, Short.parseShort(id));
             	SoundResource rsnd = r.shallowRecast(SoundResource.class);
             	if (AIFCmode.equals("AIFC"))
                 {
     	            try {
-    	                File output = new File(dir, key+".aifc");
+    	                File output = new File(typedir, id+".aifc");
     	                output.createNewFile();
     	                FileOutputStream fos = new FileOutputStream(output);
     	                fos.write(rsnd.toAiff());
@@ -351,7 +340,7 @@ public class UI implements TreeSelectionListener, ActionListener {
             	else
                 {
     	            try {
-    	                File output = new File(dir, key+".aifc");
+    	                File output = new File(typedir, id+".wav");
     	                output.createNewFile();
     	                FileOutputStream fos = new FileOutputStream(output);
     	                fos.write(rsnd.toWav());
@@ -367,7 +356,6 @@ public class UI implements TreeSelectionListener, ActionListener {
               int ftype = KSFLUtilities.fcc(nametype);
 
           	  BerkeleyResourceFile rp = srfp.getBRF();
-          	  String id = key.substring(key.indexOf('_')+1);
           	  MacResource r = rp.get(ftype, Short.parseShort(id));
 
           	  jgfx = new JackGraphic(r.data);
@@ -376,7 +364,7 @@ public class UI implements TreeSelectionListener, ActionListener {
           	  int canvas =0;
           	  for (JackRawImage jri : list)
           	  {
-          		  File outputimage = new File(dir, key+"_"+canvas+".png");
+          		  File outputimage = new File(typedir, id+"_"+canvas+".png");
           		  try {
 						ImageIO.write(jri.getImgout(), "png", outputimage);
 					} catch (IOException e) {
@@ -384,7 +372,38 @@ public class UI implements TreeSelectionListener, ActionListener {
 						e.printStackTrace();
 					}
 	            	canvas++;
-            	}
+          	  }
+          	File outputimage = new File(typedir, id+".gif");
+    		  try {
+					ImageIO.write(jgfx.toGif(), "gif", outputimage);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+            else if (type.equals("template"))
+            {
+            	val = data.get(key);
+                suffix=".tmpl";
+                
+                
+	            try {
+	                File output = new File(typedir, id+".txt");
+	                output.createNewFile();
+	                FileOutputStream fos = new FileOutputStream(output);
+	                fos.write(data.get(key));
+	                fos.close();
+	            } catch (IOException e) {
+	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+	            }
+	              int ftype = KSFLUtilities.fcc(nametype);
+
+	          	  BerkeleyResourceFile rp = srfp.getBRF();
+	          	  MacResource r = rp.get(ftype, Short.parseShort(id));
+	            
+            	val = r.data;
+                suffix=".tpl";
+
             }
             else if (!type.equals("qheader"))
             {
@@ -394,7 +413,7 @@ public class UI implements TreeSelectionListener, ActionListener {
             if (val != null)
             { 
 	            try {
-	                File output = new File(dir, key+suffix);
+	                File output = new File(typedir, id+suffix);
 	                output.createNewFile();
 	                FileOutputStream fos = new FileOutputStream(output);
 	                fos.write(val);
@@ -409,25 +428,32 @@ public class UI implements TreeSelectionListener, ActionListener {
         private void SRFSave1(String currentselect) {
             Hashtable<String, byte[]> data = srfp.getData();
             Hashtable<String, String> parents = srfp.getParents();
-            
+            if (dir == null)
+            {
+                SRFSetOutDirectory();
+            }
+
             if (!(currentselect.equals("")) && currentselect!=null)
             {
-            	String resname = currentselect.substring(0, currentselect.indexOf('_'));
-            	String type = parents.get(resname);
+                String nametype = currentselect.substring(0, currentselect.indexOf('_'));
+            	int ftype = KSFLUtilities.fcc(nametype);
+            	File typedir = new File (dir+File.separator+filenameunq+File.separator+nametype);
+           		typedir.mkdirs();            	
+            	String id = currentselect.substring(currentselect.indexOf('_')+1);
+            	
+            	String type = parents.get(nametype);
                 String suffix="";
                 byte[] val = null;
 
                 if (type.equals("audio"))
                 {
-                	int ftype = KSFLUtilities.fcc(resname);
                 	BerkeleyResourceFile rp = srfp.getBRF();
-                	String id = currentselect.substring(currentselect.indexOf('_')+1);
                 	MacResource r = rp.get(ftype, Short.parseShort(id));
                 	SoundResource rsnd = r.shallowRecast(SoundResource.class);
                 	if (AIFCmode.equals("AIFC"))
                     {
         	            try {
-        	                File output = new File(dir, currentselect+".aifc");
+        	                File output = new File(typedir, id+".aifc");
         	                output.createNewFile();
         	                FileOutputStream fos = new FileOutputStream(output);
         	                fos.write(rsnd.toAiff());
@@ -439,7 +465,7 @@ public class UI implements TreeSelectionListener, ActionListener {
                 	else
                     {
         	            try {
-        	                File output = new File(dir, currentselect+".aifc");
+        	                File output = new File(typedir, id+".wav");
         	                output.createNewFile();
         	                FileOutputStream fos = new FileOutputStream(output);
         	                fos.write(rsnd.toWav());
@@ -453,13 +479,30 @@ public class UI implements TreeSelectionListener, ActionListener {
                 {
                 	int canvas = gfxpanel.getCanvasCount();
                 	
-                	File outputimage = new File(dir, currentselect+"_"+canvas+".png");
+                	File outputimage = new File(typedir, id+"_"+canvas+".png");
                 	try {
 						ImageIO.write(gfxpanel.getImage(), "png", outputimage);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+                }
+                else if (type.equals("template"))
+                {
+    	            try {
+    	                File output = new File(typedir, id+".txt");
+    	                output.createNewFile();
+    	                FileOutputStream fos = new FileOutputStream(output);
+    	                fos.write(data.get(currentselect));
+    	                fos.close();
+    	            } catch (IOException e) {
+    	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+    	            }
+                	BerkeleyResourceFile rp = srfp.getBRF();
+                	MacResource r = rp.get(ftype, Short.parseShort(id));
+    	            
+                	val = r.data;
+                    suffix=".tpl";
                 }
                 else if (!type.equals("qheader"))
                 {
@@ -469,7 +512,7 @@ public class UI implements TreeSelectionListener, ActionListener {
                 if (val != null)
                 {
 	                try {
-	                    File output = new File(dir, currentselect+suffix);
+	                    File output = new File(typedir, id+suffix);
 	                    output.createNewFile();
 	                    FileOutputStream fos = new FileOutputStream(output);
 	                    fos.write(val);
@@ -516,45 +559,60 @@ public class UI implements TreeSelectionListener, ActionListener {
 
               DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
 
-              String type = srfp.getParents().get(parent.toString());
-              String id = node.toString();
-              String nametype = parent.toString();
-              currentselect = nametype+'_'+id;
-        	  int ftype = KSFLUtilities.fcc(nametype);
-        	  MacResource r=null;
-        	  if (!type.equals("qhdr"))
-        	  {
-	        	  BerkeleyResourceFile rp = srfp.getBRF();
-	        	  r = rp.get(ftype, Short.parseShort(id));
-        	  }              
-              if (type.equals("audio"))
+              if (parent != null)
               {
-					SoundResource rsnd = r.shallowRecast(SoundResource.class);
-      				new Thread(new AudioPlayer(rsnd.toWav())).start();
+	              String type = srfp.getParents().get(parent.toString());
+	              String id = node.toString();
+	              String nametype = parent.toString();
+	              currentselect = nametype+'_'+id;
+	        	  int ftype = KSFLUtilities.fcc(nametype);
+	        	  MacResource r=null;
+	        	  if (type != null)
+	        	  {
+		        	  if (!type.equals("qhdr"))
+		        	  {
+			        	  BerkeleyResourceFile rp = srfp.getBRF();
+			        	  r = rp.get(ftype, Short.parseShort(id));
+		        	  }              
+		              if (type.equals("audio"))
+		              {
+							SoundResource rsnd = r.shallowRecast(SoundResource.class);
+		      				new Thread(new AudioPlayer(rsnd.toWav())).start();
+		              }
+		              else if (type.equals("gfx"))
+		              {
+		            	  gfxpanel.removeAll();
+		
+							jgfx = new JackGraphic(r.data);
+									 
+		            	  gfxpanel = new JackGfxStrip(jgfx.getJri());
+		                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
+		                  frmYdkjExtractor.revalidate();
+		              }
+		              else if (type.equals("template"))
+		              {
+		            	  gfxpanel.removeAll();
+									 
+		            	  gfxpanel = new JackTemplate(srfp.getData().get(currentselect));
+		                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
+		                  frmYdkjExtractor.revalidate();
+		              }
+			              else
+		              {
+			              byte[] data = srfp.getData().get(currentselect); 
+			                            
+			              if (data != null)
+			              {
+			            	  gfxpanel.removeAll();
+								 
+			            	  gfxpanel = new JackTemplate(data);
+			                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
+			                  frmYdkjExtractor.revalidate();
+			              }
+		              }
+		          }
               }
-              else if (type.equals("gfx"))
-              {
-            	  gfxpanel.removeAll();
-
-					jgfx = new JackGraphic(r.data);
-							 
-            	  gfxpanel = new JackGfxStrip(jgfx.getJri());
-                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
-                  frmYdkjExtractor.revalidate();
-              }
-              else
-              {
-	              byte[] data = srfp.getData().get(currentselect); 
-	                            
-	              if (data != null)
-	              {
-	                  {
-							textArea.setText(new String(data));
-	                  }
-	              }
-              }
-          }
-
+        }
         @Override
         public void actionPerformed(ActionEvent arg0) {
             AIFCmode = arg0.getActionCommand();

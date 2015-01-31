@@ -160,7 +160,7 @@ public class JackAttack extends JPanel {
 				mtchval.setText(match[position-1]);
 				dc1.setText(decoy[position-1]);
 				dc2.setText(decoy[position+7-1]);
-				dc3.setText(decoy[position+14-1]);
+				dc3.setText(decoy[position+13-1]);
 					}
 		});
 		

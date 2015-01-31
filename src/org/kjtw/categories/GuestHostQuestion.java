@@ -6,26 +6,31 @@ import java.awt.GridBagLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import org.kjtw.main.AudioPlayer;
+import org.kjtw.main.JackRawImage;
 import org.kjtw.main.SRFLoad;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JLabel;
-import java.awt.event.ItemListener;
 
-public class FillInTheBlank extends JPanel {
+public class GuestHostQuestion extends JPanel {
+	private static final long serialVersionUID = -6042752868968979550L;
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8009246510436074811L;
 	private JLabel Title;
 	private JLabel Qtext;
 	private JLabel txt1;
@@ -43,20 +48,27 @@ public class FillInTheBlank extends JPanel {
 	private JButton btnAllWrongAnswers;
 	private JButton btnClosingRemark;
 	private JCheckBox chckbxNewCheckBox;
-	private Hashtable <String, byte[]> supplements;
+	private Hashtable<String, byte[]> supplements;
+	private Hashtable <String, List<JackRawImage>> gfx;
 	private SRFLoad QData;
 	private JLabel lblNewLabel;
 	private JButton btnToggleAltTitles;
 	private int titleval;
-	private JLabel Spellings;
+	private JButton btnHostIntro;
+	private JButton btnHostIntro_1;
+	private JButton btnHostOutro;
+	private JLabel lblNewLabel_2;
 	/**
 	 * Create the panel.
 	 * @throws IOException 
 	 */
-	public FillInTheBlank(final QHeader qhd) throws IOException {
+	public GuestHostQuestion(final QHeader qhd) throws IOException {
 		supplements = new Hashtable<String, byte[]>();
+		JFrame JackPic = new JFrame();
 		QData = new SRFLoad(qhd.path);
-		supplements = QData.getData(); 
+		supplements = QData.getData();
+		gfx = QData.getGfx();
+		
 		if (qhd.forced != null)
 		{
 			qhd.titlea= new String(supplements.get("STR_18"));
@@ -64,9 +76,9 @@ public class FillInTheBlank extends JPanel {
 		}
 		titleval =0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] {70, 187, 161, 2};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[] {70, 171, 153, 137, 247};
+		gridBagLayout.rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
@@ -99,12 +111,23 @@ public class FillInTheBlank extends JPanel {
 		
 		lblNewLabel = new JLabel("Value:"+qhd.value+"000");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.gridwidth = 2;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.gridx = 1;
 		gbc_lblNewLabel.gridy = 0;
 		add(lblNewLabel, gbc_lblNewLabel);
+		
+		lblNewLabel_2 = new JLabel("");
+		ImageIcon pic = new ImageIcon(gfx.get("off4_24500").get(11).getImgout());
+		lblNewLabel_2.setIcon(pic);
+		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
+		gbc_lblNewLabel_2.gridheight = 10;
+		gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel_2.gridx = 3;
+		gbc_lblNewLabel_2.gridy = 0;
+		add(lblNewLabel_2, gbc_lblNewLabel_2);
+		
 		GridBagConstraints gbc_btnPlayTitle = new GridBagConstraints();
 		gbc_btnPlayTitle.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnPlayTitle.insets = new Insets(0, 0, 5, 5);
@@ -115,7 +138,7 @@ public class FillInTheBlank extends JPanel {
 		Title = new JLabel(qhd.title);
 		GridBagConstraints gbc_Title = new GridBagConstraints();
 		gbc_Title.gridwidth = 2;
-		gbc_Title.insets = new Insets(0, 0, 5, 0);
+		gbc_Title.insets = new Insets(0, 0, 5, 5);
 		gbc_Title.fill = GridBagConstraints.HORIZONTAL;
 		gbc_Title.gridx = 1;
 		gbc_Title.gridy = 1;
@@ -137,29 +160,51 @@ public class FillInTheBlank extends JPanel {
 		{
 			btnPlaypreamble.setEnabled(false);
 		}
-
+		if (supplements.get("snd_7")==null)
+		{
+			button_1.setEnabled(false);
+		}
+		if (supplements.get("snd_8")==null)
+		{
+			button_2.setEnabled(false);
+		}
+		
+		btnHostIntro = new JButton("Host intro 1");
+		GridBagConstraints gbc_btnHostIntro = new GridBagConstraints();
+		gbc_btnHostIntro.insets = new Insets(0, 0, 5, 5);
+		gbc_btnHostIntro.gridx = 1;
+		gbc_btnHostIntro.gridy = 2;
+		add(btnHostIntro, gbc_btnHostIntro);
+		
+		btnHostIntro_1 = new JButton("Host Intro 2");
+		GridBagConstraints gbc_btnHostIntro_1 = new GridBagConstraints();
+		gbc_btnHostIntro_1.insets = new Insets(0, 0, 5, 5);
+		gbc_btnHostIntro_1.gridx = 2;
+		gbc_btnHostIntro_1.gridy = 2;
+		add(btnHostIntro_1, gbc_btnHostIntro_1);
+		
 		btnPlayQ = new JButton("Play Q");
 		btnPlayQ.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new Thread(new AudioPlayer(supplements.get("snd_3"))).start();
 			}
 		});
-		
-		Qtext = new JLabel("<html><body style='width:100%'>"+new String(supplements.get("STR_2")));
-		GridBagConstraints gbc_Qtext = new GridBagConstraints();
-		gbc_Qtext.gridheight = 2;
-		gbc_Qtext.gridwidth = 2;
-		gbc_Qtext.insets = new Insets(0, 0, 5, 0);
-		gbc_Qtext.fill = GridBagConstraints.BOTH;
-		gbc_Qtext.gridx = 1;
-		gbc_Qtext.gridy = 2;
-		add(Qtext, gbc_Qtext);
 		GridBagConstraints gbc_btnPlayQ = new GridBagConstraints();
 		gbc_btnPlayQ.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnPlayQ.insets = new Insets(0, 0, 5, 5);
 		gbc_btnPlayQ.gridx = 0;
 		gbc_btnPlayQ.gridy = 3;
 		add(btnPlayQ, gbc_btnPlayQ);
+		
+		Qtext = new JLabel("<html><body style='width:100%'>"+new String(supplements.get("STR_2")));
+		GridBagConstraints gbc_Qtext = new GridBagConstraints();
+		gbc_Qtext.gridheight = 2;
+		gbc_Qtext.gridwidth = 2;
+		gbc_Qtext.insets = new Insets(0, 0, 5, 5);
+		gbc_Qtext.fill = GridBagConstraints.BOTH;
+		gbc_Qtext.gridx = 1;
+		gbc_Qtext.gridy = 3;
+		add(Qtext, gbc_Qtext);
 		
 		btnAnswers = new JButton("Answers");
 		btnAnswers.addActionListener(new ActionListener() {
@@ -180,22 +225,6 @@ public class FillInTheBlank extends JPanel {
 				new Thread(new AudioPlayer(supplements.get("snd_7"))).start();
 			}
 		});
-		if (supplements.get("snd_7")==null)
-		{
-			button_1.setEnabled(false);
-		}
-
-		
-		final String spelltext = "<html><body style='width:100%'>"+"Alternate spellings: "+new String(supplements.get("Wrds_128"));
-		Spellings = new JLabel(spelltext);
-		GridBagConstraints gbc_Spellings = new GridBagConstraints();
-		gbc_Spellings.anchor = GridBagConstraints.WEST;
-		gbc_Spellings.insets = new Insets(0, 0, 5, 5);
-		gbc_Spellings.gridx = 1;
-		gbc_Spellings.gridy = 4;
-		add(Spellings, gbc_Spellings);
-		
-		Spellings.setText("");
 		GridBagConstraints gbc_button_1 = new GridBagConstraints();
 		gbc_button_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_button_1.insets = new Insets(0, 0, 5, 5);
@@ -203,40 +232,31 @@ public class FillInTheBlank extends JPanel {
 		gbc_button_1.gridy = 5;
 		add(button_1, gbc_button_1);
 		
-		txt1 = new JLabel(new String(supplements.get("STR_3")));
-		GridBagConstraints gbc_txt1 = new GridBagConstraints();
-		gbc_txt1.gridwidth = 2;
-		gbc_txt1.insets = new Insets(0, 0, 5, 0);
-		gbc_txt1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt1.gridx = 1;
-		gbc_txt1.gridy = 5;
-		add(txt1, gbc_txt1);
-		
 		button_2 = new JButton("2");
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new Thread(new AudioPlayer(supplements.get("snd_8"))).start();
 			}
 		});
+		
+		txt1 = new JLabel(new String(supplements.get("STR_3")));
+		GridBagConstraints gbc_txt1 = new GridBagConstraints();
+		gbc_txt1.gridwidth = 2;
+		gbc_txt1.insets = new Insets(0, 0, 5, 5);
+		gbc_txt1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txt1.gridx = 1;
+		gbc_txt1.gridy = 5;
+		add(txt1, gbc_txt1);
 		GridBagConstraints gbc_button_2 = new GridBagConstraints();
 		gbc_button_2.fill = GridBagConstraints.HORIZONTAL;
 		gbc_button_2.insets = new Insets(0, 0, 5, 5);
 		gbc_button_2.gridx = 0;
 		gbc_button_2.gridy = 6;
 		add(button_2, gbc_button_2);
-		if (supplements.get("snd_8")==null)
+		if (supplements.get("snd_9")==null)
 		{
-			button_2.setEnabled(false);
+			button_3.setEnabled(false);
 		}
-		
-		txt2 = new JLabel(new String(supplements.get("STR_4")));
-		GridBagConstraints gbc_txt2 = new GridBagConstraints();
-		gbc_txt2.gridwidth = 2;
-		gbc_txt2.insets = new Insets(0, 0, 5, 0);
-		gbc_txt2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt2.gridx = 1;
-		gbc_txt2.gridy = 6;
-		add(txt2, gbc_txt2);
 		
 		button_3 = new JButton("3");
 		button_3.addActionListener(new ActionListener() {
@@ -244,94 +264,56 @@ public class FillInTheBlank extends JPanel {
 				new Thread(new AudioPlayer(supplements.get("snd_9"))).start();
 			}
 		});
+		
+		txt2 = new JLabel(new String(supplements.get("STR_4")));
+		GridBagConstraints gbc_txt2 = new GridBagConstraints();
+		gbc_txt2.gridwidth = 2;
+		gbc_txt2.insets = new Insets(0, 0, 5, 5);
+		gbc_txt2.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txt2.gridx = 1;
+		gbc_txt2.gridy = 6;
+		add(txt2, gbc_txt2);
 		GridBagConstraints gbc_button_3 = new GridBagConstraints();
 		gbc_button_3.fill = GridBagConstraints.HORIZONTAL;
 		gbc_button_3.insets = new Insets(0, 0, 5, 5);
 		gbc_button_3.gridx = 0;
 		gbc_button_3.gridy = 7;
 		add(button_3, gbc_button_3);
-		if (supplements.get("snd_9")==null)
-		{
-			button_3.setEnabled(false);
-		}
-		
-		txt3 = new JLabel(new String(supplements.get("STR_5")));
-		GridBagConstraints gbc_txt3 = new GridBagConstraints();
-		gbc_txt3.gridwidth = 2;
-		gbc_txt3.insets = new Insets(0, 0, 5, 0);
-		gbc_txt3.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt3.gridx = 1;
-		gbc_txt3.gridy = 7;
-		add(txt3, gbc_txt3);
-		
-		button_4 = new JButton("4");
-		button_4.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new AudioPlayer(supplements.get("snd_10"))).start();
-			}
-		});
-		GridBagConstraints gbc_button_4 = new GridBagConstraints();
-		gbc_button_4.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_4.insets = new Insets(0, 0, 5, 5);
-		gbc_button_4.gridx = 0;
-		gbc_button_4.gridy = 8;
-		add(button_4, gbc_button_4);
 		if (supplements.get("snd_10")==null)
 		{
 			button_4.setEnabled(false);
 		}
-		
-		txt4 = new JLabel(new String(supplements.get("STR_6")));
-		GridBagConstraints gbc_txt4 = new GridBagConstraints();
-		gbc_txt4.gridwidth = 2;
-		gbc_txt4.insets = new Insets(0, 0, 5, 0);
-		gbc_txt4.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt4.gridx = 1;
-		gbc_txt4.gridy = 8;
-		add(txt4, gbc_txt4);
-		
-		chckbxNewCheckBox = new JCheckBox("Show answer");
-		chckbxNewCheckBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				txt1.setForeground(Color.BLACK);
-				txt2.setForeground(Color.BLACK);
-				txt3.setForeground(Color.BLACK);
-				txt4.setForeground(Color.BLACK);
-				if (e.getStateChange() == ItemEvent.DESELECTED)
-				{
-					Spellings.setText("");
-					validate();
-
-				}
-				else
-				{
-					Spellings.setText(spelltext);
-					validate();
-
-					switch (qhd.answer)
-					{
-						case 1:
-						txt1.setForeground(Color.GREEN);
-						break;
-						case 2:
-						txt2.setForeground(Color.GREEN);
-						break;
-						case 3:
-						txt3.setForeground(Color.GREEN);
-						break;
-						case 4:
-						txt4.setForeground(Color.GREEN);
-						break;
 						
-					}
-				}
-			}
-		});
-		GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
-		gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 5, 5);
-		gbc_chckbxNewCheckBox.gridx = 0;
-		gbc_chckbxNewCheckBox.gridy = 9;
-		add(chckbxNewCheckBox, gbc_chckbxNewCheckBox);
+						button_4 = new JButton("4");
+						button_4.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								new Thread(new AudioPlayer(supplements.get("snd_10"))).start();
+							}
+						});
+						
+						txt3 = new JLabel(new String(supplements.get("STR_5")));
+						GridBagConstraints gbc_txt3 = new GridBagConstraints();
+						gbc_txt3.gridwidth = 2;
+						gbc_txt3.insets = new Insets(0, 0, 5, 5);
+						gbc_txt3.fill = GridBagConstraints.HORIZONTAL;
+						gbc_txt3.gridx = 1;
+						gbc_txt3.gridy = 7;
+						add(txt3, gbc_txt3);
+						GridBagConstraints gbc_button_4 = new GridBagConstraints();
+						gbc_button_4.fill = GridBagConstraints.HORIZONTAL;
+						gbc_button_4.insets = new Insets(0, 0, 5, 5);
+						gbc_button_4.gridx = 0;
+						gbc_button_4.gridy = 8;
+						add(button_4, gbc_button_4);
+				
+						txt4 = new JLabel(new String(supplements.get("STR_6")));
+						GridBagConstraints gbc_txt4 = new GridBagConstraints();
+						gbc_txt4.gridwidth = 2;
+						gbc_txt4.insets = new Insets(0, 0, 5, 5);
+						gbc_txt4.fill = GridBagConstraints.HORIZONTAL;
+						gbc_txt4.gridx = 1;
+						gbc_txt4.gridy = 8;
+						add(txt4, gbc_txt4);
 		
 		btnAllWrongAnswers = new JButton("Play 'all wrong' audio");
 		btnAllWrongAnswers.addActionListener(new ActionListener() {
@@ -339,6 +321,47 @@ public class FillInTheBlank extends JPanel {
 				new Thread(new AudioPlayer(supplements.get("snd_11"))).start();
 			}
 		});
+		if (supplements.get("snd_11")==null)
+		{
+			btnAllWrongAnswers.setEnabled(false);
+		}
+
+				chckbxNewCheckBox = new JCheckBox("Show answer");
+				chckbxNewCheckBox.addItemListener(new ItemListener() {
+					public void itemStateChanged(ItemEvent e) {
+						txt1.setForeground(Color.BLACK);
+						txt2.setForeground(Color.BLACK);
+						txt3.setForeground(Color.BLACK);
+						txt4.setForeground(Color.BLACK);
+						if (e.getStateChange() == ItemEvent.DESELECTED)
+						{
+						}
+						else
+						{
+							switch (qhd.answer)
+							{
+								case 1:
+								txt1.setForeground(Color.GREEN);
+								break;
+								case 2:
+								txt2.setForeground(Color.GREEN);
+								break;
+								case 3:
+								txt3.setForeground(Color.GREEN);
+								break;
+								case 4:
+								txt4.setForeground(Color.GREEN);
+								break;
+								
+							}
+						}
+					}
+				});
+				GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
+				gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 5, 5);
+				gbc_chckbxNewCheckBox.gridx = 0;
+				gbc_chckbxNewCheckBox.gridy = 9;
+				add(chckbxNewCheckBox, gbc_chckbxNewCheckBox);
 		
 				GridBagConstraints gbc_btnAllWrongAnswers = new GridBagConstraints();
 				gbc_btnAllWrongAnswers.anchor = GridBagConstraints.WEST;
@@ -346,12 +369,7 @@ public class FillInTheBlank extends JPanel {
 				gbc_btnAllWrongAnswers.gridx = 1;
 				gbc_btnAllWrongAnswers.gridy = 9;
 				add(btnAllWrongAnswers, gbc_btnAllWrongAnswers);
-				
-				if (supplements.get("snd_11")==null)
-				{
-					btnAllWrongAnswers.setEnabled(false);
-				}
-
+		
 		btnClosingRemark = new JButton("Closing remark");
 		btnClosingRemark.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -359,15 +377,18 @@ public class FillInTheBlank extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnClosingRemark = new GridBagConstraints();
+		gbc_btnClosingRemark.insets = new Insets(0, 0, 5, 5);
 		gbc_btnClosingRemark.anchor = GridBagConstraints.WEST;
-		gbc_btnClosingRemark.insets = new Insets(0, 0, 5, 0);
 		gbc_btnClosingRemark.gridx = 2;
 		gbc_btnClosingRemark.gridy = 9;
 		add(btnClosingRemark, gbc_btnClosingRemark);
-		if (supplements.get("snd_6")==null)
-		{
-			btnClosingRemark.setEnabled(false);
-		}
+		
+		btnHostOutro = new JButton("Host Outro");
+		GridBagConstraints gbc_btnHostOutro = new GridBagConstraints();
+		gbc_btnHostOutro.insets = new Insets(0, 0, 5, 5);
+		gbc_btnHostOutro.gridx = 1;
+		gbc_btnHostOutro.gridy = 10;
+		add(btnHostOutro, gbc_btnHostOutro);
 
 		if (qhd.titlea != null)
 		{

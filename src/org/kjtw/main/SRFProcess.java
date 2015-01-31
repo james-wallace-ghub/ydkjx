@@ -57,8 +57,224 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
     					String ftype = KSFLUtilities.fccs(type).trim();
     					DefaultMutableTreeNode ti = new DefaultMutableTreeNode(ftype);
     					top.add(ti);
+    					if ( (ftype.contains("GT")) || ( (ftype.contains("t07") && !ftype.equals("Mt07"))))
+   						{
+	    					for (short id : rp.getIDs(type)) 
+	    					{
+    							MacResource r = rp.get(type, id);
+    							stuff = r.data;
+    							
+        						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+id);
+        						ti.add(ti2);
 
-    					if (ftype.equals("qhdr"))
+    							int questnum = KSFLUtilities.getInt(stuff, 0);
+    							StringBuilder sb = new StringBuilder();
+    							for (int i=0; i <questnum; i++)
+    							{
+    								sb.append("Question "+(i+1)+":"+System.lineSeparator());
+    								int seekval =4 + (i*20);
+    								sb.append("Set to use :");
+    								seekval+=12;
+    								if (stuff[seekval] == 0x2a)
+    								{
+    									sb.append("ALL"+System.lineSeparator());
+    								}
+    								else
+    								{
+    									sb.append(stuff[seekval]+System.lineSeparator());
+    								}
+    								seekval++;
+    								sb.append("Intro to use :");
+    								if (stuff[seekval] == 0x2a)
+    								{
+    									sb.append("ALL"+System.lineSeparator());
+    								}
+    								else
+    								{
+    									sb.append(stuff[seekval]+System.lineSeparator());
+    								}
+    								sb.append("Question Type :");
+    								seekval++;
+    								if (stuff[seekval] == 0x2a)
+    								{
+    									sb.append("ANY"+System.lineSeparator());
+    								}
+    								else
+    								{
+    									switch (stuff[seekval])
+    									{
+    										case 0:
+    										{
+    	    									sb.append("Standard(Shorty)"+System.lineSeparator());
+    	    									break;
+    										}
+    										case 2:
+    										{
+    	    									sb.append("Gibberish"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 3:
+    										{
+    	    									sb.append("Dis or Dat"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 4:
+    										{
+    	    									sb.append("Jack Attack"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 5:
+    										{
+    	    									sb.append("Fiber Optic Setup"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 6:
+    										{
+    	    									sb.append("Fiber Optic"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 7:
+    										{
+    	    									sb.append("Round 1 Wrapup"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 10:
+    										{
+    	    									sb.append("Celebrity Collect Call Setup"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 11:
+    										{
+    	    									sb.append("Celebrity Collect Call"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 12:
+    										{
+    	    									sb.append("ThreeWay"+System.lineSeparator());    											
+    	    									break;
+    										}
+    								}   								
+    							}
+    								seekval++;
+    								sb.append("Difficulty :");
+    								if (stuff[seekval] == 0x2a)
+    								{
+    									sb.append("ANY"+System.lineSeparator());
+    								}
+    								else
+    								{
+    									switch (stuff[seekval])
+    									{
+    										case 1:
+    										{
+    	    									sb.append("Easy"+System.lineSeparator());
+    	    									break;
+    										}
+    										case 2:
+    										{
+    	    									sb.append("Medium"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 3:
+    										{
+    	    									sb.append("Hard"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 4:
+    										{
+    	    									sb.append("Impossible"+System.lineSeparator());    											
+    	    									break;
+    										}
+    									}    								
+    								}
+    								seekval++;
+    								sb.append("Topic :");
+    								if (stuff[seekval] == 0x2a)
+    								{
+    									sb.append("ANY"+System.lineSeparator());
+    								}
+    								else
+    								{
+    									sb.append("Code "+stuff[seekval]+" (Contact Support)"+System.lineSeparator());
+    								}
+    								seekval++;
+    								sb.append("Format :");
+    								if (stuff[seekval] == 0x2a)
+    								{
+    									sb.append("ANY"+System.lineSeparator());
+    								}
+    								else
+    								{
+    									switch (stuff[seekval])
+    									{
+    										case 1:
+    										{
+    	    									sb.append("Plain (4 option)"+System.lineSeparator());
+    	    									break;
+    										}
+    										case 2:
+    										{
+    	    									sb.append("Fill in the blank/Interruptible Celebrity Collect Call"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 3:
+    										{
+    	    									sb.append("Whatshisname"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 4:
+    										{
+    	    									sb.append("Picture Question"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 5:
+    										{
+    	    									sb.append("Audio Question"+System.lineSeparator());    											
+    	    									break;
+    										}
+    										case 6:
+    										{
+    	    									sb.append("Guest Host Question"+System.lineSeparator());    											
+    	    									break;
+    										}
+
+    									}    								
+    								}
+    								
+    						}
+		    					stuff = sb.toString().getBytes();
+			    				recalldata.put(ftype+'_'+id, stuff);    								
+								if (!parents.containsKey(ftype))
+								{
+									parents.put(ftype, "template");
+								}
+	    				}
+   					}	
+    					else if (ftype.startsWith("TC"))
+   						{
+	    					for (short id : rp.getIDs(type)) 
+	    					{
+        						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+id);
+        						ti.add(ti2);
+
+        						MacResource r = rp.get(type, id);
+    							
+    							String content = new String();
+    							for (int i=0; i <r.data.length; i++)
+    							{
+    								content += r.data[i];
+    							}
+    							stuff = content.getBytes();
+			    				recalldata.put(ftype+'_'+id, stuff);    								
+								if (!parents.containsKey(ftype))
+								{
+									parents.put(ftype, "template");
+								}
+	    					}
+	    					
+	    					
+   						}
+    					else if (ftype.equals("qhdr"))
    						{
 	    					for (int id : rp.getfullIDs(type)) 
 	    					{
@@ -72,7 +288,13 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 
     							//special case for question header strings
         						int value = stuff[8]; // equals value in 1000's of question in Round 1
-        						int qtype = stuff[9];// 0 = Standard Question, 1 is skipped?, 2 = Gib, 3 = DisOrDat/3Way, 4 = JackAttack/HeadRush, 5 = Fiber/CCC/PubQuiz
+        						
+        						//Impossible questions in YDKJ3 are a special case, a value of 4 is actually 20.
+        						if (value ==4)
+        						{
+        							value =20;
+        						}
+        						int qtype = stuff[9];// 0 = Standard Question, 1 is skipped?, 2 = Gib, 3 = DisOrDat/3Way, 4 = JackAttack/HeadRush, 5 = Fiber/CCC/PubQuiz, 12 = 3Way
         						String qtypedef="";
         						switch (qtype)
         						{
@@ -96,7 +318,10 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
         								break;
         							case 12:
         								qtypedef = "3Way";
-        								break;            								
+        								break;
+       								default:
+           								qtypedef = ""+qtype;
+           								break;
         						}
         						int subtype = stuff[11];
         						String subtypedef="";
@@ -117,14 +342,24 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
         							case 4:
         								subtypedef = "Picture question";
         								break;
+        							case 5:
+        								subtypedef = "Super Audio question";
+        								break;
+        							case 6:
+        								subtypedef = "Guest host question";
+        								break;
+       								default:
+           								subtypedef = ""+subtype;
+           								break;
+
         						}
         						
-        						byte[] titleconst = KSFLUtilities.copy(stuff, 16, 64);
+        						byte[] titleconst = KSFLUtilities.copy(stuff, 16, 63);
         						        						
-        						String title = new String(titleconst, "MACROMAN").trim();
+        						String title = new String(titleconst, "MACROMAN").trim().replaceAll("\\{", "");;
         						
         						
-        						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 64);
+        						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 63);
         						
         						String path = new String(pathconst, "MACROMAN").trim().replace(':', File.separatorChar);
 
@@ -205,11 +440,14 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	    							}
 	    							if (isstring(stuff))
 	    							{
-	    								stuff = new String(stuff,"MACROMAN").getBytes();
-	    								if (!parents.containsKey(ftype))
-	    								{
-	    									parents.put(ftype, "string");
-	    								}								
+	    								if (!recalldata.containsKey(ftype+'_'+id))
+   										{
+		    								stuff = new String(stuff,"MACROMAN").getBytes();
+		    								if (!parents.containsKey(ftype))
+		    								{
+		    									parents.put(ftype, "string");
+		    								}	
+   										}
 	    							}
 	    							else if (isaudio(stuff))
 	    							{
@@ -222,7 +460,6 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	    							{
 	                                    if (!parents.containsKey(ftype))
 	                                    {
-	                                        stuff = new String(stuff,"MACROMAN").getBytes();
 	                                        parents.put(ftype, "string");
 	                                    }
 	    							}

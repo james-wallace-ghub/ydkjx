@@ -130,8 +130,13 @@ public class StandardQuestion extends JPanel {
 		gbc_btnPlaypreamble.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnPlaypreamble.insets = new Insets(0, 0, 5, 5);
 		gbc_btnPlaypreamble.gridx = 0;
-		gbc_btnPlaypreamble.gridy = 2;
+		gbc_btnPlaypreamble.gridy = 2;		
 		add(btnPlaypreamble, gbc_btnPlaypreamble);
+		if (supplements.get("snd_2")==null)
+		{
+			btnPlaypreamble.setEnabled(false);
+		}
+
 		
 		btnPlayQ = new JButton("Play Q");
 		btnPlayQ.addActionListener(new ActionListener() {
@@ -181,7 +186,12 @@ public class StandardQuestion extends JPanel {
 		gbc_button_1.gridx = 0;
 		gbc_button_1.gridy = 5;
 		add(button_1, gbc_button_1);
-		
+
+		if (supplements.get("snd_7")==null)
+		{
+			button_1.setEnabled(false);
+		}
+
 		txt1 = new JLabel(new String(supplements.get("STR_3")));
 		GridBagConstraints gbc_txt1 = new GridBagConstraints();
 		gbc_txt1.gridwidth = 2;
@@ -203,7 +213,12 @@ public class StandardQuestion extends JPanel {
 		gbc_button_2.gridx = 0;
 		gbc_button_2.gridy = 6;
 		add(button_2, gbc_button_2);
-		
+
+		if (supplements.get("snd_8")==null)
+		{
+			button_2.setEnabled(false);
+		}
+
 		txt2 = new JLabel(new String(supplements.get("STR_4")));
 		GridBagConstraints gbc_txt2 = new GridBagConstraints();
 		gbc_txt2.gridwidth = 2;
@@ -225,7 +240,11 @@ public class StandardQuestion extends JPanel {
 		gbc_button_3.gridx = 0;
 		gbc_button_3.gridy = 7;
 		add(button_3, gbc_button_3);
-		
+		if (supplements.get("snd_9")==null)
+		{
+			button_3.setEnabled(false);
+		}
+
 		txt3 = new JLabel(new String(supplements.get("STR_5")));
 		GridBagConstraints gbc_txt3 = new GridBagConstraints();
 		gbc_txt3.gridwidth = 2;
@@ -247,7 +266,11 @@ public class StandardQuestion extends JPanel {
 		gbc_button_4.gridx = 0;
 		gbc_button_4.gridy = 8;
 		add(button_4, gbc_button_4);
-		
+		if (supplements.get("snd_10")==null)
+		{
+			button_4.setEnabled(false);
+		}
+
 		txt4 = new JLabel(new String(supplements.get("STR_6")));
 		GridBagConstraints gbc_txt4 = new GridBagConstraints();
 		gbc_txt4.gridwidth = 2;
@@ -308,6 +331,11 @@ public class StandardQuestion extends JPanel {
 				gbc_btnAllWrongAnswers.gridy = 9;
 				add(btnAllWrongAnswers, gbc_btnAllWrongAnswers);
 		
+				if (supplements.get("snd_11")==null)
+				{
+					btnAllWrongAnswers.setEnabled(false);
+				}
+
 		btnClosingRemark = new JButton("Closing remark");
 		btnClosingRemark.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -320,6 +348,10 @@ public class StandardQuestion extends JPanel {
 		gbc_btnClosingRemark.gridx = 2;
 		gbc_btnClosingRemark.gridy = 9;
 		add(btnClosingRemark, gbc_btnClosingRemark);
+		if (supplements.get("snd_6")==null)
+		{
+			btnClosingRemark.setEnabled(false);
+		}
 
 		btnToggleAltTitles = new JButton("Toggle alt titles");
 		GridBagConstraints gbc_btnToggleAltTitles = new GridBagConstraints();

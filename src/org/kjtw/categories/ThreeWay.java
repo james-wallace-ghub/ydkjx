@@ -22,41 +22,46 @@ import java.util.Hashtable;
 import javax.swing.JLabel;
 import java.awt.Font;
 
-public class DisorDat extends JPanel {
+public class ThreeWay extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2339832975238896968L;
 	/**
 	 * 
 	 */
 	private JLabel Title;
 	private JButton btnPlayTitle;
 	private JButton btnPlaypreamble;
-	private JButton a1;
+	private JLabel a1;
 	private JCheckBox chckbxNewCheckBox;
 	private Hashtable <String, byte[]> supplements;
 	private Hashtable <String, String[]> strings;
 	private SRFLoad QData;
 	private int titleval;
 	private JButton btnPreamble;
-	private JButton btnOption;
-	private JButton btnOption_1;
+	private JLabel btnOption;
+	private JLabel btnOption_1;
 	private JLabel lblOrBoth;
-	private JButton a2;
-	private JButton a3;
-	private JButton a4;
-	private JButton a5;
-	private JButton a6;
-	private JButton a7;
-	private JLabel lblNewLabel;
+	private JLabel a2;
+	private JLabel a3;
+	private JLabel a4;
+	private JLabel a5;
+	private JLabel a6;
+	private JLabel a7;
+	private JButton btnStart;
+	private JButton btnStop;
 	/**
 	 * Create the panel.
 	 * @throws IOException 
 	 */
-	public DisorDat(final QHeader qhd) throws IOException {
+	public ThreeWay(final QHeader qhd) throws IOException {
 		supplements = new Hashtable<String, byte[]>();
 		QData = new SRFLoad(qhd.path);
 		supplements = QData.getData(); 
 		strings = QData.getStrs();
-		String[] strs = strings.get("STR#_3");
-		final byte[] ans = supplements.get("ANS#_4");
+		String[] strs = strings.get("STR#_2");
+		final byte[] ans = supplements.get("ANS#_3");
 		titleval =0;
 		
 		final Color Opt1 = new Color(255, 215, 0);
@@ -125,11 +130,11 @@ public class DisorDat extends JPanel {
 		gbc_btnPlaypreamble.gridy = 1;
 		add(btnPlaypreamble, gbc_btnPlaypreamble);
 		
-		btnPreamble = new JButton("Preamble 2");
+		btnPreamble = new JButton("Intro");
 		GridBagConstraints gbc_btnPreamble = new GridBagConstraints();
 		gbc_btnPreamble.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnPreamble.insets = new Insets(0, 0, 5, 5);
-		gbc_btnPreamble.gridx = 1;
+		gbc_btnPreamble.insets = new Insets(0, 0, 5, 0);
+		gbc_btnPreamble.gridx = 2;
 		gbc_btnPreamble.gridy = 1;
 		btnPreamble.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -137,57 +142,56 @@ public class DisorDat extends JPanel {
 			}
 		});
 		add(btnPreamble, gbc_btnPreamble);
-		String inst = new String(supplements.get("STR_2"));
-		lblNewLabel = new JLabel(inst);
-		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.gridwidth = 3;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
-		gbc_lblNewLabel.gridx = 0;
-		gbc_lblNewLabel.gridy = 2;
-		add(lblNewLabel, gbc_lblNewLabel);
 		
-		btnOption = new JButton(strs[0]);
+		btnStart = new JButton("Start");
+		GridBagConstraints gbc_btnStart = new GridBagConstraints();
+		gbc_btnStart.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnStart.insets = new Insets(0, 0, 5, 5);
+		gbc_btnStart.gridx = 0;
+		gbc_btnStart.gridy = 2;
+		btnStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new AudioPlayer(supplements.get("snd_4"))).start();
+			}
+		});
+		add(btnStart, gbc_btnStart);
+		
+		btnStop = new JButton("Stop");
+		GridBagConstraints gbc_btnStop = new GridBagConstraints();
+		gbc_btnStop.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnStop.insets = new Insets(0, 0, 5, 0);
+		gbc_btnStop.gridx = 2;
+		gbc_btnStop.gridy = 2;
+		btnStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new AudioPlayer(supplements.get("snd_5"))).start();
+			}
+		});
+		add(btnStop, gbc_btnStop);
+		
+		btnOption = new JLabel(strs[0]);
 		btnOption.setForeground(Opt1);
 		GridBagConstraints gbc_btnOption = new GridBagConstraints();
 		gbc_btnOption.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnOption.insets = new Insets(0, 0, 5, 5);
 		gbc_btnOption.gridx = 0;
 		gbc_btnOption.gridy = 3;
-		btnOption.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new AudioPlayer(supplements.get("snd_4"))).start();
-			}
-		});
 
 		add(btnOption, gbc_btnOption);
 		
-		btnOption_1 = new JButton(strs[1]);
+		btnOption_1 = new JLabel(strs[1]);
 		btnOption_1.setForeground(Opt2);
 		GridBagConstraints gbc_btnOption_1 = new GridBagConstraints();
 		gbc_btnOption_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnOption_1.insets = new Insets(0, 0, 5, 5);
 		gbc_btnOption_1.gridx = 1;
 		gbc_btnOption_1.gridy = 3;
-		btnOption_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new AudioPlayer(supplements.get("snd_5"))).start();
-			}
-		});
 		add(btnOption_1, gbc_btnOption_1);
 		
-		a1 = new JButton("<html><body style='width:100%'>"+strs[2]);
+		a1 = new JLabel("<html><body style='width:100%'>"+strs[3]);
 		a1.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		a1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new AudioPlayer(supplements.get("snd_6"))).start();
-			}
-		});
 		
-		lblOrBoth = new JLabel("Or both");
-		if (!inst.toLowerCase().contains("both"))
-		{
-			lblOrBoth.setText("");
-		}
+		lblOrBoth = new JLabel(strs[2]);
 		lblOrBoth.setForeground(Opt3);
 		GridBagConstraints gbc_lblOrBoth = new GridBagConstraints();
 		gbc_lblOrBoth.insets = new Insets(0, 0, 5, 0);
@@ -252,81 +256,56 @@ public class DisorDat extends JPanel {
 			}
 		});
 		
-		a3 = new JButton("<html><body style='width:100%'>"+strs[4]);
+		a3 = new JLabel("<html><body style='width:100%'>"+strs[5]);
 		a3.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		GridBagConstraints gbc_a3 = new GridBagConstraints();
 		gbc_a3.fill = GridBagConstraints.HORIZONTAL;
 		gbc_a3.insets = new Insets(0, 0, 5, 5);
 		gbc_a3.gridx = 0;
 		gbc_a3.gridy = 5;
-		a3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new AudioPlayer(supplements.get("snd_8"))).start();
-			}
-		});
 				
-				a2 = new JButton("<html><body style='width:100%'>"+strs[3]);
+				a2 = new JLabel("<html><body style='width:100%'>"+strs[4]);
 				a2.setFont(new Font("Tahoma", Font.PLAIN, 10));
 				GridBagConstraints gbc_a2 = new GridBagConstraints();
 				gbc_a2.fill = GridBagConstraints.HORIZONTAL;
 				gbc_a2.insets = new Insets(0, 0, 5, 0);
 				gbc_a2.gridx = 2;
 				gbc_a2.gridy = 4;
-				a2.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						new Thread(new AudioPlayer(supplements.get("snd_7"))).start();
-					}
-				});
 				
 						add(a2, gbc_a2);
 		
 				add(a3, gbc_a3);
 				
-				a6 = new JButton("<html><body style='width:100%'>"+strs[7]);
+				a6 = new JLabel("<html><body style='width:100%'>"+strs[8]);
 				a6.setFont(new Font("Tahoma", Font.PLAIN, 10));
 				GridBagConstraints gbc_a6 = new GridBagConstraints();
 				gbc_a6.fill = GridBagConstraints.HORIZONTAL;
 				gbc_a6.insets = new Insets(0, 0, 5, 0);
 				gbc_a6.gridx = 2;
 				gbc_a6.gridy = 6;
-				a6.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						new Thread(new AudioPlayer(supplements.get("snd_11"))).start();
-					}
-				});
 						
-						a4 = new JButton("<html><body style='width:100%'>"+strs[5]);
+						a4 = new JLabel("<html><body style='width:100%'>"+strs[6]);
 						a4.setFont(new Font("Tahoma", Font.PLAIN, 10));
 						GridBagConstraints gbc_a4 = new GridBagConstraints();
 						gbc_a4.fill = GridBagConstraints.HORIZONTAL;
 						gbc_a4.insets = new Insets(0, 0, 5, 0);
 						gbc_a4.gridx = 2;
 						gbc_a4.gridy = 5;
-						a4.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								new Thread(new AudioPlayer(supplements.get("snd_9"))).start();
-							}
-						});
 						add(a4, gbc_a4);
 						
-						a5 = new JButton("<html><body style='width:100%'>"+strs[6]);
+						a5 = new JLabel("<html><body style='width:100%'>"+strs[7]);
 						a5.setFont(new Font("Tahoma", Font.PLAIN, 10));
 						GridBagConstraints gbc_a5 = new GridBagConstraints();
 						gbc_a5.fill = GridBagConstraints.HORIZONTAL;
 						gbc_a5.insets = new Insets(0, 0, 5, 5);
 						gbc_a5.gridx = 0;
 						gbc_a5.gridy = 6;
-						a5.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								new Thread(new AudioPlayer(supplements.get("snd_10"))).start();
-							}
-						});
 						
 								add(a5, gbc_a5);
 				
 						add(a6, gbc_a6);
 		
-		a7 = new JButton("<html><body style='width:100%'>"+strs[8]);
+		a7 = new JLabel("<html><body style='width:100%'>"+strs[9]);
 		a7.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		GridBagConstraints gbc_a7 = new GridBagConstraints();
 		gbc_a7.fill = GridBagConstraints.HORIZONTAL;
@@ -334,11 +313,6 @@ public class DisorDat extends JPanel {
 		gbc_a7.gridx = 1;
 		gbc_a7.gridy = 7;
 		add(a7, gbc_a7);
-		a7.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new AudioPlayer(supplements.get("snd_12"))).start();
-			}
-		});
 
 		GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
 		gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 5, 5);

@@ -1,5 +1,6 @@
 package org.kjtw.main;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,5 +110,35 @@ public class JackGraphic {
 		this.jri = jri;
 	}
 
-
+	public BufferedImage toGif()
+	{
+		int maxwidth = 0, maxheight = 0;
+		for (JackRawImage j : getJri())
+		{
+			if (j.getWidth() > maxwidth)
+			{
+				maxwidth = j.getWidth();
+			}
+			maxheight += j.getHeight();
+		}
+		maxheight += getJri().size();
+		
+		BufferedImage out = new BufferedImage(maxwidth,maxheight, BufferedImage.TYPE_INT_ARGB);
+		StringBuilder js = new StringBuilder();
+		js.append("res['tiles']=new Array();");
+		int realx=0, realy=0;
+		int off4pos =0;
+		for (JackRawImage j : getJri())
+		{
+			int w = j.getWidth();
+			int h = j.getHeight();
+			
+			js.append("res['tiles']["+off4pos+"]={x:"+realx+",y:"+realy+",w:"+w+",h:"+h+"};");
+			out.createGraphics().drawImage(j.getImgout(),null,0,realy);
+			realy+= h+1;
+			off4pos++;
+		}
+		return out;
+		
+	}
 }

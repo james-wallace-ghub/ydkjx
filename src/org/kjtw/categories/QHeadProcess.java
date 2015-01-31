@@ -38,6 +38,12 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 	    std.add(whn);
 	    DefaultMutableTreeNode pic = new DefaultMutableTreeNode("Picture question");
 	    std.add(pic);
+	    DefaultMutableTreeNode saq = new DefaultMutableTreeNode("Super Audio Question");
+	    std.add(saq);
+	    DefaultMutableTreeNode imp = new DefaultMutableTreeNode("Impossible Question");
+	    std.add(imp);
+	    DefaultMutableTreeNode ghq = new DefaultMutableTreeNode("Guest Host Question");
+	    std.add(ghq);
 
 	    DefaultMutableTreeNode dod = new DefaultMutableTreeNode("Dis or Dat");
 	    DefaultMutableTreeNode fof = new DefaultMutableTreeNode("Fiber Optic Field Trip");
@@ -89,7 +95,15 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
     							String qheadnm = KSFLUtilities.fccs(id).trim();
     							qh.setName(qheadnm);
     							
-    							qh.setValue((int)stuff[8]);
+    							int tempval = (int)stuff[8];
+    							if (tempval ==4)
+    							{
+    								qh.setValue(20);
+    							}
+    							else
+    							{
+    								qh.setValue(tempval);
+    							}
     							qh.setType((int)stuff[9]);
 
     							DefaultMutableTreeNode q = new DefaultMutableTreeNode(qheadnm);
@@ -119,8 +133,13 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
             						}
             						qfound=true;
     							}
-    							qh.setSubType((int)stuff[11]);
-    							int subtype = stuff[11];
+       							int subtype = stuff[11];
+    							qh.setSubType(subtype);
+       							if (qh.value ==20)
+    							{
+       								imp.add(q);
+       								qfound=true;
+    							}
     							if (!qfound)
     							{
     								switch (subtype)
@@ -136,6 +155,12 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 	        								break;
 	        							case 4:
 	        								pic.add(q);
+	        								break;
+	        							case 5:
+	        								saq.add(q);
+	        								break;
+	        							case 6:
+	        								ghq.add(q);
 	        								break;
 	        						}
     							}

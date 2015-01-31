@@ -13,15 +13,16 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import org.kjtw.main.AudioPlayer;
+import org.kjtw.main.JackRawImage;
 import org.kjtw.main.SRFLoad;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JLabel;
 
@@ -48,29 +49,22 @@ public class PictureQuestion extends JPanel {
 	private JButton btnClosingRemark;
 	private JCheckBox chckbxNewCheckBox;
 	private Hashtable<String, byte[]> supplements;
-	private Hashtable <String, BufferedImage> gfx;
+	private Hashtable<String, List<JackRawImage>> gfx;
 	private SRFLoad QData;
 	private JLabel lblNewLabel;
 	private JButton btnToggleAltTitles;
 	private int titleval;
+	private JLabel Image;
 	/**
 	 * Create the panel.
 	 * @throws IOException 
 	 */
 	public PictureQuestion(final QHeader qhd) throws IOException {
 		supplements = new Hashtable<String, byte[]>();
-		JFrame JackPic = new JFrame();
 		QData = new SRFLoad(qhd.path);
 		supplements = QData.getData();
 		gfx = QData.getGfx();
 
-		JLabel lblNewLabel_1 = new JLabel("");
-		ImageIcon pic = new ImageIcon(gfx.get("off4_21500"));
-		lblNewLabel_1.setIcon(pic);
-		JackPic.getContentPane().add(lblNewLabel_1);
-		JackPic.setBounds(0, 0, pic.getIconWidth()+20, pic.getIconHeight()+30);
-		JackPic.setTitle("Question image");
-		JackPic.setVisible(true);
 		
 		if (qhd.forced != null)
 		{
@@ -79,10 +73,10 @@ public class PictureQuestion extends JPanel {
 		}
 		titleval =0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] {70, 187, 161, 2};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[] {70, 162, 115, 184, 2};
+		gridBagLayout.rowHeights = new int[]{0, 0, 38, 48, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		
@@ -116,10 +110,19 @@ public class PictureQuestion extends JPanel {
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.gridwidth = 2;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.gridx = 1;
 		gbc_lblNewLabel.gridy = 0;
 		add(lblNewLabel, gbc_lblNewLabel);
+		
+		Image = new JLabel("");
+		ImageIcon pic = new ImageIcon(gfx.get("off4_21500").get(0).getImgout());
+		Image.setIcon(pic);
+		GridBagConstraints gbc_Image = new GridBagConstraints();
+		gbc_Image.gridheight = 10;
+		gbc_Image.gridx = 3;
+		gbc_Image.gridy = 0;
+		add(Image, gbc_Image);
 		GridBagConstraints gbc_btnPlayTitle = new GridBagConstraints();
 		gbc_btnPlayTitle.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnPlayTitle.insets = new Insets(0, 0, 5, 5);
@@ -130,7 +133,7 @@ public class PictureQuestion extends JPanel {
 		Title = new JLabel(qhd.title);
 		GridBagConstraints gbc_Title = new GridBagConstraints();
 		gbc_Title.gridwidth = 2;
-		gbc_Title.insets = new Insets(0, 0, 5, 0);
+		gbc_Title.insets = new Insets(0, 0, 5, 5);
 		gbc_Title.fill = GridBagConstraints.HORIZONTAL;
 		gbc_Title.gridx = 1;
 		gbc_Title.gridy = 1;
@@ -148,6 +151,10 @@ public class PictureQuestion extends JPanel {
 		gbc_btnPlaypreamble.gridx = 0;
 		gbc_btnPlaypreamble.gridy = 2;
 		add(btnPlaypreamble, gbc_btnPlaypreamble);
+		if (supplements.get("snd_2")==null)
+		{
+			btnPlaypreamble.setEnabled(false);
+		}
 		
 		btnPlayQ = new JButton("Play Q");
 		btnPlayQ.addActionListener(new ActionListener() {
@@ -160,7 +167,7 @@ public class PictureQuestion extends JPanel {
 		GridBagConstraints gbc_Qtext = new GridBagConstraints();
 		gbc_Qtext.gridheight = 2;
 		gbc_Qtext.gridwidth = 2;
-		gbc_Qtext.insets = new Insets(0, 0, 5, 0);
+		gbc_Qtext.insets = new Insets(0, 0, 5, 5);
 		gbc_Qtext.fill = GridBagConstraints.BOTH;
 		gbc_Qtext.gridx = 1;
 		gbc_Qtext.gridy = 2;
@@ -197,11 +204,15 @@ public class PictureQuestion extends JPanel {
 		gbc_button_1.gridx = 0;
 		gbc_button_1.gridy = 5;
 		add(button_1, gbc_button_1);
+		if (supplements.get("snd_7")==null)
+		{
+			button_1.setEnabled(false);
+		}
 		
 		txt1 = new JLabel(new String(supplements.get("STR_3")));
 		GridBagConstraints gbc_txt1 = new GridBagConstraints();
 		gbc_txt1.gridwidth = 2;
-		gbc_txt1.insets = new Insets(0, 0, 5, 0);
+		gbc_txt1.insets = new Insets(0, 0, 5, 5);
 		gbc_txt1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txt1.gridx = 1;
 		gbc_txt1.gridy = 5;
@@ -219,11 +230,15 @@ public class PictureQuestion extends JPanel {
 		gbc_button_2.gridx = 0;
 		gbc_button_2.gridy = 6;
 		add(button_2, gbc_button_2);
+		if (supplements.get("snd_8")==null)
+		{
+			button_2.setEnabled(false);
+		}
 		
 		txt2 = new JLabel(new String(supplements.get("STR_4")));
 		GridBagConstraints gbc_txt2 = new GridBagConstraints();
 		gbc_txt2.gridwidth = 2;
-		gbc_txt2.insets = new Insets(0, 0, 5, 0);
+		gbc_txt2.insets = new Insets(0, 0, 5, 5);
 		gbc_txt2.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txt2.gridx = 1;
 		gbc_txt2.gridy = 6;
@@ -241,11 +256,15 @@ public class PictureQuestion extends JPanel {
 		gbc_button_3.gridx = 0;
 		gbc_button_3.gridy = 7;
 		add(button_3, gbc_button_3);
+		if (supplements.get("snd_9")==null)
+		{
+			button_3.setEnabled(false);
+		}
 		
 		txt3 = new JLabel(new String(supplements.get("STR_5")));
 		GridBagConstraints gbc_txt3 = new GridBagConstraints();
 		gbc_txt3.gridwidth = 2;
-		gbc_txt3.insets = new Insets(0, 0, 5, 0);
+		gbc_txt3.insets = new Insets(0, 0, 5, 5);
 		gbc_txt3.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txt3.gridx = 1;
 		gbc_txt3.gridy = 7;
@@ -263,11 +282,15 @@ public class PictureQuestion extends JPanel {
 		gbc_button_4.gridx = 0;
 		gbc_button_4.gridy = 8;
 		add(button_4, gbc_button_4);
-		
+		if (supplements.get("snd_10")==null)
+		{
+			button_4.setEnabled(false);
+		}
+
 		txt4 = new JLabel(new String(supplements.get("STR_6")));
 		GridBagConstraints gbc_txt4 = new GridBagConstraints();
 		gbc_txt4.gridwidth = 2;
-		gbc_txt4.insets = new Insets(0, 0, 5, 0);
+		gbc_txt4.insets = new Insets(0, 0, 5, 5);
 		gbc_txt4.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txt4.gridx = 1;
 		gbc_txt4.gridy = 8;
@@ -305,7 +328,7 @@ public class PictureQuestion extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
-		gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 5, 5);
+		gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 0, 5);
 		gbc_chckbxNewCheckBox.gridx = 0;
 		gbc_chckbxNewCheckBox.gridy = 9;
 		add(chckbxNewCheckBox, gbc_chckbxNewCheckBox);
@@ -319,10 +342,14 @@ public class PictureQuestion extends JPanel {
 		
 				GridBagConstraints gbc_btnAllWrongAnswers = new GridBagConstraints();
 				gbc_btnAllWrongAnswers.anchor = GridBagConstraints.WEST;
-				gbc_btnAllWrongAnswers.insets = new Insets(0, 0, 5, 5);
+				gbc_btnAllWrongAnswers.insets = new Insets(0, 0, 0, 5);
 				gbc_btnAllWrongAnswers.gridx = 1;
 				gbc_btnAllWrongAnswers.gridy = 9;
 				add(btnAllWrongAnswers, gbc_btnAllWrongAnswers);
+				if (supplements.get("snd_11")==null)
+				{
+					btnAllWrongAnswers.setEnabled(false);
+				}
 		
 		btnClosingRemark = new JButton("Closing remark");
 		btnClosingRemark.addActionListener(new ActionListener() {
@@ -332,7 +359,7 @@ public class PictureQuestion extends JPanel {
 		});
 		GridBagConstraints gbc_btnClosingRemark = new GridBagConstraints();
 		gbc_btnClosingRemark.anchor = GridBagConstraints.WEST;
-		gbc_btnClosingRemark.insets = new Insets(0, 0, 5, 0);
+		gbc_btnClosingRemark.insets = new Insets(0, 0, 0, 5);
 		gbc_btnClosingRemark.gridx = 2;
 		gbc_btnClosingRemark.gridy = 9;
 		add(btnClosingRemark, gbc_btnClosingRemark);

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JTree;
 
@@ -19,7 +20,7 @@ import com.kreative.rsrc.StringListResource;
 public class SRFLoad {
 
 Hashtable<String,String> parents = new Hashtable<String,String>();
-Hashtable<String, BufferedImage> recallsave = new Hashtable<String, BufferedImage>();
+Hashtable<String, List<JackRawImage>> recallsave = new Hashtable<String, List<JackRawImage>>();
 Hashtable<String, String[]> recallstr = new Hashtable<String, String[]>();
 Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 
@@ -59,7 +60,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 
     						if (ftype.equals("off4"))
        						{
-	    						recallsave.put(ftype+'_'+id, new JackGraphic(r.data).getJri().get(0).getImgout());
+	    						recallsave.put(ftype+'_'+id, new JackGraphic(r.data).getJri());
        						}
     						if ( ftype.equals("Dcoy") || ( ftype.equals("Mtch") || ( ftype.equals("Root") || ( ftype.equals("STR")))))
     						{
@@ -180,8 +181,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 		return recalldata;
 	}
 
-	public Hashtable<String, BufferedImage> getGfx() {
-		// TODO Auto-generated method stub
+	public Hashtable<String, List<JackRawImage>> getGfx() {
 		return recallsave;
 	}
 	public Hashtable<String, String[]> getStrs() {

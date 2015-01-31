@@ -134,7 +134,7 @@ public class Whatshisname extends JPanel {
 		gbc_btnPlaypreamble.gridx = 0;
 		gbc_btnPlaypreamble.gridy = 2;
 		add(btnPlaypreamble, gbc_btnPlaypreamble);
-		
+
 		btnAnswers = new JLabel("Hints");
 		GridBagConstraints gbc_btnAnswers = new GridBagConstraints();
 		gbc_btnAnswers.insets = new Insets(0, 0, 5, 5);
@@ -370,6 +370,10 @@ public class Whatshisname extends JPanel {
 				gbc_btnAllWrongAnswers.gridx = 1;
 				gbc_btnAllWrongAnswers.gridy = 9;
 				add(btnAllWrongAnswers, gbc_btnAllWrongAnswers);
+				if (supplements.get("snd_11")==null)
+				{
+					btnAllWrongAnswers.setEnabled(false);
+				}
 		
 		btnClosingRemark = new JButton("Closing remark");
 		btnClosingRemark.addActionListener(new ActionListener() {

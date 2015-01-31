@@ -22,10 +22,6 @@ import java.awt.event.ItemListener;
 import java.awt.Font;
 
 public class Gibberish extends JPanel {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4135380558219022262L;
 	private JLabel Title;
 	private JLabel Qtext;
 	private JLabel txt1;
@@ -54,17 +50,11 @@ public class Gibberish extends JPanel {
 	 * @throws IOException 
 	 */
 	public Gibberish(final QHeader qhd) throws IOException {
-		supplements = new Hashtable<String, byte[]>();
 		QData = new SRFLoad(qhd.path);
 		supplements = QData.getData(); 
 		final String spelltext = "<html><body style='width:100%'>"+"Alternate spellings: "+new String(supplements.get("Wrds_128"));
 		final String questiontext = "<html><body style='width:100%'>"+new String(supplements.get("STR_130"));
 
-		if (qhd.forced != null)
-		{
-			qhd.titlea= new String(supplements.get("STR_18"));
-			qhd.titleb= new String(supplements.get("STR_19"));
-		}
 		titleval =0;
 		hintval=0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -73,8 +63,7 @@ public class Gibberish extends JPanel {
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		
-		
+
 		btnPlayTitle = new JButton("Play Title");
 		btnPlayTitle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -107,7 +96,7 @@ public class Gibberish extends JPanel {
 		gbc_btnPlayTitle.gridy = 0;
 		add(btnPlayTitle, gbc_btnPlayTitle);
 		
-		Title = new JLabel(qhd.title);
+		Title = new JLabel("Title here");
 		GridBagConstraints gbc_Title = new GridBagConstraints();
 		gbc_Title.gridwidth = 2;
 		gbc_Title.insets = new Insets(0, 0, 5, 0);
@@ -177,23 +166,6 @@ public class Gibberish extends JPanel {
 		add(btnPlayQ, gbc_btnPlayQ);
 		
 				chckbxNewCheckBox = new JCheckBox("Show answer");
-				chckbxNewCheckBox.addItemListener(new ItemListener() {
-					public void itemStateChanged(ItemEvent e) {
-						if (e.getStateChange() == ItemEvent.DESELECTED)
-						{
-							Qtext.setText(questiontext);
-							lblNewLabel.setText(new String(supplements.get("Gibr_128")));
-							validate();
-
-						}
-						else
-						{
-							Qtext.setText(spelltext);
-							lblNewLabel.setText(new String(supplements.get("Ansr_128")));
-							validate();
-						}
-					}
-				});
 				GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
 				gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 5, 5);
 				gbc_chckbxNewCheckBox.gridx = 0;
@@ -212,7 +184,7 @@ public class Gibberish extends JPanel {
 		});
 
 		add(btnWrongAnswer, gbc_btnWrongAnswer);
-		
+
 		btnAnswers = new JLabel("Hints");
 		GridBagConstraints gbc_btnAnswers = new GridBagConstraints();
 		gbc_btnAnswers.insets = new Insets(0, 0, 5, 5);
@@ -265,7 +237,7 @@ public class Gibberish extends JPanel {
 		gbc_button_2.gridy = 7;
 		add(button_2, gbc_button_2);
 
-		Qtext = new JLabel(questiontext);
+		Qtext = new JLabel("questiontext");
 		Qtext.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		GridBagConstraints gbc_Qtext = new GridBagConstraints();
 		gbc_Qtext.fill = GridBagConstraints.BOTH;
@@ -354,51 +326,37 @@ public class Gibberish extends JPanel {
 		gbc_btnClosingRemark.gridy = 9;
 		add(btnClosingRemark, gbc_btnClosingRemark);
 
-		if (qhd.titlea != null)
-		{
-			btnPlayTitle.setText("Play Title 1");
-			btnToggleAltTitles = new JButton("Toggle alt titles");
-			btnToggleAltTitles.addActionListener(new ActionListener() 
-			{
-				public void actionPerformed(ActionEvent e) 
-				{
-					titleval++;
-					if (titleval >2)
-					{
-						titleval =0;
-					}
-					switch (titleval)
-					{
-						case 0:
-						default:
-						{
-							btnPlayTitle.setText("Play Title 1");
-							Title.setText(qhd.title);
-							break;
-						}
-						case 1:
-						{
-							btnPlayTitle.setText("Play Title 2");
-							Title.setText(qhd.titlea);
-							break;
-						}
-						case 2:
-						{
-							btnPlayTitle.setText("Play Title 3");
-							Title.setText(qhd.titleb);
-							break;
-						}
-					}
-				}
-				
-			});
-			GridBagConstraints gbc_btnToggleAltTitles = new GridBagConstraints();
-			gbc_btnToggleAltTitles.insets = new Insets(0, 0, 5, 5);
-			gbc_btnToggleAltTitles.gridx = 0;
-			gbc_btnToggleAltTitles.gridy = 0;
-			add(btnToggleAltTitles, gbc_btnToggleAltTitles);
-		}		
+		Qtext.setText(questiontext);
+		Title.setText(qhd.title);
 
+		chckbxNewCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.DESELECTED)
+				{
+					Qtext.setText(questiontext);
+					lblNewLabel.setText(new String(supplements.get("Gibr_128")));
+					validate();
+
+				}
+				else
+				{
+					Qtext.setText(spelltext);
+					lblNewLabel.setText(new String(supplements.get("Ansr_128")));
+					validate();
+				}
+			}
+		});
+
+		if (qhd.forced != null)
+		{
+			qhd.titlea= new String(supplements.get("STR_18"));
+			qhd.titleb= new String(supplements.get("STR_19"));
+		}
+		
+		if (supplements.get("snd_16")==null)
+		{
+			btnWrongAnswer.setEnabled(false);
+		}
 
 	}
 }
