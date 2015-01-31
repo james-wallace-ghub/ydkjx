@@ -8,7 +8,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 

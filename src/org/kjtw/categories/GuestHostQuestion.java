@@ -8,7 +8,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
@@ -64,7 +63,6 @@ public class GuestHostQuestion extends JPanel {
 	 */
 	public GuestHostQuestion(final QHeader qhd) throws IOException {
 		supplements = new Hashtable<String, byte[]>();
-		JFrame JackPic = new JFrame();
 		QData = new SRFLoad(qhd.path);
 		supplements = QData.getData();
 		gfx = QData.getGfx();

@@ -30,15 +30,12 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JScrollPane;
 
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JPanel;
 import java.awt.CardLayout;
-import java.awt.Component;
-import javax.swing.Box;
 
 public class QHeaderLoader implements TreeSelectionListener {
 

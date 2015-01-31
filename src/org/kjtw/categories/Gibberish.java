@@ -22,6 +22,10 @@ import java.awt.event.ItemListener;
 import java.awt.Font;
 
 public class Gibberish extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7342045851117088195L;
 	private JLabel Title;
 	private JLabel Qtext;
 	private JLabel txt1;
@@ -39,7 +43,6 @@ public class Gibberish extends JPanel {
 	private JCheckBox chckbxNewCheckBox;
 	private Hashtable <String, byte[]> supplements;
 	private SRFLoad QData;
-	private JButton btnToggleAltTitles;
 	private int titleval;
 	private int hintval;
 	private JLabel lblNewLabel;

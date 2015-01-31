@@ -23,9 +23,11 @@ import javax.swing.JLabel;
 import java.awt.Font;
 
 public class DisorDat extends JPanel {
+
 	/**
 	 * 
 	 */
+	private static final long serialVersionUID = 3488557141705808578L;
 	private JLabel Title;
 	private JButton btnPlayTitle;
 	private JButton btnPlaypreamble;

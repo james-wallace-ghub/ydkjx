@@ -3,24 +3,19 @@ package org.kjtw.categories;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 
 import org.kjtw.main.AudioPlayer;
 import org.kjtw.main.SRFLoad;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
-import java.awt.Font;
 
 public class JackAttack extends JPanel {
 	/**
