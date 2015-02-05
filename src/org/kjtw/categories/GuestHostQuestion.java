@@ -7,12 +7,13 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 
 import org.kjtw.main.AudioPlayer;
-import org.kjtw.main.JackRawImage;
+import org.kjtw.main.JackGfxStrip;
+import org.kjtw.main.JackGraphic;
 import org.kjtw.main.SRFLoad;
 
 import java.awt.event.ActionListener;
@@ -21,7 +22,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.swing.JLabel;
 
@@ -48,7 +48,7 @@ public class GuestHostQuestion extends JPanel {
 	private JButton btnClosingRemark;
 	private JCheckBox chckbxNewCheckBox;
 	private Hashtable<String, byte[]> supplements;
-	private Hashtable <String, List<JackRawImage>> gfx;
+	private Hashtable<String, JackGraphic> gfx;
 	private SRFLoad QData;
 	private JLabel lblNewLabel;
 	private JButton btnToggleAltTitles;
@@ -56,7 +56,6 @@ public class GuestHostQuestion extends JPanel {
 	private JButton btnHostIntro;
 	private JButton btnHostIntro_1;
 	private JButton btnHostOutro;
-	private JLabel lblNewLabel_2;
 	/**
 	 * Create the panel.
 	 * @throws IOException 
@@ -67,6 +66,12 @@ public class GuestHostQuestion extends JPanel {
 		supplements = QData.getData();
 		gfx = QData.getGfx();
 		
+		JFrame cc = new JFrame();
+		cc.setTitle("Question Graphics");
+		cc.getContentPane().add(new JackGfxStrip(gfx.get("off4_24500")));
+		cc.pack();
+		cc.setVisible(true);
+
 		if (qhd.forced != null)
 		{
 			qhd.titlea= new String(supplements.get("STR_18"));
@@ -116,16 +121,6 @@ public class GuestHostQuestion extends JPanel {
 		gbc_lblNewLabel.gridy = 0;
 		add(lblNewLabel, gbc_lblNewLabel);
 		
-		lblNewLabel_2 = new JLabel("");
-		ImageIcon pic = new ImageIcon(gfx.get("off4_24500").get(11).getImgout());
-		lblNewLabel_2.setIcon(pic);
-		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
-		gbc_lblNewLabel_2.gridheight = 10;
-		gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 0);
-		gbc_lblNewLabel_2.gridx = 3;
-		gbc_lblNewLabel_2.gridy = 0;
-		add(lblNewLabel_2, gbc_lblNewLabel_2);
-		
 		GridBagConstraints gbc_btnPlayTitle = new GridBagConstraints();
 		gbc_btnPlayTitle.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnPlayTitle.insets = new Insets(0, 0, 5, 5);
@@ -158,6 +153,26 @@ public class GuestHostQuestion extends JPanel {
 		{
 			btnPlaypreamble.setEnabled(false);
 		}
+		button_1 = new JButton("1");
+		button_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new AudioPlayer(supplements.get("snd_7"))).start();
+			}
+		});
+		GridBagConstraints gbc_button_1 = new GridBagConstraints();
+		gbc_button_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_button_1.insets = new Insets(0, 0, 5, 5);
+		gbc_button_1.gridx = 0;
+		gbc_button_1.gridy = 5;
+		add(button_1, gbc_button_1);
+		
+		button_2 = new JButton("2");
+		button_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new AudioPlayer(supplements.get("snd_8"))).start();
+			}
+		});
+
 		if (supplements.get("snd_7")==null)
 		{
 			button_1.setEnabled(false);
@@ -173,13 +188,23 @@ public class GuestHostQuestion extends JPanel {
 		gbc_btnHostIntro.gridx = 1;
 		gbc_btnHostIntro.gridy = 2;
 		add(btnHostIntro, gbc_btnHostIntro);
-		
+		btnHostIntro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new AudioPlayer(supplements.get("snd_20"))).start();
+			}
+		});
+
 		btnHostIntro_1 = new JButton("Host Intro 2");
 		GridBagConstraints gbc_btnHostIntro_1 = new GridBagConstraints();
 		gbc_btnHostIntro_1.insets = new Insets(0, 0, 5, 5);
 		gbc_btnHostIntro_1.gridx = 2;
 		gbc_btnHostIntro_1.gridy = 2;
 		add(btnHostIntro_1, gbc_btnHostIntro_1);
+		btnHostIntro_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new AudioPlayer(supplements.get("snd_21"))).start();
+			}
+		});
 		
 		btnPlayQ = new JButton("Play Q");
 		btnPlayQ.addActionListener(new ActionListener() {
@@ -216,27 +241,7 @@ public class GuestHostQuestion extends JPanel {
 		gbc_btnAnswers.gridx = 0;
 		gbc_btnAnswers.gridy = 4;
 		add(btnAnswers, gbc_btnAnswers);
-		
-		button_1 = new JButton("1");
-		button_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new AudioPlayer(supplements.get("snd_7"))).start();
-			}
-		});
-		GridBagConstraints gbc_button_1 = new GridBagConstraints();
-		gbc_button_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_1.insets = new Insets(0, 0, 5, 5);
-		gbc_button_1.gridx = 0;
-		gbc_button_1.gridy = 5;
-		add(button_1, gbc_button_1);
-		
-		button_2 = new JButton("2");
-		button_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new AudioPlayer(supplements.get("snd_8"))).start();
-			}
-		});
-		
+				
 		txt1 = new JLabel(new String(supplements.get("STR_3")));
 		GridBagConstraints gbc_txt1 = new GridBagConstraints();
 		gbc_txt1.gridwidth = 2;
@@ -251,17 +256,17 @@ public class GuestHostQuestion extends JPanel {
 		gbc_button_2.gridx = 0;
 		gbc_button_2.gridy = 6;
 		add(button_2, gbc_button_2);
-		if (supplements.get("snd_9")==null)
-		{
-			button_3.setEnabled(false);
-		}
-		
 		button_3 = new JButton("3");
 		button_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new Thread(new AudioPlayer(supplements.get("snd_9"))).start();
 			}
 		});
+		if (supplements.get("snd_9")==null)
+		{
+			button_3.setEnabled(false);
+		}
+		
 		
 		txt2 = new JLabel(new String(supplements.get("STR_4")));
 		GridBagConstraints gbc_txt2 = new GridBagConstraints();
@@ -277,17 +282,17 @@ public class GuestHostQuestion extends JPanel {
 		gbc_button_3.gridx = 0;
 		gbc_button_3.gridy = 7;
 		add(button_3, gbc_button_3);
+		button_4 = new JButton("4");
+		button_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new AudioPlayer(supplements.get("snd_10"))).start();
+			}
+		});
 		if (supplements.get("snd_10")==null)
 		{
 			button_4.setEnabled(false);
 		}
 						
-						button_4 = new JButton("4");
-						button_4.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								new Thread(new AudioPlayer(supplements.get("snd_10"))).start();
-							}
-						});
 						
 						txt3 = new JLabel(new String(supplements.get("STR_5")));
 						GridBagConstraints gbc_txt3 = new GridBagConstraints();
@@ -387,6 +392,11 @@ public class GuestHostQuestion extends JPanel {
 		gbc_btnHostOutro.gridx = 1;
 		gbc_btnHostOutro.gridy = 10;
 		add(btnHostOutro, gbc_btnHostOutro);
+		btnHostOutro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new AudioPlayer(supplements.get("snd_22"))).start();
+			}
+		});
 
 		if (qhd.titlea != null)
 		{

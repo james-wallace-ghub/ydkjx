@@ -20,7 +20,7 @@ public class JackGFXPanel extends JPanel {
 		{
 			scaleflag=true;
 		}
-		setBounds(0, 0, 640, 480);
+		//setBounds(0, 0, 640, 480);
 	}
 	@Override
     protected void paintComponent(Graphics g) {

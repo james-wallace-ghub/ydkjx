@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.swing.JTree;
 
@@ -19,7 +18,7 @@ import com.kreative.rsrc.StringListResource;
 public class SRFLoad {
 
 Hashtable<String,String> parents = new Hashtable<String,String>();
-Hashtable<String, List<JackRawImage>> recallsave = new Hashtable<String, List<JackRawImage>>();
+Hashtable<String, JackGraphic> recallsave = new Hashtable<String, JackGraphic>();
 Hashtable<String, String[]> recallstr = new Hashtable<String, String[]>();
 Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 
@@ -59,11 +58,11 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 
     						if (ftype.equals("off4"))
        						{
-	    						recallsave.put(ftype+'_'+id, new JackGraphic(r.data).getJri());
+	    						recallsave.put(ftype+'_'+id, new JackGraphic(r.data));
        						}
     						if ( ftype.equals("Dcoy") || ( ftype.equals("Mtch") || ( ftype.equals("Root") || ( ftype.equals("STR")))))
     						{
-    							String str = new String(stuff,"MACROMAN").replaceAll("\\{", "");
+    							String str = new String(stuff,"MACROMAN").replaceAll("\\{", "").replaceAll("\u2211" , "ß");
 								recallstr.put(ftype+'_'+id, str.split("\0"));
     						}
     							if (  ( ftype.equals("3SEx") || (ftype.contains("#") && !ftype.equals("ANS#"))))
@@ -87,7 +86,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 
 	    							if ( ftype.equals("Wrds"))
 	    							{
-	    								stuff = new String(stuff,"MACROMAN").replaceAll("\\{", "").getBytes();
+	    								stuff = new String(stuff,"MACROMAN").replaceAll("\\{", "").replaceAll("\u2211" , "ß").getBytes();
 	    								if (!parents.containsKey(ftype))
 	    								{
 	    									parents.put(ftype, "string");
@@ -95,7 +94,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	    							}
 	    							if (isstring(stuff))
 	    							{
-	    								stuff = new String(stuff,"MACROMAN").replaceAll("\\{", "").getBytes();
+	    								stuff = new String(stuff,"MACROMAN").replaceAll("\\{", "").replaceAll("\u2211" , "ß").getBytes();
 	    								if (!parents.containsKey(ftype))
 	    								{
 	    									parents.put(ftype, "string");
@@ -180,7 +179,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 		return recalldata;
 	}
 
-	public Hashtable<String, List<JackRawImage>> getGfx() {
+	public Hashtable<String, JackGraphic> getGfx() {
 		return recallsave;
 	}
 	public Hashtable<String, String[]> getStrs() {

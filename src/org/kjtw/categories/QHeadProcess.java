@@ -2,21 +2,17 @@ package org.kjtw.categories;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.kreative.ksfl.KSFLUtilities;
 import com.kreative.rsrc.BerkeleyResourceFile;
 import com.kreative.rsrc.MacResource;
-import com.kreative.rsrc.MacResourceFile;
 
 public class QHeadProcess {
 
@@ -24,7 +20,7 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 
 	JTree tree = null;
 
-	public QHeadProcess(File file) throws IOException
+	public QHeadProcess(BerkeleyResourceFile rp, String fpath) throws IOException
 	{
 	    DefaultMutableTreeNode top = new DefaultMutableTreeNode("Questions");
 
@@ -34,7 +30,7 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 	    std.add(norm);
 	    DefaultMutableTreeNode fitb = new DefaultMutableTreeNode("Fill in the blank");
 	    std.add(fitb);
-	    DefaultMutableTreeNode whn = new DefaultMutableTreeNode("Whatshisname?");
+	    DefaultMutableTreeNode whn = new DefaultMutableTreeNode("Whatshisname? / Moldy Memories");
 	    std.add(whn);
 	    DefaultMutableTreeNode pic = new DefaultMutableTreeNode("Picture question");
 	    std.add(pic);
@@ -42,48 +38,32 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 	    std.add(saq);
 	    DefaultMutableTreeNode imp = new DefaultMutableTreeNode("Impossible Question");
 	    std.add(imp);
-	    DefaultMutableTreeNode ghq = new DefaultMutableTreeNode("Guest Host Question");
+	    DefaultMutableTreeNode ghq = new DefaultMutableTreeNode("Guest Host / Pissed about a Question");
 	    std.add(ghq);
 
 	    DefaultMutableTreeNode dod = new DefaultMutableTreeNode("Dis or Dat");
+	    DefaultMutableTreeNode ccc = new DefaultMutableTreeNode("Celebrity Collect Call");
 	    DefaultMutableTreeNode fof = new DefaultMutableTreeNode("Fiber Optic Field Trip");
 	    DefaultMutableTreeNode gib = new DefaultMutableTreeNode("Gibberish Questions");
 	    DefaultMutableTreeNode jat = new DefaultMutableTreeNode("Jack Attack (HeadRush)");
 	    DefaultMutableTreeNode twy = new DefaultMutableTreeNode("3Way");
+	    DefaultMutableTreeNode unk = new DefaultMutableTreeNode("Unknown Questions");
 	    top.add(dod);
+	    top.add(ccc);
 	    top.add(fof);
 	    top.add(gib);
 	    top.add(jat);
 	    top.add(twy);
+	    top.add(unk);
 	    
-        
-		RandomAccessFile raf = null;
-		//Force read only
-		try {
-			raf = new RandomAccessFile(file, "r");
-		} catch (FileNotFoundException e) {
-		    JOptionPane.showMessageDialog(null, "Resource tree can't be made, that file doesn't exist.");
-			e.printStackTrace();
-		}
-		if (raf != null)
-		{
-    		byte[]packet = new byte[4];
-    		raf.read(packet, 0, 4);
-    		if (issrf(packet))
-    		{
-    			BerkeleyResourceFile rp = null;
-    			try {
-    				rp = new BerkeleyResourceFile(file, "r", MacResourceFile.CREATE_NEVER);
-    			} catch (IOException e) {
-    				System.err.println("Error: Invalid file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
-    				return;
-    			}
 
-    			String fpath = file.getPath().replaceFirst(file.getName(), "");
     				for (int type : rp.getTypes()) {
    						byte[] stuff = new byte[0];
 
     					String ftype = KSFLUtilities.fccs(type).trim();
+    					if (ftype.equals("Nuke"))
+   						{
+   						}
     					if (ftype.equals("qhdr"))
    						{
 	    					for (int id : rp.getfullIDs(type)) 
@@ -96,14 +76,7 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
     							qh.setName(qheadnm);
     							
     							int tempval = (int)stuff[8];
-    							if (tempval ==4)
-    							{
-    								qh.setValue(20);
-    							}
-    							else
-    							{
-    								qh.setValue(tempval);
-    							}
+   								qh.setValue(tempval);
     							qh.setType((int)stuff[9]);
 
     							DefaultMutableTreeNode q = new DefaultMutableTreeNode(qheadnm);
@@ -127,15 +100,21 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 		    							case 5:
 		    								fof.add(q);
 		    								break;
+		    							case 10:
+		    								ccc.add(q);
+		    								break;
 		    							case 12:
 		    								twy.add(q);
+		    								break;
+		    							default:
+		    								unk.add(q);
 		    								break;
             						}
             						qfound=true;
     							}
        							int subtype = stuff[11];
     							qh.setSubType(subtype);
-       							if (qh.value ==20)
+       							if (qh.value ==4)
     							{
        								imp.add(q);
        								qfound=true;
@@ -162,13 +141,16 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 	        							case 6:
 	        								ghq.add(q);
 	        								break;
+	        							default:
+	        								unk.add(q);
+	        								break;
 	        						}
     							}
     							List<Byte> construct = new ArrayList<Byte>();
         						
         						byte[] titleconst = KSFLUtilities.copy(stuff, 16, 63);
         						
-        						String title = new String(titleconst, "MACROMAN").trim();
+        						String title = new String(titleconst, "MACROMAN").trim().replaceAll("\\{", "").replaceAll("\u2211" , "ß");
         						
         						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 63);
         						
@@ -214,19 +196,6 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
     			}
     		}
 		}
-		}
-	}		
-	private static boolean issrf(byte[] packet) 
-	{
-		if ((packet[0] == 115) && (packet[1] == 114) && (packet[2] == 102) && (packet[3] == 49)) //srf1 in byte form
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
 	
 	public Hashtable<String,QHeader> getTable()
 	{

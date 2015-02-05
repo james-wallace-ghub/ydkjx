@@ -4,15 +4,17 @@ import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 
 import org.kjtw.main.AudioPlayer;
-import org.kjtw.main.JackRawImage;
+import org.kjtw.main.JackGfxStrip;
+import org.kjtw.main.JackGraphic;
 import org.kjtw.main.SRFLoad;
 
 import java.awt.event.ActionListener;
@@ -21,7 +23,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.swing.JLabel;
 
@@ -48,14 +49,14 @@ public class PictureQuestion extends JPanel {
 	private JButton btnClosingRemark;
 	private JCheckBox chckbxNewCheckBox;
 	private Hashtable<String, byte[]> supplements;
-	private Hashtable<String, List<JackRawImage>> gfx;
+	private Hashtable<String, JackGraphic> gfx;
 	private SRFLoad QData;
 	private JLabel lblNewLabel;
 	private JButton btnToggleAltTitles;
 	private int titleval;
-	private JLabel Image;
 	/**
 	 * Create the panel.
+	 * @param pal 
 	 * @throws IOException 
 	 */
 	public PictureQuestion(final QHeader qhd) throws IOException {
@@ -64,7 +65,14 @@ public class PictureQuestion extends JPanel {
 		supplements = QData.getData();
 		gfx = QData.getGfx();
 
-		
+		JFrame cc = new JFrame();
+		cc.setTitle("Picture Question Graphics");
+		JackGfxStrip jgs = new JackGfxStrip(gfx.get("off4_21500"));
+		cc.getContentPane().add(jgs);
+		cc.setPreferredSize(new Dimension(600, 400));
+		cc.pack();
+		cc.setVisible(true);
+
 		if (qhd.forced != null)
 		{
 			qhd.titlea= new String(supplements.get("STR_18"));
@@ -72,9 +80,9 @@ public class PictureQuestion extends JPanel {
 		}
 		titleval =0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] {70, 162, 115, 184, 2};
+		gridBagLayout.columnWidths = new int[] {70, 162, 115, 2};
 		gridBagLayout.rowHeights = new int[]{0, 0, 38, 48, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
@@ -109,19 +117,11 @@ public class PictureQuestion extends JPanel {
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.gridwidth = 2;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_lblNewLabel.gridx = 1;
 		gbc_lblNewLabel.gridy = 0;
 		add(lblNewLabel, gbc_lblNewLabel);
 		
-		Image = new JLabel("");
-		ImageIcon pic = new ImageIcon(gfx.get("off4_21500").get(0).getImgout());
-		Image.setIcon(pic);
-		GridBagConstraints gbc_Image = new GridBagConstraints();
-		gbc_Image.gridheight = 10;
-		gbc_Image.gridx = 3;
-		gbc_Image.gridy = 0;
-		add(Image, gbc_Image);
 		GridBagConstraints gbc_btnPlayTitle = new GridBagConstraints();
 		gbc_btnPlayTitle.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnPlayTitle.insets = new Insets(0, 0, 5, 5);
@@ -132,7 +132,7 @@ public class PictureQuestion extends JPanel {
 		Title = new JLabel(qhd.title);
 		GridBagConstraints gbc_Title = new GridBagConstraints();
 		gbc_Title.gridwidth = 2;
-		gbc_Title.insets = new Insets(0, 0, 5, 5);
+		gbc_Title.insets = new Insets(0, 0, 5, 0);
 		gbc_Title.fill = GridBagConstraints.HORIZONTAL;
 		gbc_Title.gridx = 1;
 		gbc_Title.gridy = 1;
@@ -166,7 +166,7 @@ public class PictureQuestion extends JPanel {
 		GridBagConstraints gbc_Qtext = new GridBagConstraints();
 		gbc_Qtext.gridheight = 2;
 		gbc_Qtext.gridwidth = 2;
-		gbc_Qtext.insets = new Insets(0, 0, 5, 5);
+		gbc_Qtext.insets = new Insets(0, 0, 5, 0);
 		gbc_Qtext.fill = GridBagConstraints.BOTH;
 		gbc_Qtext.gridx = 1;
 		gbc_Qtext.gridy = 2;
@@ -211,7 +211,7 @@ public class PictureQuestion extends JPanel {
 		txt1 = new JLabel(new String(supplements.get("STR_3")));
 		GridBagConstraints gbc_txt1 = new GridBagConstraints();
 		gbc_txt1.gridwidth = 2;
-		gbc_txt1.insets = new Insets(0, 0, 5, 5);
+		gbc_txt1.insets = new Insets(0, 0, 5, 0);
 		gbc_txt1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txt1.gridx = 1;
 		gbc_txt1.gridy = 5;
@@ -237,7 +237,7 @@ public class PictureQuestion extends JPanel {
 		txt2 = new JLabel(new String(supplements.get("STR_4")));
 		GridBagConstraints gbc_txt2 = new GridBagConstraints();
 		gbc_txt2.gridwidth = 2;
-		gbc_txt2.insets = new Insets(0, 0, 5, 5);
+		gbc_txt2.insets = new Insets(0, 0, 5, 0);
 		gbc_txt2.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txt2.gridx = 1;
 		gbc_txt2.gridy = 6;
@@ -263,7 +263,7 @@ public class PictureQuestion extends JPanel {
 		txt3 = new JLabel(new String(supplements.get("STR_5")));
 		GridBagConstraints gbc_txt3 = new GridBagConstraints();
 		gbc_txt3.gridwidth = 2;
-		gbc_txt3.insets = new Insets(0, 0, 5, 5);
+		gbc_txt3.insets = new Insets(0, 0, 5, 0);
 		gbc_txt3.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txt3.gridx = 1;
 		gbc_txt3.gridy = 7;
@@ -289,7 +289,7 @@ public class PictureQuestion extends JPanel {
 		txt4 = new JLabel(new String(supplements.get("STR_6")));
 		GridBagConstraints gbc_txt4 = new GridBagConstraints();
 		gbc_txt4.gridwidth = 2;
-		gbc_txt4.insets = new Insets(0, 0, 5, 5);
+		gbc_txt4.insets = new Insets(0, 0, 5, 0);
 		gbc_txt4.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txt4.gridx = 1;
 		gbc_txt4.gridy = 8;
@@ -358,7 +358,6 @@ public class PictureQuestion extends JPanel {
 		});
 		GridBagConstraints gbc_btnClosingRemark = new GridBagConstraints();
 		gbc_btnClosingRemark.anchor = GridBagConstraints.WEST;
-		gbc_btnClosingRemark.insets = new Insets(0, 0, 0, 5);
 		gbc_btnClosingRemark.gridx = 2;
 		gbc_btnClosingRemark.gridy = 9;
 		add(btnClosingRemark, gbc_btnClosingRemark);

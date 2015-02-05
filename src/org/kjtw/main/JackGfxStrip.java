@@ -3,6 +3,8 @@ package org.kjtw.main;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
+
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
@@ -10,9 +12,12 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 
-public class JackGfxStrip extends JPanel {
+public class JackGfxStrip extends JPanel implements ActionListener {
 	/**
 	 * 
 	 */
@@ -22,32 +27,126 @@ public class JackGfxStrip extends JPanel {
 	private GridBagConstraints gbc_panel;
 	private BufferedImage currentimage;
 	private List<JackRawImage> list;
-	public JackGfxStrip(final List<JackRawImage> lst) {
-		this.list=lst;
+	private JackGraphic jgfx;
+	private JRadioButton rdbtnYdkjPalette;
+	private AbstractButton rdbtnYdkjPalette_1;
+	private JRadioButton rdbtnYdkjPalette_2;
+	private JRadioButton rdbtnYdkjPalette_3;
+	private JRadioButton rdbtnHeadrushPalette;
+	private JRadioButton rdbtnOffline;
+	private JRadioButton rdbtnLff;
+	/**
+	 * @wbp.parser.constructor
+	 */
+	public JackGfxStrip(JackGraphic jg) {
+		jgfx=jg;
+		this.list=jgfx.getJri();
 		canvascount=0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{54, 27, 428, 0, 33, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{68, 63, 58, 79, 57, 58, 0, 60, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		currentimage = list.get(0).getImgout();
+		currentimage = list.get(0).getImgout(jgfx.GetPalette());
 		
+		JLabel lblPalette = new JLabel("Palette:");
+		GridBagConstraints gbc_lblPalette = new GridBagConstraints();
+		gbc_lblPalette.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPalette.gridx = 0;
+		gbc_lblPalette.gridy = 0;
+		add(lblPalette, gbc_lblPalette);
+
+		ButtonGroup group = new ButtonGroup();
+
+		rdbtnYdkjPalette = new JRadioButton("YDKJ 1");
+		rdbtnYdkjPalette.setActionCommand("org/kjtw/resources/YDKJ1PAL.bmp");
+
+		GridBagConstraints gbc_rdbtnYdkjPalette = new GridBagConstraints();
+		gbc_rdbtnYdkjPalette.insets = new Insets(0, 0, 5, 5);
+		gbc_rdbtnYdkjPalette.gridx = 1;
+		gbc_rdbtnYdkjPalette.gridy = 0;
+		add(rdbtnYdkjPalette, gbc_rdbtnYdkjPalette);
+		group.add(rdbtnYdkjPalette);
+		rdbtnYdkjPalette.addActionListener(this);
+
+		rdbtnYdkjPalette_1 = new JRadioButton("YDKJ 2");
+		rdbtnYdkjPalette_1.setActionCommand("org/kjtw/resources/YDKJ2PAL.bmp");
+		rdbtnYdkjPalette_1.setSelected(true);
+		GridBagConstraints gbc_rdbtnYdkjPalette_1 = new GridBagConstraints();
+		gbc_rdbtnYdkjPalette_1.insets = new Insets(0, 0, 5, 5);
+		gbc_rdbtnYdkjPalette_1.gridx = 2;
+		gbc_rdbtnYdkjPalette_1.gridy = 0;
+		add(rdbtnYdkjPalette_1, gbc_rdbtnYdkjPalette_1);
+		group.add(rdbtnYdkjPalette_1);
+		rdbtnYdkjPalette_1.addActionListener(this);
+		
+		rdbtnYdkjPalette_2 = new JRadioButton("YDKJ 3");
+		rdbtnYdkjPalette_2.setActionCommand("org/kjtw/resources/YDKJ3PAL.bmp");
+		GridBagConstraints gbc_rdbtnYdkjPalette_2 = new GridBagConstraints();
+		gbc_rdbtnYdkjPalette_2.insets = new Insets(0, 0, 5, 5);
+		gbc_rdbtnYdkjPalette_2.gridx = 3;
+		gbc_rdbtnYdkjPalette_2.gridy = 0;
+		add(rdbtnYdkjPalette_2, gbc_rdbtnYdkjPalette_2);
+		group.add(rdbtnYdkjPalette_2);
+		rdbtnYdkjPalette_2.addActionListener(this);
+		
+		rdbtnYdkjPalette_3 = new JRadioButton("YDKJ 4");
+		rdbtnYdkjPalette_3.setActionCommand("org/kjtw/resources/YDKJ4PAL.bmp");
+		GridBagConstraints gbc_rdbtnYdkjPalette_3 = new GridBagConstraints();
+		gbc_rdbtnYdkjPalette_3.insets = new Insets(0, 0, 5, 5);
+		gbc_rdbtnYdkjPalette_3.gridx = 4;
+		gbc_rdbtnYdkjPalette_3.gridy = 0;
+		add(rdbtnYdkjPalette_3, gbc_rdbtnYdkjPalette_3);
+		group.add(rdbtnYdkjPalette_3);
+		rdbtnYdkjPalette_3.addActionListener(this);
+
+		rdbtnHeadrushPalette = new JRadioButton("HeadRush");
+		rdbtnHeadrushPalette.setActionCommand("org/kjtw/resources/HRUSHP.bmp");
+		GridBagConstraints gbc_rdbtnHeadrushPalette = new GridBagConstraints();
+		gbc_rdbtnHeadrushPalette.insets = new Insets(0, 0, 5, 5);
+		gbc_rdbtnHeadrushPalette.gridx = 5;
+		gbc_rdbtnHeadrushPalette.gridy = 0;
+		add(rdbtnHeadrushPalette, gbc_rdbtnHeadrushPalette);
+		group.add(rdbtnHeadrushPalette);
+		rdbtnHeadrushPalette.addActionListener(this);
+		
+		rdbtnOffline = new JRadioButton("Offline");
+		rdbtnOffline.setActionCommand("org/kjtw/resources/OFFLINEP.bmp");
+		GridBagConstraints gbc_rdbtnOffline = new GridBagConstraints();
+		gbc_rdbtnOffline.insets = new Insets(0, 0, 5, 5);
+		gbc_rdbtnOffline.gridx = 6;
+		gbc_rdbtnOffline.gridy = 0;
+		group.add(rdbtnOffline);
+		add(rdbtnOffline, gbc_rdbtnOffline);
+		rdbtnOffline.addActionListener(this);
+		
+		rdbtnLff = new JRadioButton("L!F!F!");
+		rdbtnLff.setActionCommand("org/kjtw/resources/LFFP.bmp");
+		GridBagConstraints gbc_rdbtnLff = new GridBagConstraints();
+		gbc_rdbtnLff.insets = new Insets(0, 0, 5, 0);
+		gbc_rdbtnLff.gridx = 7;
+		gbc_rdbtnLff.gridy = 0;
+		group.add(rdbtnLff);
+		add(rdbtnLff, gbc_rdbtnLff);
+		rdbtnLff.addActionListener(this);
+
 		panel = new JackGFXPanel(currentimage);
 
 		gbc_panel = new GridBagConstraints();
-		gbc_panel.gridwidth = 5;
+		gbc_panel.gridwidth = 8;
 		gbc_panel.insets = new Insets(0, 0, 5, 0);
 		gbc_panel.fill = GridBagConstraints.BOTH;
 		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 0;
+		gbc_panel.gridy = 1;
 		add(panel, gbc_panel);
 
 		final JLabel lblFrameCount = new JLabel("Canvas "+(canvascount+1)+" of "+list.size());
 		GridBagConstraints gbc_lblFrameCount = new GridBagConstraints();
+		gbc_lblFrameCount.gridwidth = 4;
 		gbc_lblFrameCount.insets = new Insets(0, 0, 0, 5);
 		gbc_lblFrameCount.gridx = 2;
-		gbc_lblFrameCount.gridy = 1;
+		gbc_lblFrameCount.gridy = 2;
 		add(lblFrameCount, gbc_lblFrameCount);
 
 		JButton button = new JButton("< 5");
@@ -58,7 +157,7 @@ public class JackGfxStrip extends JPanel {
 				{
 					canvascount =0;
 				}
-				currentimage = list.get(canvascount).getImgout();
+				currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
 				panel.setImage(currentimage);
 				lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
 				panel.revalidate();
@@ -67,7 +166,7 @@ public class JackGfxStrip extends JPanel {
 		GridBagConstraints gbc_button = new GridBagConstraints();
 		gbc_button.insets = new Insets(0, 0, 0, 5);
 		gbc_button.gridx = 0;
-		gbc_button.gridy = 1;
+		gbc_button.gridy = 2;
 		add(button, gbc_button);
 		
 		JButton button_1 = new JButton("< 1");
@@ -78,7 +177,7 @@ public class JackGfxStrip extends JPanel {
 				{
 					canvascount =0;
 				}
-				currentimage = list.get(canvascount).getImgout();
+				currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
 				panel.setImage(currentimage);
 				lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
 				panel.revalidate();
@@ -87,7 +186,7 @@ public class JackGfxStrip extends JPanel {
 		GridBagConstraints gbc_button_1 = new GridBagConstraints();
 		gbc_button_1.insets = new Insets(0, 0, 0, 5);
 		gbc_button_1.gridx = 1;
-		gbc_button_1.gridy = 1;
+		gbc_button_1.gridy = 2;
 		add(button_1, gbc_button_1);
 		
 		JButton button_2 = new JButton("> 5");
@@ -98,7 +197,7 @@ public class JackGfxStrip extends JPanel {
 				{
 					canvascount =list.size()-1;
 				}
-				currentimage = list.get(canvascount).getImgout();
+				currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
 				panel.setImage(currentimage);
 				lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
 				panel.revalidate();
@@ -113,7 +212,7 @@ public class JackGfxStrip extends JPanel {
 				{
 					canvascount =list.size()-1;
 				}
-				currentimage = list.get(canvascount).getImgout();
+				currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
 				panel.setImage(currentimage);
 				lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
 				panel.revalidate();
@@ -123,14 +222,14 @@ public class JackGfxStrip extends JPanel {
 
 		GridBagConstraints gbc_button_3 = new GridBagConstraints();
 		gbc_button_3.insets = new Insets(0, 0, 0, 5);
-		gbc_button_3.gridx = 3;
-		gbc_button_3.gridy = 1;
+		gbc_button_3.gridx = 6;
+		gbc_button_3.gridy = 2;
 		add(button_3, gbc_button_3);
 
 		GridBagConstraints gbc_button_2 = new GridBagConstraints();
 		gbc_button_2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_2.gridx = 4;
-		gbc_button_2.gridy = 1;
+		gbc_button_2.gridx = 7;
+		gbc_button_2.gridy = 2;
 		add(button_2, gbc_button_2);
 	}
 	public JackGfxStrip() {
@@ -140,18 +239,33 @@ public class JackGfxStrip extends JPanel {
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
+		jgfx = new JackGraphic();
 	}
+	
 	public int getCanvasCount()
 	{
 		return canvascount;
 	}
 	public BufferedImage getImage() {
-		// TODO Auto-generated method stub
 		return currentimage;
 	}
 	public List<JackRawImage> getList() {
-		// TODO Auto-generated method stub
 		return list;
 	}
 
+	public Color[] getStripPalette() {
+		return jgfx.GetPalette();
+	}
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+    	String pal = arg0.getActionCommand();
+    	jgfx.SetPalette(pal);
+		currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
+		panel.setImage(currentimage);
+        }
+	public JackGraphic getGfx() {
+		return jgfx;
+	}
+
 }
+

@@ -276,12 +276,14 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
    						}
     					else if (ftype.equals("qhdr"))
    						{
+    						StringBuilder csv = new StringBuilder();
 	    					for (int id : rp.getfullIDs(type)) 
 	    					{
     							MacResource r = rp.getFromFullID(type, id);
     							stuff = r.data;
+    							String qhead = KSFLUtilities.fccs(id);
     							
-    							String qheadnm = KSFLUtilities.fccs(id).trim();
+    							String qheadnm = qhead.trim();
     							
         						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+qheadnm);
         						ti.add(ti2);
@@ -289,11 +291,6 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
     							//special case for question header strings
         						int value = stuff[8]; // equals value in 1000's of question in Round 1
         						
-        						//Impossible questions in YDKJ3 are a special case, a value of 4 is actually 20.
-        						if (value ==4)
-        						{
-        							value =20;
-        						}
         						int qtype = stuff[9];// 0 = Standard Question, 1 is skipped?, 2 = Gib, 3 = DisOrDat/3Way, 4 = JackAttack/HeadRush, 5 = Fiber/CCC/PubQuiz, 12 = 3Way
         						String qtypedef="";
         						switch (qtype)
@@ -314,7 +311,10 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
         								qtypedef = "Jack Attack / HeadRush";
         								break;
         							case 5:
-        								qtypedef = "Fiber Optic Field Trip/ Pub Quiz / Celebrity Collect Call";
+        								qtypedef = "Fiber Optic Field Trip/ Pub Quiz";
+        								break;
+        							case 10:
+        								qtypedef = "Celebrity Collect Call";
         								break;
         							case 12:
         								qtypedef = "3Way";
@@ -356,12 +356,12 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
         						
         						byte[] titleconst = KSFLUtilities.copy(stuff, 16, 63);
         						        						
-        						String title = new String(titleconst, "MACROMAN").trim().replaceAll("\\{", "");;
+        						String title = new String(titleconst, "MACROMAN").trim().replaceAll("\\{", "").replaceAll("\u2211" , "ß");
         						
         						
         						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 63);
-        						
-        						String path = new String(pathconst, "MACROMAN").trim().replace(':', File.separatorChar);
+        						String oldpath = new String(pathconst, "MACROMAN").trim();        						
+        						String path = oldpath.replace(':', File.separatorChar);
 
         						int rightanswer=0;
         						if (stuff.length > 146)
@@ -377,30 +377,34 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
         						{
         							qdata +="Correct answer number ="+rightanswer+System.lineSeparator();
         						}
-        						
+        						String forcing="";
+        						String forced="";
         						if (stuff.length >152)
         						{
 	        						if (stuff[150] != 0)
 	        						{
 	        							//forcing a question after this one.
 	            						byte[] forceconst = KSFLUtilities.copy(stuff, 150, 4);
-	            						String forcestr = new String(forceconst, "MACROMAN").trim();
+	            						forcing = new String(forceconst, "MACROMAN").trim();
 	            						
-	        							qdata +="This question forces "+forcestr+" to appear next"+System.lineSeparator();
+	        							qdata +="This question forces "+forcing+" to appear next"+System.lineSeparator();
 	        						}
 	        						if (stuff[154] != 0)
 	        						{
 	        							//This was a forced question, don't display it.
 	            						byte[] forceconst = KSFLUtilities.copy(stuff, 154, 4);
-	            						String forcestr = new String(forceconst, "MACROMAN").trim();
+	            						forced = new String(forceconst, "MACROMAN").trim();
 	            						
-	        							qdata +="This question is forced by "+forcestr+System.lineSeparator();
+	        							qdata +="This question is forced by "+forced+System.lineSeparator();
 	        						}
-        						}        						
+        						}    
+        						csv.append("¾"+qhead+"¾½¾"+title+"¾½¾"+oldpath+"¾½¾"+qtype+"¾½¾"+subtype+"¾½¾"+value+"¾½¾"+rightanswer+"¾½¾"+forcing+"¾½¾"+forced+'¾'+System.lineSeparator());
         						stuff = qdata.getBytes();
 	    						recalldata.put(ftype+'_'+qheadnm, stuff);
     						}
-							if (!parents.containsKey(ftype))
+    						recallsave.put(ftype, csv.toString().getBytes());
+
+	    					if (!parents.containsKey(ftype))
 							{
 								parents.put(ftype, "qhdr");
 							}								
@@ -429,7 +433,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	    								String master="";
 	    								for (String result : strs)
 	    								{
-	    									master+=result+System.lineSeparator();
+	    									master+=result.trim().replaceAll("\\{", "").replaceAll("\u2211" , "ß")+System.lineSeparator();
 	    								}
 	    								stuff=master.getBytes();
 	    								if (!parents.containsKey(ftype))
@@ -442,7 +446,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	    							{
 	    								if (!recalldata.containsKey(ftype+'_'+id))
    										{
-		    								stuff = new String(stuff,"MACROMAN").getBytes();
+		    								stuff = new String(stuff,"MACROMAN").trim().replaceAll("\\{", "").replaceAll("\u2211" , "ß").getBytes();
 		    								if (!parents.containsKey(ftype))
 		    								{
 		    									parents.put(ftype, "string");

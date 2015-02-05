@@ -309,7 +309,11 @@ public class Gibberish extends JPanel {
 				});
 
 				add(btnRightAnswer, gbc_btnRightAnswer);
-		
+				if (supplements.get("snd_11")==null)
+				{
+					btnRightAnswer.setEnabled(false);
+				}
+
 				GridBagConstraints gbc_btnAllWrongAnswers = new GridBagConstraints();
 				gbc_btnAllWrongAnswers.anchor = GridBagConstraints.WEST;
 				gbc_btnAllWrongAnswers.insets = new Insets(0, 0, 0, 5);

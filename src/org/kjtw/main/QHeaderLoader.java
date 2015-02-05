@@ -3,6 +3,7 @@ package org.kjtw.main;
 import java.awt.EventQueue;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.JLabel;
 import javax.swing.event.TreeSelectionEvent;
@@ -11,6 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.kjtw.categories.CelebrityCollectCall;
 import org.kjtw.categories.DisorDat;
 import org.kjtw.categories.FiberOpticFieldTrip;
 import org.kjtw.categories.FillInTheBlank;
@@ -26,8 +28,15 @@ import org.kjtw.categories.ThreeWay;
 import org.kjtw.categories.Whatshisname;
 import org.kjtw.main.SRFProcess;
 
+import com.kreative.ksfl.KSFLUtilities;
+import com.kreative.rsrc.BerkeleyResourceFile;
+import com.kreative.rsrc.MacResourceFile;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+
 import javax.swing.JScrollPane;
 
 import java.awt.Font;
@@ -51,6 +60,9 @@ public class QHeaderLoader implements TreeSelectionListener {
     QHeadProcess qhp = null;
     JPanel panel_1;
     GridBagConstraints gbc_panel;
+	private JLabel lblResourcesInSrf;
+	private String fpath;
+	private BerkeleyResourceFile rp;
     /**
      * Launch the application.
      */
@@ -91,7 +103,7 @@ public class QHeaderLoader implements TreeSelectionListener {
         gridBagLayout.rowWeights = new double[]{0.0, 1.0};
         frmYdkjExtractor.getContentPane().setLayout(gridBagLayout);
         
-        JLabel lblResourcesInSrf = new JLabel("Resources in SRF");
+        lblResourcesInSrf = new JLabel("Resources in SRF");
         GridBagConstraints gbc_lblResourcesInSrf = new GridBagConstraints();
         gbc_lblResourcesInSrf.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblResourcesInSrf.anchor = GridBagConstraints.SOUTH;
@@ -136,16 +148,52 @@ public class QHeaderLoader implements TreeSelectionListener {
         {
             dirin=indir;
         }
+        boolean hasqhdr=false;
         do
         {
 	        JFileChooser chooser = new JFileChooser(dirin);
-	        chooser.setDialogTitle("Open the qheaders.srf file to continue");
+	        chooser.setDialogTitle("Open a file containing Question headers, such as qheaders.srf");
 	        chooser.setFileFilter(new FileNameExtensionFilter("QHEADERS.SRF", "srf"));
 	        chooser.showOpenDialog(null);
 	        file = chooser.getSelectedFile();
 	        filenameunq = file.getName();
 	        indir = file.getPath();
-        } while (!filenameunq.toLowerCase().equals("qheaders.srf"));
+			RandomAccessFile raf = null;
+			//Force read only
+			try {
+				raf = new RandomAccessFile(file, "r");
+			} catch (FileNotFoundException e) {
+			    JOptionPane.showMessageDialog(null, "Resource tree can't be made, that file doesn't exist.");
+				e.printStackTrace();
+			}
+			if (raf != null)
+			{
+	    		byte[]packet = new byte[4];
+	    		try {
+					raf.read(packet, 0, 4);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+	    		if (issrf(packet))
+	    		{
+	    			try {
+	    				rp = new BerkeleyResourceFile(file, "r", MacResourceFile.CREATE_NEVER);
+	    			} catch (IOException e) {
+	    				System.err.println("Error: Invalid file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+	    				return;
+	    			}
+	    			fpath = file.getPath().replaceFirst(file.getName(), "");
+    				for (int type : rp.getTypes()) {
+    					String ftype = KSFLUtilities.fccs(type).trim();
+    					if (ftype.equals("qhdr"))
+    					{
+    						hasqhdr = true;
+    					}
+    				}
+	    		}	 
+			}
+        } while (hasqhdr==false);
     }
 
     protected void SRFSetOutDirectory() {
@@ -170,7 +218,7 @@ public class QHeaderLoader implements TreeSelectionListener {
 
             QHeadSetInDirectory();
             try {
-                qhp = new QHeadProcess(file);
+                qhp = new QHeadProcess(rp,fpath);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }       
@@ -204,6 +252,7 @@ public class QHeaderLoader implements TreeSelectionListener {
               QHeader qdat = qhp.getTable().get(node.toString());
               if (qdat!= null)
               {
+            	  lblResourcesInSrf.setText(qdat.getPath().substring(qdat.getPath().indexOf("QF")));
             	  frmYdkjExtractor.getContentPane().remove(panel_1); 
               
                   panel_1 = new JPanel(new CardLayout());
@@ -326,6 +375,16 @@ public class QHeaderLoader implements TreeSelectionListener {
 							e1.printStackTrace();
 						}
 		  			}
+		  			case 10:
+		  			{
+		  				try {
+							panel_1.add(new CelebrityCollectCall(qdat),"Panel");
+							break;
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+		  			}
 		  			case 12:
 		  			{
 		  				try {
@@ -344,29 +403,17 @@ public class QHeaderLoader implements TreeSelectionListener {
 	              frmYdkjExtractor.repaint();
 
               }
-/*              if (qdat != null)
-      	      	  	case 12:
-      	      	  	{
-      	      	  		try {
-      			            	  if (panel != null)
-      			            	  {
-      			            		  panel.removeAll();
-      			            	  }
-      							panel = new ThreeWay(qdat);
-      						} catch (IOException e1) {
-      							// TODO Auto-generated catch block
-      							e1.printStackTrace();
-      						}
-      			              break;
-      	      	  	}
-      		    }
-		              frmYdkjExtractor.getContentPane().add(panel, gbc_panel);
-		              frmYdkjExtractor.revalidate();
-		              frmYdkjExtractor.repaint();
+        }
+    	private static boolean issrf(byte[] packet) 
+    	{
+    		if ((packet[0] == 115) && (packet[1] == 114) && (packet[2] == 102) && (packet[3] == 49)) //srf1 in byte form
+    		{
+    			return true;
+    		}
+    		else
+    		{
+    			return false;
+    		}
+    	}
 
-		          }
-		        	  
-              }
-  */      
-}
 }

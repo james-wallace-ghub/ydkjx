@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -86,7 +87,7 @@ public class UI implements TreeSelectionListener, ActionListener {
      */
     private void initialize() {
         frmYdkjExtractor = new JFrame();
-        frmYdkjExtractor.setTitle("YDKJ Extractor");
+        frmYdkjExtractor.setTitle("YDKJ SRF Extractor");
         frmYdkjExtractor.setBounds(100, 100, 1162, 611);
         frmYdkjExtractor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -119,7 +120,6 @@ public class UI implements TreeSelectionListener, ActionListener {
         gbc_txtrSelectAResource.weightx = 1.0;
         gbc_txtrSelectAResource.fill = GridBagConstraints.BOTH;
         gbc_txtrSelectAResource.insets = new Insets(0, 0, 5, 5);
-        gbc_txtrSelectAResource.gridheight = 2;
         gbc_txtrSelectAResource.gridx = 1;
         gbc_txtrSelectAResource.gridy = 0;
         frmYdkjExtractor.getContentPane().add(txtrSelectAResource, gbc_txtrSelectAResource);
@@ -140,10 +140,11 @@ public class UI implements TreeSelectionListener, ActionListener {
         
         gfxpanel = new JackGfxStrip();
         gbc_gfxpanel = new GridBagConstraints();
+        gbc_gfxpanel.gridheight = 2;
         gbc_gfxpanel.fill = GridBagConstraints.BOTH;
         gbc_gfxpanel.insets = new Insets(0, 0, 5, 5);
         gbc_gfxpanel.gridx = 1;
-        gbc_gfxpanel.gridy = 2;
+        gbc_gfxpanel.gridy = 1;
         frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
         
         JButton btnSaveSelectedResource = new JButton("Save Selected Resource");
@@ -307,7 +308,9 @@ public class UI implements TreeSelectionListener, ActionListener {
         {
             SRFSetOutDirectory();
         }
+        String filenamenoext = filenameunq.substring(0, filenameunq.length()-4);
         Hashtable<String, byte[]> data = srfp.getData();
+        Hashtable<String, byte[]> save = srfp.getSaves();
         Hashtable<String, String> parents = srfp.getParents();
         Enumeration<String> enumKey = data.keys();
         while(enumKey.hasMoreElements()) {
@@ -317,7 +320,7 @@ public class UI implements TreeSelectionListener, ActionListener {
             String suffix="";
             byte[] val = null;
         	String id = key.substring(key.indexOf('_')+1);
-        	File typedir = new File (dir+File.separator+filenameunq+File.separator+nametype);
+        	File typedir = new File (dir+File.separator+filenamenoext+File.separator+nametype);
        		typedir.mkdirs();
             if (type.equals("audio"))
             {
@@ -352,7 +355,6 @@ public class UI implements TreeSelectionListener, ActionListener {
             }
             else if (type.equals("gfx"))
             {
-
               int ftype = KSFLUtilities.fcc(nametype);
 
           	  BerkeleyResourceFile rp = srfp.getBRF();
@@ -366,7 +368,14 @@ public class UI implements TreeSelectionListener, ActionListener {
           	  {
           		  File outputimage = new File(typedir, id+"_"+canvas+".png");
           		  try {
-						ImageIO.write(jri.getImgout(), "png", outputimage);
+          			  if (gfxpanel.getStripPalette() != null)
+          			  {
+          				  ImageIO.write(jri.getImgout(gfxpanel.getStripPalette()), "png", outputimage);
+          			  }
+          			  else 
+          			  {
+          				ImageIO.write(jri.getImgout(jgfx.GetPalette()), "png", outputimage);
+          			  }
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -375,11 +384,30 @@ public class UI implements TreeSelectionListener, ActionListener {
           	  }
           	File outputimage = new File(typedir, id+".gif");
     		  try {
-					ImageIO.write(jgfx.toGif(), "gif", outputimage);
+        			  if (gfxpanel.getStripPalette() != null)
+        			  {
+        				  ImageIO.write(jgfx.toGif(gfxpanel.getStripPalette()), "gif", outputimage);
+        			  }
+        			  else
+        			  {
+        				  ImageIO.write(jgfx.toGif(jgfx.GetPalette()), "gif", outputimage);
+        			  }
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+    		  
+	            try {
+	                File output = new File(typedir, id+".js");
+	                output.createNewFile();
+	                PrintWriter out = new PrintWriter(output);
+	                out.print(jgfx.getJS());
+	                out.close();
+	            } catch (IOException e) {
+	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+	            }
+
             }
             else if (type.equals("template"))
             {
@@ -407,6 +435,19 @@ public class UI implements TreeSelectionListener, ActionListener {
             }
             else if (!type.equals("qheader"))
             {
+	            try {
+	                File output = new File(typedir, filenamenoext+".csv");
+	                if (!output.exists())
+	                {
+		                output.createNewFile();
+		                FileOutputStream fos = new FileOutputStream(output);
+		                fos.write(save.get("qhdr"));
+		                fos.close();
+	                }
+	            } catch (IOException e) {
+	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+	            }
+
             	val = data.get(key);
                 suffix=".txt";
             }
@@ -583,9 +624,9 @@ public class UI implements TreeSelectionListener, ActionListener {
 		              {
 		            	  gfxpanel.removeAll();
 		
-							jgfx = new JackGraphic(r.data);
+		            	  jgfx = new JackGraphic(r.data);
 									 
-		            	  gfxpanel = new JackGfxStrip(jgfx.getJri());
+		            	  gfxpanel = new JackGfxStrip(jgfx);
 		                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
 		                  frmYdkjExtractor.revalidate();
 		              }

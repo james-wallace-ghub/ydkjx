@@ -6,10 +6,14 @@ import java.awt.GridBagLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 
 import org.kjtw.main.AudioPlayer;
+import org.kjtw.main.JackGfxStrip;
+import org.kjtw.main.JackGraphic;
 import org.kjtw.main.SRFLoad;
 
 import java.awt.event.ActionListener;
@@ -21,11 +25,11 @@ import java.util.Hashtable;
 
 import javax.swing.JLabel;
 
-public class FiberOpticFieldTrip extends JPanel {
+public class CelebrityCollectCall extends JPanel {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6720303554134016701L;
+	private static final long serialVersionUID = -2854596315721322142L;
 	private JLabel Title;
 	private JLabel Qtext;
 	private JLabel txt1;
@@ -49,8 +53,7 @@ public class FiberOpticFieldTrip extends JPanel {
 	private JButton btnToggleAltTitles;
 	private int titleval;
 	private JButton button;
-	private JButton button_5;
-	private JButton button_6;
+	private JButton btnIntro;
 	private JLabel label;
 	private JButton button_7;
 	private JButton button_8;
@@ -63,17 +66,23 @@ public class FiberOpticFieldTrip extends JPanel {
 	private JButton button_15;
 	private JButton button_16;
 	private JButton button_17;
-	private JLabel label_1;
-	private JLabel label_2;
 	private JLabel label_3;
+	private Hashtable<String, JackGraphic> gfx;
+	private JButton btnHangup;
 	/**
 	 * Create the panel.
 	 * @throws IOException 
 	 */
-	public FiberOpticFieldTrip(final QHeader qhd) throws IOException {
-		supplements = new Hashtable<String, byte[]>();
+	public CelebrityCollectCall(final QHeader qhd) throws IOException {
 		QData = new SRFLoad(qhd.path);
 		supplements = QData.getData();
+		gfx = QData.getGfx();
+
+		JFrame cc = new JFrame();
+		cc.setTitle("Celebrity Collect Call Graphics");
+		cc.getContentPane().add(new JackGfxStrip(gfx.get("off4_22500")));
+		cc.pack();
+		cc.setVisible(true);
 		
 		if (qhd.forced != null)
 		{
@@ -82,10 +91,10 @@ public class FiberOpticFieldTrip extends JPanel {
 		}
 		titleval =0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] {79, 93, 51, 77, 134, 132, 2};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[] {96, 93, 24, 77, 134, 161, 2};
+		gridBagLayout.rowHeights = new int[]{33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		
@@ -115,6 +124,42 @@ public class FiberOpticFieldTrip extends JPanel {
 			}
 		});
 		
+		button = new JButton("Intro title");
+		GridBagConstraints gbc_button = new GridBagConstraints();
+		gbc_button.fill = GridBagConstraints.HORIZONTAL;
+		gbc_button.insets = new Insets(0, 0, 5, 5);
+		gbc_button.gridx = 0;
+		gbc_button.gridy = 0;
+		add(button, gbc_button);
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new Thread(new AudioPlayer(supplements.get("snd_25"))).start();
+			}
+		});
+				
+						label = new JLabel(qhd.title);
+						GridBagConstraints gbc_label = new GridBagConstraints();
+						gbc_label.anchor = GridBagConstraints.NORTH;
+						gbc_label.gridwidth = 2;
+						gbc_label.fill = GridBagConstraints.HORIZONTAL;
+						gbc_label.insets = new Insets(0, 0, 5, 5);
+						gbc_label.gridx = 1;
+						gbc_label.gridy = 0;
+						add(label, gbc_label);
+		
+				button_11 = new JButton("Value");
+				GridBagConstraints gbc_button_11 = new GridBagConstraints();
+				gbc_button_11.fill = GridBagConstraints.HORIZONTAL;
+				gbc_button_11.insets = new Insets(0, 0, 5, 5);
+				gbc_button_11.gridx = 3;
+				gbc_button_11.gridy = 0;
+				add(button_11, gbc_button_11);
+				button_11.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						new Thread(new AudioPlayer(supplements.get("snd_23"))).start();
+					}
+				});
+		
 		lblNewLabel = new JLabel("Value:"+qhd.value+"000");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
@@ -123,30 +168,6 @@ public class FiberOpticFieldTrip extends JPanel {
 		gbc_lblNewLabel.gridx = 4;
 		gbc_lblNewLabel.gridy = 0;
 		add(lblNewLabel, gbc_lblNewLabel);
-		
-		button = new JButton("Intro title");
-		GridBagConstraints gbc_button = new GridBagConstraints();
-		gbc_button.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button.insets = new Insets(0, 0, 5, 5);
-		gbc_button.gridx = 0;
-		gbc_button.gridy = 1;
-		add(button, gbc_button);
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_14"))).start();
-			}
-		});
-
-		label = new JLabel(qhd.title);
-		GridBagConstraints gbc_label = new GridBagConstraints();
-		gbc_label.anchor = GridBagConstraints.NORTH;
-		gbc_label.gridheight = 2;
-		gbc_label.gridwidth = 2;
-		gbc_label.fill = GridBagConstraints.HORIZONTAL;
-		gbc_label.insets = new Insets(0, 0, 5, 5);
-		gbc_label.gridx = 1;
-		gbc_label.gridy = 1;
-		add(label, gbc_label);
 		GridBagConstraints gbc_btnPlayTitle = new GridBagConstraints();
 		gbc_btnPlayTitle.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnPlayTitle.insets = new Insets(0, 0, 5, 5);
@@ -169,6 +190,27 @@ public class FiberOpticFieldTrip extends JPanel {
 				new Thread(new AudioPlayer(supplements.get("snd_2"))).start();
 			}
 		});
+		
+		btnIntro = new JButton("Intro 2");
+		GridBagConstraints gbc_btnIntro = new GridBagConstraints();
+		gbc_btnIntro.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnIntro.insets = new Insets(0, 0, 5, 5);
+		gbc_btnIntro.gridx = 0;
+		gbc_btnIntro.gridy = 2;
+		add(btnIntro, gbc_btnIntro);
+		btnIntro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new Thread(new AudioPlayer(supplements.get("snd_16"))).start();
+			}
+		});
+		
+		label_3 = new JLabel(new String(supplements.get("STR_9")));
+		GridBagConstraints gbc_label_3 = new GridBagConstraints();
+		gbc_label_3.fill = GridBagConstraints.HORIZONTAL;
+		gbc_label_3.insets = new Insets(0, 0, 5, 5);
+		gbc_label_3.gridx = 1;
+		gbc_label_3.gridy = 2;
+		add(label_3, gbc_label_3);
 		GridBagConstraints gbc_btnPlaypreamble = new GridBagConstraints();
 		gbc_btnPlaypreamble.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnPlaypreamble.insets = new Insets(0, 0, 5, 5);
@@ -193,27 +235,18 @@ public class FiberOpticFieldTrip extends JPanel {
 		gbc_Qtext.gridy = 2;
 		add(Qtext, gbc_Qtext);
 		
-		button_5 = new JButton("Location 1");
-		GridBagConstraints gbc_button_5 = new GridBagConstraints();
-		gbc_button_5.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_5.insets = new Insets(0, 0, 5, 5);
-		gbc_button_5.gridx = 0;
-		gbc_button_5.gridy = 3;
-		add(button_5, gbc_button_5);
-		button_5.addActionListener(new ActionListener() {
+		button_7 = new JButton("Call 1");
+		GridBagConstraints gbc_button_7 = new GridBagConstraints();
+		gbc_button_7.fill = GridBagConstraints.HORIZONTAL;
+		gbc_button_7.insets = new Insets(0, 0, 5, 5);
+		gbc_button_7.gridx = 0;
+		gbc_button_7.gridy = 3;
+		add(button_7, gbc_button_7);
+		button_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_15"))).start();
+				new Thread(new AudioPlayer(supplements.get("snd_20"))).start();
 			}
 		});
-		
-				label_1 = new JLabel(new String(supplements.get("STR_7")));
-				GridBagConstraints gbc_label_1 = new GridBagConstraints();
-				gbc_label_1.fill = GridBagConstraints.HORIZONTAL;
-				gbc_label_1.gridwidth = 2;
-				gbc_label_1.insets = new Insets(0, 0, 5, 5);
-				gbc_label_1.gridx = 1;
-				gbc_label_1.gridy = 3;
-				add(label_1, gbc_label_1);
 		GridBagConstraints gbc_btnPlayQ = new GridBagConstraints();
 		gbc_btnPlayQ.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnPlayQ.insets = new Insets(0, 0, 5, 5);
@@ -228,27 +261,18 @@ public class FiberOpticFieldTrip extends JPanel {
 			}
 		});
 		
-		button_6 = new JButton("Location 2");
-		GridBagConstraints gbc_button_6 = new GridBagConstraints();
-		gbc_button_6.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_6.insets = new Insets(0, 0, 5, 5);
-		gbc_button_6.gridx = 0;
-		gbc_button_6.gridy = 4;
-		add(button_6, gbc_button_6);
-		button_6.addActionListener(new ActionListener() {
+		button_8 = new JButton("Call 2");
+		GridBagConstraints gbc_button_8 = new GridBagConstraints();
+		gbc_button_8.fill = GridBagConstraints.HORIZONTAL;
+		gbc_button_8.insets = new Insets(0, 0, 5, 5);
+		gbc_button_8.gridx = 0;
+		gbc_button_8.gridy = 4;
+		add(button_8, gbc_button_8);
+		button_8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_16"))).start();
+				new Thread(new AudioPlayer(supplements.get("snd_17"))).start();
 			}
 		});
-		
-				label_2 = new JLabel(new String(supplements.get("STR_8")));
-				GridBagConstraints gbc_label_2 = new GridBagConstraints();
-				gbc_label_2.fill = GridBagConstraints.HORIZONTAL;
-				gbc_label_2.gridwidth = 2;
-				gbc_label_2.insets = new Insets(0, 0, 5, 5);
-				gbc_label_2.gridx = 1;
-				gbc_label_2.gridy = 4;
-				add(label_2, gbc_label_2);
 		GridBagConstraints gbc_btnAnswers = new GridBagConstraints();
 		gbc_btnAnswers.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnAnswers.insets = new Insets(0, 0, 5, 5);
@@ -263,27 +287,18 @@ public class FiberOpticFieldTrip extends JPanel {
 			}
 		});
 		
-		button_7 = new JButton("Call 1");
-		GridBagConstraints gbc_button_7 = new GridBagConstraints();
-		gbc_button_7.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_7.insets = new Insets(0, 0, 5, 5);
-		gbc_button_7.gridx = 0;
-		gbc_button_7.gridy = 5;
-		add(button_7, gbc_button_7);
-		button_7.addActionListener(new ActionListener() {
+		button_14 = new JButton("Call 3");
+		GridBagConstraints gbc_button_14 = new GridBagConstraints();
+		gbc_button_14.fill = GridBagConstraints.HORIZONTAL;
+		gbc_button_14.insets = new Insets(0, 0, 5, 5);
+		gbc_button_14.gridx = 0;
+		gbc_button_14.gridy = 5;
+		add(button_14, gbc_button_14);
+		button_14.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_20"))).start();
+				new Thread(new AudioPlayer(supplements.get("snd_27"))).start();
 			}
 		});
-		
-		label_3 = new JLabel(new String(supplements.get("STR_9")));
-		GridBagConstraints gbc_label_3 = new GridBagConstraints();
-		gbc_label_3.fill = GridBagConstraints.HORIZONTAL;
-		gbc_label_3.gridwidth = 2;
-		gbc_label_3.insets = new Insets(0, 0, 5, 5);
-		gbc_label_3.gridx = 1;
-		gbc_label_3.gridy = 5;
-		add(label_3, gbc_label_3);
 
 		GridBagConstraints gbc_button_1 = new GridBagConstraints();
 		gbc_button_1.fill = GridBagConstraints.HORIZONTAL;
@@ -308,30 +323,16 @@ public class FiberOpticFieldTrip extends JPanel {
 			}
 		});
 		
-		button_8 = new JButton("Call 2");
-		GridBagConstraints gbc_button_8 = new GridBagConstraints();
-		gbc_button_8.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_8.insets = new Insets(0, 0, 5, 5);
-		gbc_button_8.gridx = 0;
-		gbc_button_8.gridy = 6;
-		add(button_8, gbc_button_8);
-		button_8.addActionListener(new ActionListener() {
+		button_15 = new JButton("Call 4");
+		GridBagConstraints gbc_button_15 = new GridBagConstraints();
+		gbc_button_15.fill = GridBagConstraints.HORIZONTAL;
+		gbc_button_15.insets = new Insets(0, 0, 5, 5);
+		gbc_button_15.gridx = 0;
+		gbc_button_15.gridy = 6;
+		add(button_15, gbc_button_15);
+		button_15.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_17"))).start();
-			}
-		});
-
-		button_10 = new JButton("Return to Q");
-		GridBagConstraints gbc_button_10 = new GridBagConstraints();
-		gbc_button_10.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_10.insets = new Insets(0, 0, 5, 5);
-		gbc_button_10.gridx = 1;
-		gbc_button_10.gridy = 6;
-		add(button_10, gbc_button_10);
-		
-		button_10.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_18"))).start();
+				new Thread(new AudioPlayer(supplements.get("snd_28"))).start();
 			}
 		});
 
@@ -358,29 +359,16 @@ public class FiberOpticFieldTrip extends JPanel {
 			}
 		});
 		
-		button_14 = new JButton("Call 3");
-		GridBagConstraints gbc_button_14 = new GridBagConstraints();
-		gbc_button_14.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_14.insets = new Insets(0, 0, 5, 5);
-		gbc_button_14.gridx = 0;
-		gbc_button_14.gridy = 7;
-		add(button_14, gbc_button_14);
-		button_14.addActionListener(new ActionListener() {
+		button_16 = new JButton("Call 5");
+		GridBagConstraints gbc_button_16 = new GridBagConstraints();
+		gbc_button_16.fill = GridBagConstraints.HORIZONTAL;
+		gbc_button_16.insets = new Insets(0, 0, 5, 5);
+		gbc_button_16.gridx = 0;
+		gbc_button_16.gridy = 7;
+		add(button_16, gbc_button_16);
+		button_16.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_27"))).start();
-			}
-		});
-
-		button_9 = new JButton("Reintroduce");
-		GridBagConstraints gbc_button_9 = new GridBagConstraints();
-		gbc_button_9.anchor = GridBagConstraints.WEST;
-		gbc_button_9.insets = new Insets(0, 0, 5, 5);
-		gbc_button_9.gridx = 1;
-		gbc_button_9.gridy = 7;
-		add(button_9, gbc_button_9);
-		button_9.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_22"))).start();
+				new Thread(new AudioPlayer(supplements.get("snd_29"))).start();
 			}
 		});
 
@@ -407,29 +395,16 @@ public class FiberOpticFieldTrip extends JPanel {
 			}
 		});
 		
-		button_15 = new JButton("Call 4");
-		GridBagConstraints gbc_button_15 = new GridBagConstraints();
-		gbc_button_15.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_15.insets = new Insets(0, 0, 5, 5);
-		gbc_button_15.gridx = 0;
-		gbc_button_15.gridy = 8;
-		add(button_15, gbc_button_15);
-		button_15.addActionListener(new ActionListener() {
+		button_17 = new JButton("Call 6");
+		GridBagConstraints gbc_button_17 = new GridBagConstraints();
+		gbc_button_17.fill = GridBagConstraints.HORIZONTAL;
+		gbc_button_17.insets = new Insets(0, 0, 5, 5);
+		gbc_button_17.gridx = 0;
+		gbc_button_17.gridy = 8;
+		add(button_17, gbc_button_17);
+		button_17.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_28"))).start();
-			}
-		});
-
-		button_11 = new JButton("Value");
-		GridBagConstraints gbc_button_11 = new GridBagConstraints();
-		gbc_button_11.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_11.insets = new Insets(0, 0, 5, 5);
-		gbc_button_11.gridx = 1;
-		gbc_button_11.gridy = 8;
-		add(button_11, gbc_button_11);
-		button_11.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_23"))).start();
+				new Thread(new AudioPlayer(supplements.get("snd_21"))).start();
 			}
 		});
 
@@ -450,36 +425,37 @@ public class FiberOpticFieldTrip extends JPanel {
 		gbc_txt4.gridy = 8;
 		add(txt4, gbc_txt4);
 		
-		button_16 = new JButton("Call 5");
-		GridBagConstraints gbc_button_16 = new GridBagConstraints();
-		gbc_button_16.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_16.insets = new Insets(0, 0, 5, 5);
-		gbc_button_16.gridx = 0;
-		gbc_button_16.gridy = 9;
-		add(button_16, gbc_button_16);
-		button_16.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_29"))).start();
-			}
-		});
-		
 		btnAllWrongAnswers = new JButton("Play 'all wrong' audio");
 		btnAllWrongAnswers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new Thread(new AudioPlayer(supplements.get("snd_11"))).start();
 			}
 		});
+						
+								button_10 = new JButton("Return to Q");
+								GridBagConstraints gbc_button_10 = new GridBagConstraints();
+								gbc_button_10.fill = GridBagConstraints.HORIZONTAL;
+								gbc_button_10.insets = new Insets(0, 0, 5, 5);
+								gbc_button_10.gridx = 0;
+								gbc_button_10.gridy = 9;
+								add(button_10, gbc_button_10);
+								
+								button_10.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent arg0) {
+										new Thread(new AudioPlayer(supplements.get("snd_18"))).start();
+									}
+								});
 				
-						button_12 = new JButton("End Game");
-						GridBagConstraints gbc_button_12 = new GridBagConstraints();
-						gbc_button_12.fill = GridBagConstraints.HORIZONTAL;
-						gbc_button_12.insets = new Insets(0, 0, 5, 5);
-						gbc_button_12.gridx = 3;
-						gbc_button_12.gridy = 9;
-						add(button_12, gbc_button_12);
-						button_12.addActionListener(new ActionListener() {
+						button_13 = new JButton("Hangup");
+						GridBagConstraints gbc_button_13 = new GridBagConstraints();
+						gbc_button_13.fill = GridBagConstraints.HORIZONTAL;
+						gbc_button_13.insets = new Insets(0, 0, 5, 5);
+						gbc_button_13.gridx = 3;
+						gbc_button_13.gridy = 9;
+						add(button_13, gbc_button_13);
+						button_13.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent arg0) {
-								new Thread(new AudioPlayer(supplements.get("snd_12"))).start();
+								new Thread(new AudioPlayer(supplements.get("snd_19"))).start();
 							}
 						});
 		
@@ -489,84 +465,95 @@ public class FiberOpticFieldTrip extends JPanel {
 				gbc_btnAllWrongAnswers.gridx = 4;
 				gbc_btnAllWrongAnswers.gridy = 9;
 				add(btnAllWrongAnswers, gbc_btnAllWrongAnswers);
-		
-		btnClosingRemark = new JButton("Closing remark");
-		btnClosingRemark.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new AudioPlayer(supplements.get("snd_6"))).start();
-			}
-		});
-		GridBagConstraints gbc_btnClosingRemark = new GridBagConstraints();
-		gbc_btnClosingRemark.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnClosingRemark.insets = new Insets(0, 0, 5, 0);
-		gbc_btnClosingRemark.gridx = 5;
-		gbc_btnClosingRemark.gridy = 9;
-		add(btnClosingRemark, gbc_btnClosingRemark);
-		
-		button_17 = new JButton("Call 6");
-		GridBagConstraints gbc_button_17 = new GridBagConstraints();
-		gbc_button_17.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_17.insets = new Insets(0, 0, 0, 5);
-		gbc_button_17.gridx = 0;
-		gbc_button_17.gridy = 10;
-		add(button_17, gbc_button_17);
-		button_17.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				new Thread(new AudioPlayer(supplements.get("snd_21"))).start();
-			}
-		});
-		
-		chckbxNewCheckBox = new JCheckBox("Show answer");
-		chckbxNewCheckBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				txt1.setForeground(Color.BLACK);
-				txt2.setForeground(Color.BLACK);
-				txt3.setForeground(Color.BLACK);
-				txt4.setForeground(Color.BLACK);
-				if (e.getStateChange() == ItemEvent.DESELECTED)
-				{
-				}
-				else
-				{
-					switch (qhd.answer)
-					{
-						case 1:
-						txt1.setForeground(Color.GREEN);
-						break;
-						case 2:
-						txt2.setForeground(Color.GREEN);
-						break;
-						case 3:
-						txt3.setForeground(Color.GREEN);
-						break;
-						case 4:
-						txt4.setForeground(Color.GREEN);
-						break;
 						
-					}
-				}
-			}
-		});
-				
-						button_13 = new JButton("Hangup");
-						GridBagConstraints gbc_button_13 = new GridBagConstraints();
-						gbc_button_13.fill = GridBagConstraints.HORIZONTAL;
-						gbc_button_13.insets = new Insets(0, 0, 0, 5);
-						gbc_button_13.gridx = 3;
-						gbc_button_13.gridy = 10;
-						add(button_13, gbc_button_13);
-						button_13.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent arg0) {
-								new Thread(new AudioPlayer(supplements.get("snd_19"))).start();
+						btnClosingRemark = new JButton("Closing remark");
+						btnClosingRemark.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								new Thread(new AudioPlayer(supplements.get("snd_6"))).start();
 							}
 						});
-		
-				GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
-				gbc_chckbxNewCheckBox.fill = GridBagConstraints.HORIZONTAL;
-				gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 0, 5);
-				gbc_chckbxNewCheckBox.gridx = 4;
-				gbc_chckbxNewCheckBox.gridy = 10;
-				add(chckbxNewCheckBox, gbc_chckbxNewCheckBox);
+						
+								button_12 = new JButton("End Game");
+								GridBagConstraints gbc_button_12 = new GridBagConstraints();
+								gbc_button_12.fill = GridBagConstraints.HORIZONTAL;
+								gbc_button_12.insets = new Insets(0, 0, 5, 0);
+								gbc_button_12.gridx = 5;
+								gbc_button_12.gridy = 9;
+								add(button_12, gbc_button_12);
+								button_12.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent arg0) {
+										new Thread(new AudioPlayer(supplements.get("snd_12"))).start();
+									}
+								});
+						
+								button_9 = new JButton("Reintroduce");
+								GridBagConstraints gbc_button_9 = new GridBagConstraints();
+								gbc_button_9.fill = GridBagConstraints.HORIZONTAL;
+								gbc_button_9.insets = new Insets(0, 0, 0, 5);
+								gbc_button_9.gridx = 0;
+								gbc_button_9.gridy = 10;
+								add(button_9, gbc_button_9);
+								button_9.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent arg0) {
+										new Thread(new AudioPlayer(supplements.get("snd_22"))).start();
+									}
+								});
+						
+						btnHangup = new JButton("Hangup 2");
+						GridBagConstraints gbc_btnHangup = new GridBagConstraints();
+						gbc_btnHangup.insets = new Insets(0, 0, 0, 5);
+						gbc_btnHangup.gridx = 3;
+						gbc_btnHangup.gridy = 10;
+						add(btnHangup, gbc_btnHangup);
+						btnHangup.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent arg0) {
+								new Thread(new AudioPlayer(supplements.get("snd_26"))).start();
+							}
+						});
+						GridBagConstraints gbc_btnClosingRemark = new GridBagConstraints();
+						gbc_btnClosingRemark.fill = GridBagConstraints.HORIZONTAL;
+						gbc_btnClosingRemark.insets = new Insets(0, 0, 0, 5);
+						gbc_btnClosingRemark.gridx = 4;
+						gbc_btnClosingRemark.gridy = 10;
+						add(btnClosingRemark, gbc_btnClosingRemark);
+						
+						chckbxNewCheckBox = new JCheckBox("Show answer");
+						chckbxNewCheckBox.addItemListener(new ItemListener() {
+							public void itemStateChanged(ItemEvent e) {
+								txt1.setForeground(Color.BLACK);
+								txt2.setForeground(Color.BLACK);
+								txt3.setForeground(Color.BLACK);
+								txt4.setForeground(Color.BLACK);
+								if (e.getStateChange() == ItemEvent.DESELECTED)
+								{
+								}
+								else
+								{
+									switch (qhd.answer)
+									{
+										case 1:
+										txt1.setForeground(Color.GREEN);
+										break;
+										case 2:
+										txt2.setForeground(Color.GREEN);
+										break;
+										case 3:
+										txt3.setForeground(Color.GREEN);
+										break;
+										case 4:
+										txt4.setForeground(Color.GREEN);
+										break;
+										
+									}
+								}
+							}
+						});
+						
+												GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
+												gbc_chckbxNewCheckBox.fill = GridBagConstraints.HORIZONTAL;
+												gbc_chckbxNewCheckBox.gridx = 5;
+												gbc_chckbxNewCheckBox.gridy = 10;
+												add(chckbxNewCheckBox, gbc_chckbxNewCheckBox);
 
 		if (qhd.titlea != null)
 		{

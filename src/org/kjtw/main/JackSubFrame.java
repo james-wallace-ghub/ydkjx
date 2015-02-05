@@ -3,18 +3,21 @@ package org.kjtw.main;
 public class JackSubFrame {
 
 	public JackSubFrame(int valflag, int xoffset, int yoffset, int xsize,
-			int ysize) {
-		this.sameoffset = valflag;
-		this.offsetx = xoffset;
-		this.offsety = yoffset;
-		this.sizex = xsize;
-		this.sizey = ysize;
+			int ysize, int frameimgs, int idx) {
+		this.valflag = valflag;
+		this.xoffset = xoffset;
+		this.yoffset = yoffset;
+		this.xsize = xsize;
+		this.ysize = ysize;
+		this.numimagesinframe = frameimgs;
+		this.idx=idx;
 	}
-	private int sameoffset;
-	private int offsetx;
-	private int offsety;
-	private int sizex;
-	private int sizey;
-	private int numimagesinframe;
+	public int valflag;
+	public int xoffset;
+	public int yoffset;
+	public int xsize;
+	public int ysize;
+	public int numimagesinframe;
+	public int idx;
 
 }
