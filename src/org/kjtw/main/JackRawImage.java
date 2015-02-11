@@ -2,10 +2,6 @@ package org.kjtw.main;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageIO;
 
 import com.kreative.ksfl.KSFLUtilities;
 
@@ -25,12 +21,12 @@ public class JackRawImage {
 	//Straight port of code from YDKJ.fr, just with sign hacking
 	private int[][] decodegfx(byte[] indata,int buflen,int width, int height) {
 		int[] infos = new int[3];
-		int[] buf = new int[307200];
-		
-		for (int i =0; i < 307200; i++)
-		{
-			buf[i] = (indata[i] & 0xff);
-		}
+//		int[] buf = new int[307200];
+//		
+//		for (int i =0; i < 307200; i++)
+//		{
+//			buf[i] = (indata[i] & 0xff);
+//		}
 		int[] bitmap = new int[309001];
 		long widebf;
 		long status;
@@ -45,19 +41,19 @@ public class JackRawImage {
 		int [][] output = new int[width][height];
 		l=0;
 		pos=0;
-		extrapixels=(buf[0])-2;
+		extrapixels=(indata[0]&0xff)-2;
 		bglength=-1;
-		nextbg=(buf[0])+(buf[1]);
+		nextbg=(indata[0]&0xff)+(indata[1]&0xff);
 		for (int i=0; i <3; i++)
 		{
-			    bitmap[l]=(buf[pos]);
+			    bitmap[l]=(indata[pos]&0xff);
 			    pos++;
 			    l++;
 		  }
 		  
 		  while ((l+extrapixels < buflen) && (l < 307200))
 		  {
-			  widebf=(buf[pos]);
+			  widebf=(indata[pos]&0xff);
 			  pos++;
 			  widebf=(widebf << 1) | 1;
 		    while ((widebf & 0xFF) != 0)
@@ -68,23 +64,23 @@ public class JackRawImage {
 		      {
 		        if ((l == nextbg-extrapixels) || (bglength != -1))
 		        {
-		        	if (bglength == -1) bglength=(buf[pos]); else
+		        	if (bglength == -1) bglength=(indata[pos]&0xff); else
 		        	{
 		        		extrapixels+=bglength-2;
-		        		nextbg+=bglength+(buf[pos]);
+		        		nextbg+=bglength+(indata[pos]&0xff);
 		            	bglength=-1;
 		        	}
 		        }
-		        bitmap[l]=(buf[pos]);
+		        bitmap[l]=(indata[pos]&0xff);
 		        pos++;
 		        l++;
 		      } else { // Répétition
-		        infos[0]=(buf[pos]);
+		        infos[0]=(indata[pos]&0xff);
 		        pos++;
-		        infos[1]=(buf[pos]);
+		        infos[1]=(indata[pos]&0xff);
 		        pos++;
 		        if ((infos[1] & 0xF0) == 0 ){ // Répétition à 3 octets
-		          infos[2]=(buf[pos]);
+		          infos[2]=(indata[pos]&0xff);
 		          pos++;
 		          nbrepeat=infos[2]+0x10;
 		        } else { // Répétition à 2 octets

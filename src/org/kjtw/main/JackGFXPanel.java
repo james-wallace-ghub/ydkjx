@@ -16,7 +16,7 @@ public class JackGFXPanel extends JPanel {
 	private boolean scaleflag = false;
 	public JackGFXPanel(BufferedImage imgout) {
 		image = imgout;
-		if ( (imgout.getWidth() >639)|| (imgout.getHeight() >479))
+		if ( (imgout.getWidth() >499)|| (imgout.getHeight() >374))
 		{
 			scaleflag=true;
 		}
@@ -27,7 +27,7 @@ public class JackGFXPanel extends JPanel {
         super.paintComponent(g);
         if (scaleflag)
         {
-        	g.drawImage(image,0,0,640,480,null);
+        	g.drawImage(image,0,0,500,375,null);
         }
         else
         {

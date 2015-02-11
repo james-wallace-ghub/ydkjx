@@ -252,7 +252,7 @@ public class QHeaderLoader implements TreeSelectionListener {
               QHeader qdat = qhp.getTable().get(node.toString());
               if (qdat!= null)
               {
-            	  lblResourcesInSrf.setText(qdat.getPath().substring(qdat.getPath().indexOf("QF")));
+            	  lblResourcesInSrf.setText(qdat.getPath());
             	  frmYdkjExtractor.getContentPane().remove(panel_1); 
               
                   panel_1 = new JPanel(new CardLayout());

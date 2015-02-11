@@ -14,7 +14,6 @@ import com.kreative.ksfl.KSFLUtilities;
 import com.kreative.rsrc.BerkeleyResourceFile;
 import com.kreative.rsrc.MacResource;
 import com.kreative.rsrc.MacResourceFile;
-import com.kreative.rsrc.SoundResource;
 import com.kreative.rsrc.StringListResource;
 
 public class SRFProcess {
@@ -26,7 +25,6 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	BerkeleyResourceFile rp;
 	public SRFProcess(File file) throws IOException
 	{
-		boolean showanswer = true;
 	    DefaultMutableTreeNode top = new DefaultMutableTreeNode("Resources");
         
 		RandomAccessFile raf = null;
@@ -63,7 +61,11 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	    					{
     							MacResource r = rp.get(type, id);
     							stuff = r.data;
-    							
+    							String tempdata="";
+    							for (int i=0; i < stuff.length;i++)
+    							{
+    								tempdata+=stuff[i];
+    							}
         						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+id);
         						ti.add(ti2);
 
@@ -195,7 +197,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
     								}
     								else
     								{
-    									sb.append("Code "+stuff[seekval]+" (Contact Support)"+System.lineSeparator());
+    									sb.append("Code "+stuff[seekval]+" (Contact jackofallplatforms@gmail.com)"+System.lineSeparator());
     								}
     								seekval++;
     								sb.append("Format :");
@@ -237,13 +239,12 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
     	    									sb.append("Guest Host Question"+System.lineSeparator());    											
     	    									break;
     										}
-
     									}    								
     								}
-    								
     						}
 		    					stuff = sb.toString().getBytes();
 			    				recalldata.put(ftype+'_'+id, stuff);    								
+			    				recallsave.put(ftype+'_'+id, tempdata.getBytes());    								
 								if (!parents.containsKey(ftype))
 								{
 									parents.put(ftype, "template");
@@ -271,8 +272,6 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 									parents.put(ftype, "template");
 								}
 	    					}
-	    					
-	    					
    						}
     					else if (ftype.equals("qhdr"))
    						{
@@ -358,7 +357,6 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
         						        						
         						String title = new String(titleconst, "MACROMAN").trim().replaceAll("\\{", "").replaceAll("\u2211" , "ß");
         						
-        						
         						byte[] pathconst = KSFLUtilities.copy(stuff, 81, 63);
         						String oldpath = new String(pathconst, "MACROMAN").trim();        						
         						String path = oldpath.replace(':', File.separatorChar);
@@ -373,10 +371,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
         								"Round 1 Value ="+value+",000"+System.lineSeparator()+
         								"Question type ="+qtypedef+System.lineSeparator()+
         								"Subtype ="+subtypedef+System.lineSeparator();
-        						if (showanswer)
-        						{
         							qdata +="Correct answer number ="+rightanswer+System.lineSeparator();
-        						}
         						String forcing="";
         						String forced="";
         						if (stuff.length >152)
@@ -429,18 +424,49 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	    							if (( ftype.equals("3SEx") || ftype.contains("#")) && !ftype.equals("ANS#"))
 	    							{
 	    								StringListResource rstr = r.shallowRecast(StringListResource.class);
-	    								String[] strs = rstr.getStrings("MACROMAN");
-	    								String master="";
-	    								for (String result : strs)
+	    								if (rstr.getStringCount() ==0)
 	    								{
-	    									master+=result.trim().replaceAll("\\{", "").replaceAll("\u2211" , "ß")+System.lineSeparator();
+		    								int numstrings = KSFLUtilities.getInt(r.data, 0);
+		    								int seekpos = 4;
+		    								String master="";
+		    								for (int i=0; i < numstrings; i++)
+		    								{
+		    									int numchars = KSFLUtilities.getByte(r.data, seekpos);
+		    									seekpos++;
+		    									master+=new String(KSFLUtilities.copy(r.data, seekpos, numchars),"MACROMAN");
+		    									master+=System.lineSeparator();
+		    									seekpos+=numchars;
+		    								}
+		    								master = master.replaceAll("\\{", "").replaceAll("\u2211" , "ß")+System.lineSeparator();
+		    								stuff=master.getBytes();
+		    							}
+	    								else
+	    								{
+		    								String[] strs = rstr.getStrings("MACROMAN");
+		    								String master="";
+		    								for (String result : strs)
+		    								{
+		    									master+=result.trim().replaceAll("\\{", "").replaceAll("\u2211" , "ß")+System.lineSeparator();
+		    								}
+		    								stuff=master.getBytes();
 	    								}
-	    								stuff=master.getBytes();
 	    								if (!parents.containsKey(ftype))
 	    								{
 	    									parents.put(ftype, "string");
 	    								}
-	    
+	    							}
+	    							if (ftype.equals("ANS#"))
+	    							{
+	    								String ans = "";
+	    								for (int i=0; i < r.data.length;i++)
+	    								{
+	    									ans+=r.data[i];
+	    								}
+	    								stuff = ans.getBytes();
+	    								if (!parents.containsKey(ftype))
+	    								{
+	    									parents.put(ftype, "string");
+	    								}	
 	    							}
 	    							if (isstring(stuff))
 	    							{
@@ -480,6 +506,10 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	}		
 	private static boolean isstring(byte[] stuff) 
 	{
+		if (stuff.length ==0)
+		{
+			return false;
+		}
 		if (( stuff.length > 5) && isaudio(stuff))
 		{
 			return false;
@@ -520,13 +550,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 			return false;
 		}
 	}
-	public byte[] toAIFF(SoundResource r) {
-		return r.toAiff();
-}
 	
-	public byte[] convert(SoundResource r) {
-		return r.toWav();
-	}
 	public JTree getTree() {
 		return tree;
 	}

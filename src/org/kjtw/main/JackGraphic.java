@@ -29,7 +29,18 @@ public class JackGraphic {
 
 	public String getJS()
 	{
-		return tilestring+System.lineSeparator()+framestring;
+		StringBuilder out = new StringBuilder();
+		if (tilestring == null)
+		{
+			out.append("");
+		}
+		else
+		{
+			out.append(tilestring);
+		}
+		out.append(System.lineSeparator());
+		out.append(framestring);
+		return out.toString();
 	}
 	public void SetPalette(String in)
 	{
@@ -57,7 +68,7 @@ public class JackGraphic {
 		fpsnum = KSFLUtilities.getShort(data, 4);
 		fpsden = KSFLUtilities.getShort(data, 6);
 		jri = (new ArrayList <JackRawImage>());
-
+		int max = data.length -12;
 		fps = fpsnum/fpsden;
 		frames =KSFLUtilities.getShort(data, 8);
 		int seekpos =10;
@@ -79,47 +90,65 @@ public class JackGraphic {
 				{
 					oldseek = seekpos;
 					seekpos = (10+frames*2+(frameoffset-1)*12);
-					int sameoffset = KSFLUtilities.getShort(data, seekpos);
-					seekpos+=2;
-					int xoffset = KSFLUtilities.getShort(data, seekpos);
-					seekpos+=2;
-					int yoffset = KSFLUtilities.getShort(data, seekpos);
-					seekpos+=2;
-					int xsize = KSFLUtilities.getShort(data, seekpos);
-					seekpos+=2;
-					int ysize = KSFLUtilities.getShort(data, seekpos);
-					seekpos+=2;
-					int frameimgs =  KSFLUtilities.getShort(data, seekpos);
-					seekpos+=2;
-					jsflist.add(new JackSubFrame(0,xoffset,yoffset,xsize,ysize,frameimgs,0));
+					int sameoffset,frameimgs;
+					try
+					{
+						sameoffset = KSFLUtilities.getShort(data, seekpos);
+						seekpos+=2;
+						int xoffset = KSFLUtilities.getShort(data, seekpos);
+						seekpos+=2;
+						int yoffset = KSFLUtilities.getShort(data, seekpos);
+						seekpos+=2;
+						int xsize = KSFLUtilities.getShort(data, seekpos);
+						seekpos+=2;
+						int ysize = KSFLUtilities.getShort(data, seekpos);
+						seekpos+=2;
+						frameimgs =  KSFLUtilities.getShort(data, seekpos);
+						seekpos+=2;
+						jsflist.add(new JackSubFrame(0,xoffset,yoffset,xsize,ysize,frameimgs,0));
+					}
+					catch(Exception e)
+					{
+						break;
+					}
 					if (sameoffset !=0)
 					{
 						seekpos = (10+frames*2+(sameoffset)*12);
+						if ( (seekpos < 0 ) || (seekpos > (max) ))
+						{
+							break;
+						}
 					}
 					if (frameimgs > 0)
 					{
 						for (int j =1; (j < frameimgs+1); j++)
 						{
-							int subimgnum = KSFLUtilities.getByte(data, seekpos);
-							seekpos++;
-							int valflag= KSFLUtilities.getByte(data, seekpos);//what is this?
-							seekpos++;
-							int xoffs = KSFLUtilities.getShort(data, seekpos);
-							seekpos+=2;
-							int yoffs = KSFLUtilities.getShort(data, seekpos);
-							seekpos+=2;
-							int xs = KSFLUtilities.getShort(data, seekpos);
-							seekpos+=2;
-							int ys = KSFLUtilities.getShort(data, seekpos);
-							seekpos+=2;
-							int idx =  KSFLUtilities.getShort(data, seekpos);
-							seekpos+=2;
-							jsflist.add(new JackSubFrame(valflag,xoffs,yoffs,xs,ys,0,idx));
-						}
+							try
+							{
+								int subimgnum = KSFLUtilities.getByte(data, seekpos);
+								seekpos++;
+								int valflag= KSFLUtilities.getByte(data, seekpos);//what is this?
+								seekpos++;
+								int xoffs = KSFLUtilities.getShort(data, seekpos);
+								seekpos+=2;
+								int yoffs = KSFLUtilities.getShort(data, seekpos);
+								seekpos+=2;
+								int xs = KSFLUtilities.getShort(data, seekpos);
+								seekpos+=2;
+								int ys = KSFLUtilities.getShort(data, seekpos);
+								seekpos+=2;
+								int idx =  KSFLUtilities.getShort(data, seekpos);
+								seekpos+=2;
+								jsflist.add(new JackSubFrame(valflag,xoffs,yoffs,xs,ys,0,idx));
+							}
+							catch(Exception e)
+							{
+								break;
+							}
 						seekpos =oldseek;
 					}
 				}
-				
+				}
 				visframes.add(new JackFrame(jsflist));
 			}
 		}
@@ -143,7 +172,6 @@ public class JackGraphic {
 				jri.add(new JackRawImage(data,offset,width,height));
 			}
 		}
-		
 		StringBuilder fs = new StringBuilder("res['frames']=[");
 		for (JackFrame jf : visframes)
 		{
@@ -184,40 +212,43 @@ public class JackGraphic {
 	
 	public BufferedImage toGif(Color[] pal)
 	{
-		int maxwidth = 0, maxheight = 0;
-		for (JackRawImage j : getJri())
 		{
-			if (j.getWidth() > maxwidth)
-			{
-				maxwidth = j.getWidth();
-			}
-			maxheight += j.getHeight();
-		}
-		maxheight += getJri().size();
-		
-		if ((maxwidth > 0) && (maxheight >0))
-		{
-			BufferedImage out = new BufferedImage(maxwidth,maxheight, BufferedImage.TYPE_INT_ARGB);
-			StringBuilder js = new StringBuilder();
-			js.append("res['tiles']=new Array();");
-			int realx=0, realy=0;
-			int off4pos =0;
+			int maxwidth = 0, maxheight = 0;
+			
 			for (JackRawImage j : getJri())
 			{
-				int w = j.getWidth();
-				int h = j.getHeight();
-				
-				js.append("res['tiles']["+off4pos+"]={x:"+realx+",y:"+realy+",w:"+w+",h:"+h+"};");
-				out.createGraphics().drawImage(j.getImgout(pal),null,0,realy);
-				realy+= h+1;
-				off4pos++;
+				if (j.getWidth() > maxwidth)
+				{
+					maxwidth = j.getWidth();
+				}
+				maxheight += j.getHeight();
 			}
-			tilestring = js.toString();
-			return out;
-		}
-		else
-		{
-			return new BufferedImage (1,1, BufferedImage.TYPE_INT_ARGB);
+			maxheight += getJri().size();
+			
+			if ((maxwidth > 0) && (maxheight >0))
+			{
+				BufferedImage out = new BufferedImage(maxwidth,maxheight, BufferedImage.TYPE_INT_ARGB);
+				StringBuilder js = new StringBuilder();
+				js.append("res['tiles']=new Array();");
+				int realx=0, realy=0;
+				int off4pos =0;
+				for (JackRawImage j : getJri())
+				{
+					int w = j.getWidth();
+					int h = j.getHeight();
+					
+					js.append("res['tiles']["+off4pos+"]={x:"+realx+",y:"+realy+",w:"+w+",h:"+h+"};");
+					out.createGraphics().drawImage(j.getImgout(pal),null,0,realy);
+					realy+= h+1;
+					off4pos++;
+				}
+				tilestring = js.toString();
+				return out;
+			}
+			else
+			{
+				return new BufferedImage (1,1, BufferedImage.TYPE_INT_ARGB);
+			}
 		}
 	}
 }

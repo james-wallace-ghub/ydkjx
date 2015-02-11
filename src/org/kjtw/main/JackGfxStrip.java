@@ -1,5 +1,6 @@
 package org.kjtw.main;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
@@ -10,12 +11,17 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextPane;
+import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 
 public class JackGfxStrip extends JPanel implements ActionListener {
 	/**
@@ -35,20 +41,87 @@ public class JackGfxStrip extends JPanel implements ActionListener {
 	private JRadioButton rdbtnHeadrushPalette;
 	private JRadioButton rdbtnOffline;
 	private JRadioButton rdbtnLff;
+	private JScrollPane scrollPane;
+	private JTextPane textPane;
+	private JToggleButton tglbtnShowJs;
 	/**
 	 * @wbp.parser.constructor
 	 */
 	public JackGfxStrip(JackGraphic jg) {
+
 		jgfx=jg;
 		this.list=jgfx.getJri();
 		canvascount=0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{68, 63, 58, 79, 57, 58, 0, 60, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[]{68, 71, 87, 79, 79, 58, 94, 79, 0};
+		gridBagLayout.rowHeights = new int[]{0, 375, 0, 81, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		currentimage = list.get(0).getImgout(jgfx.GetPalette());
+		final JLabel lblFrameCount = new JLabel("Canvas "+(canvascount+1)+" of "+list.size());
+		GridBagConstraints gbc_lblFrameCount = new GridBagConstraints();
+		gbc_lblFrameCount.gridwidth = 3;
+		gbc_lblFrameCount.insets = new Insets(0, 0, 5, 5);
+		gbc_lblFrameCount.gridx = 2;
+		gbc_lblFrameCount.gridy = 2;
+		add(lblFrameCount, gbc_lblFrameCount);
+		
+				JButton button = new JButton("< 5");
+				button.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						canvascount -=5;
+						if (canvascount <0)
+						{
+							canvascount =0;
+						}
+						currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
+						panel.setImage(currentimage);
+						lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
+						panel.revalidate();
+					}
+				});
+				GridBagConstraints gbc_button = new GridBagConstraints();
+				gbc_button.fill = GridBagConstraints.HORIZONTAL;
+				gbc_button.insets = new Insets(0, 0, 5, 5);
+				gbc_button.gridx = 0;
+				gbc_button.gridy = 2;
+				add(button, gbc_button);
+		
+		JButton button_1 = new JButton("< 1");
+		button_1.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				canvascount --;
+				if (canvascount <0)
+				{
+					canvascount =0;
+				}
+				currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
+				panel.setImage(currentimage);
+				lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
+				panel.revalidate();
+			}
+		});
+		GridBagConstraints gbc_button_1 = new GridBagConstraints();
+		gbc_button_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_button_1.insets = new Insets(0, 0, 5, 5);
+		gbc_button_1.gridx = 1;
+		gbc_button_1.gridy = 2;
+		add(button_1, gbc_button_1);
+
+		if (list.isEmpty())
+		{
+			try {
+				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+				InputStream input = classLoader.getResourceAsStream("org/kjtw/resources/nodice.png");
+			    currentimage = ImageIO.read(input);
+			} catch (IOException e) {
+			}
+		}
+		else
+		{
+			currentimage = list.get(0).getImgout(jgfx.GetPalette());
+		}
 		
 		JLabel lblPalette = new JLabel("Palette:");
 		GridBagConstraints gbc_lblPalette = new GridBagConstraints();
@@ -140,97 +213,87 @@ public class JackGfxStrip extends JPanel implements ActionListener {
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 1;
 		add(panel, gbc_panel);
+				
+				
+				JButton button_3 = new JButton("> 1");
+				button_3.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						canvascount ++;
+						if (canvascount >list.size()-1)
+						{
+							canvascount =list.size()-1;
+						}
+						currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
+						panel.setImage(currentimage);
+						lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
+						panel.revalidate();
+					}
+				});
+				
 
-		final JLabel lblFrameCount = new JLabel("Canvas "+(canvascount+1)+" of "+list.size());
-		GridBagConstraints gbc_lblFrameCount = new GridBagConstraints();
-		gbc_lblFrameCount.gridwidth = 4;
-		gbc_lblFrameCount.insets = new Insets(0, 0, 0, 5);
-		gbc_lblFrameCount.gridx = 2;
-		gbc_lblFrameCount.gridy = 2;
-		add(lblFrameCount, gbc_lblFrameCount);
+				GridBagConstraints gbc_button_3 = new GridBagConstraints();
+				gbc_button_3.fill = GridBagConstraints.HORIZONTAL;
+				gbc_button_3.insets = new Insets(0, 0, 5, 5);
+				gbc_button_3.gridx = 5;
+				gbc_button_3.gridy = 2;
+				add(button_3, gbc_button_3);
+				
+				JButton button_2 = new JButton("> 5");
+				button_2.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						canvascount +=5;
+						if (canvascount >list.size()-1)
+						{
+							canvascount =list.size()-1;
+						}
+						currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
+						panel.setImage(currentimage);
+						lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
+						panel.revalidate();
+					}
+				});
+				
+						GridBagConstraints gbc_button_2 = new GridBagConstraints();
+						gbc_button_2.insets = new Insets(0, 0, 5, 5);
+						gbc_button_2.fill = GridBagConstraints.HORIZONTAL;
+						gbc_button_2.gridx = 6;
+						gbc_button_2.gridy = 2;
+						add(button_2, gbc_button_2);
+				
+				
+				scrollPane = new JScrollPane();
+				GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+				gbc_scrollPane.gridwidth = 8;
+				gbc_scrollPane.fill = GridBagConstraints.BOTH;
+				gbc_scrollPane.gridx = 0;
+				gbc_scrollPane.gridy = 3;
+				add(scrollPane, gbc_scrollPane);
+				
+				textPane = new JTextPane();
+				textPane.setEditable(false);
+				scrollPane.setViewportView(textPane);
+				
+				tglbtnShowJs = new JToggleButton("Show JS");
+				tglbtnShowJs.setSelected(false);
+				tglbtnShowJs.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (tglbtnShowJs.isSelected())
+						{
+							textPane.setText(jgfx.getJS());
+							
+						}
+						else
+						{
+							textPane.setText("");
+						}
+					}
+				});
+				GridBagConstraints gbc_tglbtnShowJs = new GridBagConstraints();
+				gbc_tglbtnShowJs.insets = new Insets(0, 0, 5, 0);
+				gbc_tglbtnShowJs.gridx = 7;
+				gbc_tglbtnShowJs.gridy = 2;
+				add(tglbtnShowJs, gbc_tglbtnShowJs);
 
-		JButton button = new JButton("< 5");
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				canvascount -=5;
-				if (canvascount <0)
-				{
-					canvascount =0;
-				}
-				currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
-				panel.setImage(currentimage);
-				lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
-				panel.revalidate();
-			}
-		});
-		GridBagConstraints gbc_button = new GridBagConstraints();
-		gbc_button.insets = new Insets(0, 0, 0, 5);
-		gbc_button.gridx = 0;
-		gbc_button.gridy = 2;
-		add(button, gbc_button);
-		
-		JButton button_1 = new JButton("< 1");
-		button_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				canvascount --;
-				if (canvascount <0)
-				{
-					canvascount =0;
-				}
-				currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
-				panel.setImage(currentimage);
-				lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
-				panel.revalidate();
-			}
-		});
-		GridBagConstraints gbc_button_1 = new GridBagConstraints();
-		gbc_button_1.insets = new Insets(0, 0, 0, 5);
-		gbc_button_1.gridx = 1;
-		gbc_button_1.gridy = 2;
-		add(button_1, gbc_button_1);
-		
-		JButton button_2 = new JButton("> 5");
-		button_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				canvascount +=5;
-				if (canvascount >list.size()-1)
-				{
-					canvascount =list.size()-1;
-				}
-				currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
-				panel.setImage(currentimage);
-				lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
-				panel.revalidate();
-			}
-		});
-		
-		JButton button_3 = new JButton("> 1");
-		button_3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				canvascount ++;
-				if (canvascount >list.size()-1)
-				{
-					canvascount =list.size()-1;
-				}
-				currentimage = list.get(canvascount).getImgout(jgfx.GetPalette());
-				panel.setImage(currentimage);
-				lblFrameCount.setText("Canvas "+(canvascount+1)+" of "+list.size());
-				panel.revalidate();
-			}
-		});
-		
-
-		GridBagConstraints gbc_button_3 = new GridBagConstraints();
-		gbc_button_3.insets = new Insets(0, 0, 0, 5);
-		gbc_button_3.gridx = 6;
-		gbc_button_3.gridy = 2;
-		add(button_3, gbc_button_3);
-
-		GridBagConstraints gbc_button_2 = new GridBagConstraints();
-		gbc_button_2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_2.gridx = 7;
-		gbc_button_2.gridy = 2;
-		add(button_2, gbc_button_2);
 	}
 	public JackGfxStrip() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
