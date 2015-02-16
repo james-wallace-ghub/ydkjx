@@ -21,12 +21,6 @@ public class JackRawImage {
 	//Straight port of code from YDKJ.fr, just with sign hacking
 	private int[][] decodegfx(byte[] indata,int buflen,int width, int height) {
 		int[] infos = new int[3];
-//		int[] buf = new int[307200];
-//		
-//		for (int i =0; i < 307200; i++)
-//		{
-//			buf[i] = (indata[i] & 0xff);
-//		}
 		int[] bitmap = new int[309001];
 		long widebf;
 		long status;
@@ -144,6 +138,9 @@ public class JackRawImage {
 		return color.getRGB();
 	}
 
+	public int[][] getBitmap(){
+		return this.bitmap;		
+	}
 	public BufferedImage getImgout(Color[] palette) {
 		BufferedImage img = new BufferedImage(width,height, BufferedImage.TYPE_INT_ARGB);
 

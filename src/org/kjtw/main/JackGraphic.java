@@ -1,6 +1,7 @@
 package org.kjtw.main;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 import com.kreative.ksfl.KSFLUtilities;
 
@@ -30,14 +32,7 @@ public class JackGraphic {
 	public String getJS()
 	{
 		StringBuilder out = new StringBuilder();
-		if (tilestring == null)
-		{
-			out.append("");
-		}
-		else
-		{
-			out.append(tilestring);
-		}
+		out.append(tilestring);
 		out.append(System.lineSeparator());
 		out.append(framestring);
 		return out.toString();
@@ -127,7 +122,7 @@ public class JackGraphic {
 							{
 								int subimgnum = KSFLUtilities.getByte(data, seekpos);
 								seekpos++;
-								int valflag= KSFLUtilities.getByte(data, seekpos);//what is this?
+								int flag= KSFLUtilities.getByte(data, seekpos);//what is this?
 								seekpos++;
 								int xoffs = KSFLUtilities.getShort(data, seekpos);
 								seekpos+=2;
@@ -139,7 +134,7 @@ public class JackGraphic {
 								seekpos+=2;
 								int idx =  KSFLUtilities.getShort(data, seekpos);
 								seekpos+=2;
-								jsflist.add(new JackSubFrame(valflag,xoffs,yoffs,xs,ys,0,idx));
+								jsflist.add(new JackSubFrame(flag,xoffs,yoffs,xs,ys,0,idx));
 							}
 							catch(Exception e)
 							{
@@ -172,9 +167,39 @@ public class JackGraphic {
 				jri.add(new JackRawImage(data,offset,width,height));
 			}
 		}
+		
+		int maxwidth = 0, maxheight = 0;
+		
+		for (JackRawImage j : getJri())
+		{
+			if (j.getWidth() > maxwidth)
+			{
+				maxwidth = j.getWidth();
+			}
+			maxheight += j.getHeight();
+		}
+		maxheight += getJri().size();
+
+		if ((maxwidth > 0) && (maxheight >0))
+		{
+			StringBuilder js = new StringBuilder();
+			js.append("res['tiles']=new Array();");
+			int realx=0, realy=0;
+			int off4pos =0;
+			for (JackRawImage j : getJri())
+			{
+				int w = j.getWidth();
+				int h = j.getHeight();
+				js.append("res['tiles']["+off4pos+"]={x:"+realx+",y:"+realy+",w:"+w+",h:"+h+"};");
+				realy+= h+1;
+				off4pos++;
+			}
+			tilestring = js.toString();
+		}
 		StringBuilder fs = new StringBuilder("res['frames']=[");
 		for (JackFrame jf : visframes)
 		{
+			
 			List<JackSubFrame> jsf = jf.GetSubFrameList();
 			int nbimages = jsf.size();
 			if (nbimages >0)
@@ -198,9 +223,47 @@ public class JackGraphic {
 		}
 			fs.append("];");
 			framestring = fs.toString();
+		}
+	
 
+	public  BufferedImage resizeImage(BufferedImage image, int width, int height) {
+        int type=0;
+       type = image.getType() == 0? BufferedImage.TYPE_INT_ARGB : image.getType();
+       BufferedImage resizedImage = new BufferedImage(width, height,type);
+       Graphics2D g = resizedImage.createGraphics();
+       g.drawImage(image, 0, 0, width, height, null);
+       g.dispose();
+       return resizedImage;
+    }
+	
+	public List<BufferedImage> toFrames(Color[]pal)
+	{
+		List<BufferedImage> outlist = new ArrayList<BufferedImage>();
+		List <JackRawImage> jr = getJri();
+		for (JackFrame jf : visframes)
+		{
+			BufferedImage output = new BufferedImage(640,480, BufferedImage.TYPE_INT_ARGB);
+
+			for (JackSubFrame jsf : jf.GetSubFrameList())
+			{
+				try
+				{
+					if (jsf.idx !=0)
+					{	
+						BufferedImage temp = resizeImage(jr.get(jsf.idx).getImgout(pal),jsf.xsize,jsf.ysize);
+						output.createGraphics().drawImage(temp,null,jsf.xoffset,jsf.yoffset);
+					}
+				}
+				catch (Exception e)
+				{
+				//	JOptionPane.showMessageDialog(null, "Image data extends outside of canvas, ox:"+jsf.get(j).xoffset+",oy:"+jsf.get(j).yoffset+",sx:"+jsf.get(j).xsize+",sy:"+jsf.get(j).ysize);
+				}
+			}
+			outlist.add(output);
+		}
+		return outlist;
 	}
-
+		
 	public List<JackRawImage> getJri() {
 		return jri;
 	}
@@ -229,18 +292,14 @@ public class JackGraphic {
 			{
 				BufferedImage out = new BufferedImage(maxwidth,maxheight, BufferedImage.TYPE_INT_ARGB);
 				StringBuilder js = new StringBuilder();
-				js.append("res['tiles']=new Array();");
-				int realx=0, realy=0;
-				int off4pos =0;
+				int realy=0;
 				for (JackRawImage j : getJri())
 				{
 					int w = j.getWidth();
 					int h = j.getHeight();
 					
-					js.append("res['tiles']["+off4pos+"]={x:"+realx+",y:"+realy+",w:"+w+",h:"+h+"};");
 					out.createGraphics().drawImage(j.getImgout(pal),null,0,realy);
 					realy+= h+1;
-					off4pos++;
 				}
 				tilestring = js.toString();
 				return out;

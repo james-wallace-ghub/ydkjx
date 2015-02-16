@@ -55,7 +55,7 @@ public class UI implements TreeSelectionListener, ActionListener {
     JScrollPane scrollPane;
     boolean playCompleted;
     String AIFCmode = "AIFC";
-	private JackGfxStrip gfxpanel;
+	private JackGFX gfxpanel;
 	private GridBagConstraints gbc_gfxpanel;
 	JackGraphic jgfx= null;
 	private JLabel lblSavingPleaseWait;
@@ -89,13 +89,13 @@ public class UI implements TreeSelectionListener, ActionListener {
     private void initialize() {
         frmYdkjExtractor = new JFrame();
         frmYdkjExtractor.setTitle("YDKJ SRF Extractor");
-        frmYdkjExtractor.setBounds(100, 100, 1162, 660);
+        frmYdkjExtractor.setBounds(100, 100, 1162, 941);
         frmYdkjExtractor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
 
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{200, 796, 133, 0};
-        gridBagLayout.rowHeights = new int[]{30, 50, 500, 26, 29, 23, 0};
+        gridBagLayout.rowHeights = new int[]{30, 32, 600, 26, 29, 23, 0};
         gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         frmYdkjExtractor.getContentPane().setLayout(gridBagLayout);
@@ -139,7 +139,7 @@ public class UI implements TreeSelectionListener, ActionListener {
         
         makeTree();
         
-        gfxpanel = new JackGfxStrip();
+        gfxpanel = new JackGFX();
         gbc_gfxpanel = new GridBagConstraints();
         gbc_gfxpanel.gridheight = 2;
         gbc_gfxpanel.fill = GridBagConstraints.BOTH;
@@ -326,6 +326,7 @@ public class UI implements TreeSelectionListener, ActionListener {
             SRFSetOutDirectory();
         }
         String filenamenoext = filenameunq.substring(0, filenameunq.length()-4);
+
         Hashtable<String, byte[]> data = srfp.getData();
         Hashtable<String, byte[]> save = srfp.getSaves();
         Hashtable<String, String> parents = srfp.getParents();
@@ -385,9 +386,9 @@ public class UI implements TreeSelectionListener, ActionListener {
           	  {
           		  File outputimage = new File(typedir, id+"_"+canvas+".png");
           		  try {
-          			  if (gfxpanel.getStripPalette() != null)
+          			  if (gfxpanel.getStrip().getStripPalette() != null)
           			  {
-          				  ImageIO.write(jri.getImgout(gfxpanel.getStripPalette()), "png", outputimage);
+          				  ImageIO.write(jri.getImgout(gfxpanel.getStrip().getStripPalette()), "png", outputimage);
           			  }
           			  else 
           			  {
@@ -401,9 +402,9 @@ public class UI implements TreeSelectionListener, ActionListener {
           	  }
           	File outputimage = new File(typedir, id+".gif");
     		  try {
-        			  if (gfxpanel.getStripPalette() != null)
+        			  if (gfxpanel.getStrip().getStripPalette() != null)
         			  {
-        				  ImageIO.write(jgfx.toGif(gfxpanel.getStripPalette()), "gif", outputimage);
+        				  ImageIO.write(jgfx.toGif(gfxpanel.getStrip().getStripPalette()), "gif", outputimage);
         			  }
         			  else
         			  {
@@ -494,7 +495,8 @@ public class UI implements TreeSelectionListener, ActionListener {
             {
                 String nametype = currentselect.substring(0, currentselect.indexOf('_'));
             	int ftype = KSFLUtilities.fcc(nametype);
-            	File typedir = new File (dir+File.separator+filenameunq+File.separator+nametype);
+                String filenamenoext = filenameunq.substring(0, filenameunq.length()-4);
+            	File typedir = new File (dir+File.separator+filenamenoext+File.separator+nametype);
            		typedir.mkdirs();            	
             	String id = currentselect.substring(currentselect.indexOf('_')+1);
             	
@@ -534,11 +536,11 @@ public class UI implements TreeSelectionListener, ActionListener {
                 }
                 else if (type.equals("gfx"))
                 {
-                	int canvas = gfxpanel.getCanvasCount();
+                	int canvas = gfxpanel.getStrip().getCanvasCount();
                 	
                 	File outputimage = new File(typedir, id+"_"+canvas+".png");
                 	try {
-						ImageIO.write(gfxpanel.getImage(), "png", outputimage);
+						ImageIO.write(gfxpanel.getStrip().getImage(), "png", outputimage);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -591,7 +593,8 @@ public class UI implements TreeSelectionListener, ActionListener {
 
             {
                 String nametype = currentselect.substring(0, currentselect.indexOf('_'));
-            	File typedir = new File (dir+File.separator+filenameunq+File.separator+nametype);
+                String filenamenoext = filenameunq.substring(0, filenameunq.length()-4);
+            	File typedir = new File (dir+File.separator+filenamenoext+File.separator+nametype);
            		typedir.mkdirs();            	
             	String id = currentselect.substring(currentselect.indexOf('_')+1);
             	
@@ -603,7 +606,7 @@ public class UI implements TreeSelectionListener, ActionListener {
     	                File output = new File(typedir, id+".js");
     	                output.createNewFile();
     	                PrintWriter out = new PrintWriter(output);
-    	                out.print(gfxpanel.getGfx().getJS());
+    	                out.print(gfxpanel.getStrip().getGfx().getJS());
     	                out.close();
     	            } catch (IOException e) {
     	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
@@ -690,7 +693,7 @@ public class UI implements TreeSelectionListener, ActionListener {
 		
 		            	  jgfx = new JackGraphic(r.data);
 									 
-		            	  gfxpanel = new JackGfxStrip(jgfx);
+		            	  gfxpanel = new JackGFX(jgfx);
 		                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
 		                  frmYdkjExtractor.revalidate();
 		                  btnSaveImageJavascript.setEnabled(true);

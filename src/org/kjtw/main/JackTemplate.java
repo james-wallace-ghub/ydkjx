@@ -7,7 +7,7 @@ import javax.swing.JScrollPane;
 import java.awt.Insets;
 import java.awt.Color;
 
-public class JackTemplate extends JackGfxStrip {
+public class JackTemplate extends JackGFX {
 
 	/**
 	 * 
