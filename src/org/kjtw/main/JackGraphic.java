@@ -1,7 +1,11 @@
 package org.kjtw.main;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 import com.kreative.ksfl.KSFLUtilities;
 
@@ -63,6 +66,7 @@ public class JackGraphic {
 		fpsnum = KSFLUtilities.getShort(data, 4);
 		fpsden = KSFLUtilities.getShort(data, 6);
 		jri = (new ArrayList <JackRawImage>());
+		jri.add(new JackRawImage());
 		int max = data.length -12;
 		fps = fpsnum/fpsden;
 		frames =KSFLUtilities.getShort(data, 8);
@@ -73,6 +77,7 @@ public class JackGraphic {
 		SetPalette("org/kjtw/resources/YDKJ2PAL.bmp");
 		if (frames >0)
 		{
+			StringBuilder frametxt = new StringBuilder();
 			for (int i =0; i < frames;i++)
 			{
 				List<JackSubFrame> jsflist = new ArrayList<JackSubFrame>();
@@ -100,7 +105,9 @@ public class JackGraphic {
 						seekpos+=2;
 						frameimgs =  KSFLUtilities.getShort(data, seekpos);
 						seekpos+=2;
-						jsflist.add(new JackSubFrame(0,xoffset,yoffset,xsize,ysize,frameimgs,0));
+						frametxt.append("VAL:"+0+",XOFFS"+xoffset+",YOFFS"+yoffset+",XSIZE"+xsize+",YSIZE"+ysize+",NUMIMAGES"+frameimgs+",IDX:-1"+System.lineSeparator());
+
+						jsflist.add(new JackSubFrame(0,xoffset,yoffset,xsize,ysize,frameimgs,-1));
 					}
 					catch(Exception e)
 					{
@@ -108,7 +115,7 @@ public class JackGraphic {
 					}
 					if (sameoffset !=0)
 					{
-						seekpos = (10+frames*2+(sameoffset)*12);
+						seekpos = (10+frames*2+(sameoffset*12));
 						if ( (seekpos < 0 ) || (seekpos > (max) ))
 						{
 							break;
@@ -120,9 +127,9 @@ public class JackGraphic {
 						{
 							try
 							{
-								int subimgnum = KSFLUtilities.getByte(data, seekpos);
+//								int subimgnum = KSFLUtilities.getByte(data, seekpos);
 								seekpos++;
-								int flag= KSFLUtilities.getByte(data, seekpos);//what is this?
+								int flag= KSFLUtilities.getByte(data, seekpos);
 								seekpos++;
 								int xoffs = KSFLUtilities.getShort(data, seekpos);
 								seekpos+=2;
@@ -134,17 +141,36 @@ public class JackGraphic {
 								seekpos+=2;
 								int idx =  KSFLUtilities.getShort(data, seekpos);
 								seekpos+=2;
+								
+								if ((flag & 0x01) == 0x01)
+								{
+									frametxt.append("MIRROR TEXT"+System.lineSeparator());
+								}
+								if ((flag & 0x08) == 0x08)
+								{
+									frametxt.append("STATE TRIGGER"+System.lineSeparator());
+								}
+								if ((flag & 0x10) == 0x10)
+								{
+									frametxt.append("ANIM END"+System.lineSeparator());
+								}
+								if ((flag & 0x20) == 0x20)
+								{
+									frametxt.append("SUBFRAME IS TXT"+System.lineSeparator());
+								}
+									
+								frametxt.append("VAL:"+flag+",XOFFS"+xoffs+",YOFFS"+yoffs+",XSIZE"+xs+",YSIZE"+ys+",NUMIMAGES"+0+",IDX:"+idx+System.lineSeparator());
 								jsflist.add(new JackSubFrame(flag,xoffs,yoffs,xs,ys,0,idx));
 							}
 							catch(Exception e)
 							{
 								break;
 							}
+					}
 						seekpos =oldseek;
 					}
 				}
-				}
-				visframes.add(new JackFrame(jsflist));
+				visframes.add(new JackFrame(jsflist,frametxt.toString()));
 			}
 		}
 		
@@ -152,7 +178,7 @@ public class JackGraphic {
 		seekpos = imagestart;
 		int numimages = KSFLUtilities.getShort(data,seekpos);
 		seekpos+=2;
-		int altnumimages = KSFLUtilities.getShort(data,seekpos);
+//		int altnumimages = KSFLUtilities.getShort(data,seekpos);
 		seekpos+=2;
 		if (numimages >0)
 		{
@@ -184,15 +210,24 @@ public class JackGraphic {
 		{
 			StringBuilder js = new StringBuilder();
 			js.append("res['tiles']=new Array();");
-			int realx=0, realy=0;
+			int realy=0;
 			int off4pos =0;
+			int ignorefirst=0;
 			for (JackRawImage j : getJri())
 			{
-				int w = j.getWidth();
-				int h = j.getHeight();
-				js.append("res['tiles']["+off4pos+"]={x:"+realx+",y:"+realy+",w:"+w+",h:"+h+"};");
-				realy+= h+1;
-				off4pos++;
+				if (ignorefirst !=0)
+				{
+					int w = j.getWidth();
+					int h = j.getHeight();
+					js.append("res['tiles']["+off4pos+"]={x:"+0+",y:"+realy+",w:"+w+",h:"+h+"};");
+					realy+= h+1;
+					off4pos++;
+				}
+				else
+				{
+					ignorefirst++;
+				}
+				
 			}
 			tilestring = js.toString();
 		}
@@ -236,33 +271,7 @@ public class JackGraphic {
        return resizedImage;
     }
 	
-	public List<BufferedImage> toFrames(Color[]pal)
-	{
-		List<BufferedImage> outlist = new ArrayList<BufferedImage>();
-		List <JackRawImage> jr = getJri();
-		for (JackFrame jf : visframes)
-		{
-			BufferedImage output = new BufferedImage(640,480, BufferedImage.TYPE_INT_ARGB);
-
-			for (JackSubFrame jsf : jf.GetSubFrameList())
-			{
-				try
-				{
-					if (jsf.idx !=0)
-					{	
-						BufferedImage temp = resizeImage(jr.get(jsf.idx).getImgout(pal),jsf.xsize,jsf.ysize);
-						output.createGraphics().drawImage(temp,null,jsf.xoffset,jsf.yoffset);
-					}
-				}
-				catch (Exception e)
-				{
-				//	JOptionPane.showMessageDialog(null, "Image data extends outside of canvas, ox:"+jsf.get(j).xoffset+",oy:"+jsf.get(j).yoffset+",sx:"+jsf.get(j).xsize+",sy:"+jsf.get(j).ysize);
-				}
-			}
-			outlist.add(output);
-		}
-		return outlist;
-	}
+	
 		
 	public List<JackRawImage> getJri() {
 		return jri;
@@ -291,17 +300,14 @@ public class JackGraphic {
 			if ((maxwidth > 0) && (maxheight >0))
 			{
 				BufferedImage out = new BufferedImage(maxwidth,maxheight, BufferedImage.TYPE_INT_ARGB);
-				StringBuilder js = new StringBuilder();
 				int realy=0;
 				for (JackRawImage j : getJri())
 				{
-					int w = j.getWidth();
 					int h = j.getHeight();
 					
 					out.createGraphics().drawImage(j.getImgout(pal),null,0,realy);
 					realy+= h+1;
 				}
-				tilestring = js.toString();
 				return out;
 			}
 			else
@@ -310,4 +316,103 @@ public class JackGraphic {
 			}
 		}
 	}
+
+	public int getFrameSize() {
+		// TODO Auto-generated method stub
+		return visframes.size();
+	}
+
+	public String getFrameTxt(int canvascount)
+	{
+		return visframes.get(canvascount).getTxt();
+	}
+	public BufferedImage getFrameImg(int canvascount, Color[] pal) {
+		List <JackRawImage> jr = getJri();
+		JackFrame jf = visframes.get(canvascount);
+		
+		BufferedImage out = new BufferedImage(640,480, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage canvas = null;
+
+		int masterx=0;
+		int mastery=0;
+		int masterxs=0;
+		int masterys=0;
+		for (JackSubFrame jsf : jf.GetSubFrameList())
+		{
+			try
+			{
+				if (jsf.idx ==-1)
+				{	
+					masterx=jsf.xoffset;
+					mastery=jsf.yoffset;
+					masterxs=jsf.xsize;
+					masterys=jsf.ysize;
+					canvas = new BufferedImage(masterxs-masterx,masterys-mastery, BufferedImage.TYPE_INT_ARGB);
+				}
+				else
+				{
+					int xoffs = jsf.xoffset;
+					int yoffs = jsf.yoffset;
+					BufferedImage temp = null;
+					
+					if ((jsf.valflag & 0x20) == 0x20)
+					{
+						String identifier = ""+jsf.idx;
+						int last = identifier.length()-1; 
+						int style = Integer.valueOf(identifier.charAt(last));
+						identifier = identifier.substring(0, last);
+						temp = new BufferedImage(jsf.xsize-xoffs,jsf.ysize-yoffs, BufferedImage.TYPE_INT_ARGB);
+						Graphics2D g = temp.createGraphics();
+						FontMetrics fm = g.getFontMetrics();
+						Font font = null;
+						double scale = (jsf.ysize-yoffs) / (fm.getHeight());
+						if (style == 1)
+						{
+							font = g.getFont().deriveFont(Font.BOLD+Font.ITALIC, AffineTransform.getScaleInstance(scale, scale));
+						}
+						else
+						{
+							font = g.getFont().deriveFont(Font.BOLD, AffineTransform.getScaleInstance(scale, scale));
+						}
+						
+				        g.setFont(font);
+				        g.setColor(Color.RED);
+				        fm = g.getFontMetrics(font);
+				        int xPos = ((jsf.xsize-xoffs) - fm.stringWidth(identifier)) / 2;
+				        int yPos = ( ((jsf.ysize-yoffs) - fm.getHeight()) / 2) + fm.getAscent();
+				        g.drawString(identifier, xPos, yPos);
+				        g.dispose();
+				        
+				        if ((jsf.valflag & 0x01) == 0x01)
+				        {
+					        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+					        tx.translate(-temp.getWidth(null), 0);
+					        AffineTransformOp op = new AffineTransformOp(tx, 
+	                                AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+					        temp = op.filter(temp, null);
+				        }
+					}
+					else
+					{
+						temp = resizeImage(jr.get(jsf.idx).getImgout(pal),jsf.xsize-xoffs,jsf.ysize-yoffs);
+					}
+					canvas.createGraphics().drawImage(temp,null,xoffs,yoffs);	
+					temp=null;
+				}
+			}
+			catch (Exception e)
+			{
+			//	JOptionPane.showMessageDialog(null, "Image data extends outside of canvas, ox:"+jsf.get(j).xoffset+",oy:"+jsf.get(j).yoffset+",sx:"+jsf.get(j).xsize+",sy:"+jsf.get(j).ysize);
+			}
+		}
+		out.createGraphics().drawImage(canvas,null,masterx,mastery);
+		canvas=null;
+		return out;	
+	}
+
+	public List<JackFrame> getFrames() {
+		// TODO Auto-generated method stub
+		return visframes;
+	}
+
 }

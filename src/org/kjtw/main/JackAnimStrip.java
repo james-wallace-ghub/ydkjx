@@ -1,9 +1,10 @@
 package org.kjtw.main;
 
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
+
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import javax.swing.JButton;
+
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -13,16 +14,20 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JToggleButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.JTextArea;
 
-public class JackAnimStrip extends JPanel implements ActionListener {
+public class JackAnimStrip extends JackGfxStrip implements ActionListener {
 	/**
 	 * 
 	 */
@@ -31,7 +36,6 @@ public class JackAnimStrip extends JPanel implements ActionListener {
 	private int canvascount;
 	private GridBagConstraints gbc_panel;
 	private BufferedImage currentimage;
-	private List<BufferedImage> list;
 	private JackGraphic jgfx;
 	private JRadioButton rdbtnYdkjPalette;
 	private AbstractButton rdbtnYdkjPalette_1;
@@ -40,74 +44,41 @@ public class JackAnimStrip extends JPanel implements ActionListener {
 	private JRadioButton rdbtnHeadrushPalette;
 	private JRadioButton rdbtnOffline;
 	private JRadioButton rdbtnLff;
+	private JSlider slider;
+	private JToggleButton tglbtnInvertBg;
 	private JScrollPane scrollPane;
-	private JTextPane textPane;
+	private JTextArea textPane;
 	/**
 	 * @wbp.parser.constructor
 	 */
 	public JackAnimStrip(JackGraphic jg) {
 
 		jgfx=jg;
-		this.list=jgfx.toFrames(jgfx.GetPalette());
+
 		canvascount=0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{68, 71, 87, 79, 79, 58, 94, 79, 0};
-		gridBagLayout.rowHeights = new int[]{0, 444, 30, 50, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowHeights = new int[]{0, 444, 50, 10, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		final JLabel lblFrameCount = new JLabel("Frame "+(canvascount+1)+" of "+list.size());
-		GridBagConstraints gbc_lblFrameCount = new GridBagConstraints();
-		gbc_lblFrameCount.gridwidth = 2;
-		gbc_lblFrameCount.insets = new Insets(0, 0, 5, 5);
-		gbc_lblFrameCount.gridx = 3;
-		gbc_lblFrameCount.gridy = 2;
-		add(lblFrameCount, gbc_lblFrameCount);
+		scrollPane = new JScrollPane();
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollPane.setPreferredSize(new Dimension(640, 100));
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.gridwidth = 8;
+		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 2;
+		add(scrollPane, gbc_scrollPane);
 		
-				JButton button = new JButton("< 5");
-				button.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						canvascount -=5;
-						if (canvascount <0)
-						{
-							canvascount =0;
-						}
-						currentimage = list.get(canvascount);
-						panel.setImage(currentimage);
-						lblFrameCount.setText("Frame "+(canvascount+1)+" of "+list.size());
-						panel.revalidate();
-					}
-				});
-				GridBagConstraints gbc_button = new GridBagConstraints();
-				gbc_button.fill = GridBagConstraints.HORIZONTAL;
-				gbc_button.insets = new Insets(0, 0, 5, 5);
-				gbc_button.gridx = 0;
-				gbc_button.gridy = 2;
-				add(button, gbc_button);
-		
-		JButton button_1 = new JButton("< 1");
-		button_1.addActionListener(new ActionListener() {
+		textPane = new JTextArea();
+		textPane.setWrapStyleWord(true);
+		scrollPane.setViewportView(textPane);
 
-			public void actionPerformed(ActionEvent e) {
-				canvascount --;
-				if (canvascount <0)
-				{
-					canvascount =0;
-				}
-				currentimage = list.get(canvascount);
-				panel.setImage(currentimage);
-				lblFrameCount.setText("Frame "+(canvascount+1)+" of "+list.size());
-				panel.revalidate();
-			}
-		});
-		GridBagConstraints gbc_button_1 = new GridBagConstraints();
-		gbc_button_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_button_1.insets = new Insets(0, 0, 5, 5);
-		gbc_button_1.gridx = 1;
-		gbc_button_1.gridy = 2;
-		add(button_1, gbc_button_1);
-
-		if (list.isEmpty())
+		if (jgfx.getFrameSize()==0)
 		{
 			try {
 				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -118,7 +89,8 @@ public class JackAnimStrip extends JPanel implements ActionListener {
 		}
 		else
 		{
-			currentimage = list.get(canvascount);
+			currentimage = jgfx.getFrameImg(canvascount,jgfx.GetPalette());
+			textPane.setText(jgfx.getFrameTxt(canvascount));
 		}
 		
 		JLabel lblPalette = new JLabel("Palette:");
@@ -203,6 +175,15 @@ public class JackAnimStrip extends JPanel implements ActionListener {
 		rdbtnLff.addActionListener(this);
 
 		panel = new JackGFXPanel(currentimage);
+		panel.setBackground(Color.white);
+		final JLabel lblFrameCount = new JLabel("Frame "+(canvascount+1)+" of "+jgfx.getFrameSize());
+		GridBagConstraints gbc_lblFrameCount = new GridBagConstraints();
+		gbc_lblFrameCount.insets = new Insets(0, 0, 0, 5);
+		gbc_lblFrameCount.gridwidth = 2;
+		gbc_lblFrameCount.gridx = 5;
+		gbc_lblFrameCount.gridy = 3;
+		add(lblFrameCount, gbc_lblFrameCount);
+		
 
 		gbc_panel = new GridBagConstraints();
 		gbc_panel.gridwidth = 8;
@@ -211,65 +192,56 @@ public class JackAnimStrip extends JPanel implements ActionListener {
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 1;
 		add(panel, gbc_panel);
-				
-				JButton button_2 = new JButton("> 5");
-				button_2.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						canvascount +=5;
-						if (canvascount >list.size()-1)
-						{
-							canvascount =list.size()-1;
-						}
-						currentimage = list.get(canvascount);
-						panel.setImage(currentimage);
-						lblFrameCount.setText("Frame "+(canvascount+1)+" of "+list.size());
-						panel.revalidate();
-					}
-				});
-						
-						
-						JButton button_3 = new JButton("> 1");
-						button_3.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								canvascount ++;
-								if (canvascount >list.size()-1)
-								{
-									canvascount =list.size()-1;
-								}
-								currentimage = list.get(canvascount);
-								panel.setImage(currentimage);
-								lblFrameCount.setText("Frame "+(canvascount+1)+" of "+list.size());
-								panel.revalidate();
-							}
-						});
-						
+		slider = new JSlider();
+		slider.setMaximum(jgfx.getFrameSize()-1);
+		slider.setSnapToTicks(true);
+		slider.setPaintTicks(true);
+		slider.setMajorTickSpacing(1);
+		slider.setValue(canvascount);
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+				if (!source.getValueIsAdjusting()) {	
+				canvascount = source.getValue();
+				currentimage = jgfx.getFrameImg(canvascount,jgfx.GetPalette());
+				textPane.setText(jgfx.getFrameTxt(canvascount));
+				panel.setImage(currentimage);
+				lblFrameCount.setText("Frame "+(canvascount+1)+" of "+jgfx.getFrameSize());
+				panel.revalidate();
+				}
+			}
+		});
+		GridBagConstraints gbc_slider = new GridBagConstraints();
+		gbc_slider.fill = GridBagConstraints.HORIZONTAL;
+		gbc_slider.gridwidth = 5;
+		gbc_slider.insets = new Insets(0, 0, 0, 5);
+		gbc_slider.gridx = 0;
+		gbc_slider.gridy = 3;
+		add(slider, gbc_slider);
 
-						GridBagConstraints gbc_button_3 = new GridBagConstraints();
-						gbc_button_3.fill = GridBagConstraints.HORIZONTAL;
-						gbc_button_3.insets = new Insets(0, 0, 5, 5);
-						gbc_button_3.gridx = 6;
-						gbc_button_3.gridy = 2;
-						add(button_3, gbc_button_3);
+		
+		tglbtnInvertBg = new JToggleButton("Invert BG");
+		tglbtnInvertBg.setSelected(false);
+		GridBagConstraints gbc_btnToggleBg = new GridBagConstraints();
+		gbc_btnToggleBg.gridx = 7;
+		gbc_btnToggleBg.gridy = 3;
+		add(tglbtnInvertBg, gbc_btnToggleBg);
+		tglbtnInvertBg.setSelected(false);
+		tglbtnInvertBg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (tglbtnInvertBg.isSelected())
+				{
+					panel.setBackground(Color.black);
+				}
+				else
+				{
+					panel.setBackground(Color.white);
+				}
+			}
+		});
 				
-						GridBagConstraints gbc_button_2 = new GridBagConstraints();
-						gbc_button_2.insets = new Insets(0, 0, 5, 0);
-						gbc_button_2.fill = GridBagConstraints.HORIZONTAL;
-						gbc_button_2.gridx = 7;
-						gbc_button_2.gridy = 2;
-						add(button_2, gbc_button_2);
 				
-				
-				scrollPane = new JScrollPane();
-				GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-				gbc_scrollPane.gridwidth = 8;
-				gbc_scrollPane.fill = GridBagConstraints.BOTH;
-				gbc_scrollPane.gridx = 0;
-				gbc_scrollPane.gridy = 3;
-				add(scrollPane, gbc_scrollPane);
-				
-				textPane = new JTextPane();
-				textPane.setEditable(false);
-				scrollPane.setViewportView(textPane);
+
 
 	}
 	public JackAnimStrip() {
@@ -297,12 +269,27 @@ public class JackAnimStrip extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent arg0) {
     	String pal = arg0.getActionCommand();
     	jgfx.SetPalette(pal);
-    	list = jgfx.toFrames(jgfx.GetPalette());
-		currentimage = list.get(canvascount);
+		currentimage = jgfx.getFrameImg(canvascount,jgfx.GetPalette());
+		textPane.setText(jgfx.getFrameTxt(canvascount));
 		panel.setImage(currentimage);
         }
 	public JackGraphic getGfx() {
 		return jgfx;
+	}
+
+	public String getJS() {
+		StringBuilder output = new StringBuilder();
+		for (JackFrame jf : jgfx.getFrames())
+		{
+			output.append(jf.getTxt());
+		}
+		// TODO Auto-generated method stub
+		return output.toString();
+	}
+
+	public boolean isRaw() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

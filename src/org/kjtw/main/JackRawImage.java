@@ -18,6 +18,12 @@ public class JackRawImage {
 		bitmap = decodegfx(KSFLUtilities.copy(data, offset, 307200),width*height,width,height);
 	}
 
+	public JackRawImage() {
+		this.setWidth(0);
+		this.setHeight(0);
+		bitmap = new int[1][1];
+	}
+
 	//Straight port of code from YDKJ.fr, just with sign hacking
 	private int[][] decodegfx(byte[] indata,int buflen,int width, int height) {
 		int[] infos = new int[3];

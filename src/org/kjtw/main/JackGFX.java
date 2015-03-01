@@ -7,26 +7,31 @@ import javax.swing.JTabbedPane;
 
 public class JackGFX extends JPanel {
 
-	private JackGfxStrip JGS;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2631343788849889367L;
+	private JTabbedPane tabbedPane;
 
+	
 	public JackGfxStrip getStrip()
 	{
-		return JGS;
+		return 	(JackGfxStrip) tabbedPane.getSelectedComponent();
+
 	}
+
 
 	/**
 	 * Create the panel.
 	 */
 	public JackGFX(JackGraphic jgfx) {
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		add(tabbedPane);
-		JGS = new JackGfxStrip(jgfx);
-		tabbedPane.addTab("Raw Frames", null, JGS,
+		tabbedPane.addTab("Raw Frames", null, new JackGfxStrip(jgfx),
                 "Raw Frames");
 		tabbedPane.addTab("Animation", null, new JackAnimStrip(jgfx),
                 "Animation");
-		
 	}
 
 	public JackGFX() {
