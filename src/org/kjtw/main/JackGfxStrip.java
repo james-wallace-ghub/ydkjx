@@ -111,7 +111,6 @@ public class JackGfxStrip extends JPanel implements ActionListener {
 				add(tglbtnShowJs, gbc_tglbtnShowJs);
 
 		tglbtnInvertBg = new JToggleButton("Invert BG");
-		tglbtnInvertBg.setSelected(false);
 		GridBagConstraints gbc_tglbtnInvertBg = new GridBagConstraints();
 		gbc_tglbtnInvertBg.gridwidth = 2;
 		gbc_tglbtnInvertBg.insets = new Insets(0, 0, 5, 5);

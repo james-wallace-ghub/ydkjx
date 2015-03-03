@@ -32,9 +32,11 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JScrollPane;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -92,7 +94,7 @@ public class UI implements TreeSelectionListener, ActionListener {
 
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{200, 796, 0};
-        gridBagLayout.rowHeights = new int[]{24, 780, 0};
+        gridBagLayout.rowHeights = new int[]{24, 600, 0};
         gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
         frmYdkjExtractor.getContentPane().setLayout(gridBagLayout);
@@ -114,26 +116,8 @@ public class UI implements TreeSelectionListener, ActionListener {
         gbc_lblSavingPleaseWait.gridy = 0;
         frmYdkjExtractor.getContentPane().add(lblSavingPleaseWait, gbc_lblSavingPleaseWait);
         
-        
-//        JButton btnSaveSelectedResource = new JButton("Save Selected");
-//        btnSaveSelectedResource.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                lblSavingPleaseWait.setText("Saving, Please Wait");
-//                SRFSave1(currentselect);
-//                lblSavingPleaseWait.setText("");
-//            }
-//        });
-//        GridBagConstraints gbc_btnSaveSelectedResource = new GridBagConstraints();
-//        gbc_btnSaveSelectedResource.weighty = 0.8;
-//        gbc_btnSaveSelectedResource.weightx = 0.8;
-//        gbc_btnSaveSelectedResource.anchor = GridBagConstraints.NORTH;
-//        gbc_btnSaveSelectedResource.fill = GridBagConstraints.HORIZONTAL;
-//        gbc_btnSaveSelectedResource.insets = new Insets(0, 0, 5, 0);
-//        gbc_btnSaveSelectedResource.gridx = 2;
-//        gbc_btnSaveSelectedResource.gridy = 0;
-//        frmYdkjExtractor.getContentPane().add(btnSaveSelectedResource, gbc_btnSaveSelectedResource);
-        
         scrollPane = new JScrollPane();
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         GridBagConstraints gbc_scrollPane = new GridBagConstraints();
         gbc_scrollPane.weighty = 1.0;
@@ -153,21 +137,6 @@ public class UI implements TreeSelectionListener, ActionListener {
         gbc_gfxpanel.gridy = 1;
         frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
 
-//        JRadioButton rdbtnNativeaifc = new JRadioButton("Native (AIFC)");
-//        rdbtnNativeaifc.setSelected(true);
-//        rdbtnNativeaifc.setActionCommand("AIFC");
-//        GridBagConstraints gbc_rdbtnNativeaifc = new GridBagConstraints();
-//        gbc_rdbtnNativeaifc.weightx = 1.0;
-//        gbc_rdbtnNativeaifc.weighty = 1.0;
-//        gbc_rdbtnNativeaifc.anchor = GridBagConstraints.NORTHWEST;
-//        gbc_rdbtnNativeaifc.gridx = 2;
-//        gbc_rdbtnNativeaifc.gridy = 8;
-//        frmYdkjExtractor.getContentPane().add(rdbtnNativeaifc, gbc_rdbtnNativeaifc);
-//
-//        //Register a listener for the radio buttons.
-//        rdbtnNativeaifc.addActionListener(this);
-//        group.add(rdbtnNativeaifc);
-        
         JMenuBar menuBar = new JMenuBar();
         frmYdkjExtractor.setJMenuBar(menuBar);
         
@@ -664,12 +633,13 @@ public class UI implements TreeSelectionListener, ActionListener {
 	              currentselect = nametype+'_'+id;
 	        	  int ftype = KSFLUtilities.fcc(nametype);
 	        	  MacResource r=null;
+	        	  BerkeleyResourceFile rp = srfp.getBRF();
+
 	        	  if (type != null)
 	        	  {
 	        		  mntmSaveJsanimationInfo.setEnabled(false);
 		        	  if (!type.equals("qhdr"))
 		        	  {
-			        	  BerkeleyResourceFile rp = srfp.getBRF();
 			        	  r = rp.get(ftype, Short.parseShort(id));
 		        	  }              
 		              if (type.equals("audio"))
@@ -680,7 +650,6 @@ public class UI implements TreeSelectionListener, ActionListener {
 		              else if (type.equals("gfx"))
 		              {
 		            	  gfxpanel.removeAll();
-		
 		            	  jgfx = new JackGraphic(r.data);
 		            	  gfxpanel = new JackGFX(jgfx);
 		                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);

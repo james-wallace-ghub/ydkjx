@@ -67,7 +67,7 @@ public class JackGraphic {
 		fpsden = KSFLUtilities.getShort(data, 6);
 		jri = (new ArrayList <JackRawImage>());
 		jri.add(new JackRawImage());
-		int max = data.length -12;
+		int max = data.length;
 		fps = fpsnum/fpsden;
 		frames =KSFLUtilities.getShort(data, 8);
 		int seekpos =10;
@@ -111,15 +111,15 @@ public class JackGraphic {
 					}
 					catch(Exception e)
 					{
-						break;
+						continue;
 					}
 					if (sameoffset !=0)
 					{
 						seekpos = (10+frames*2+(sameoffset*12));
-						if ( (seekpos < 0 ) || (seekpos > (max) ))
-						{
-							break;
-						}
+//						if ( (seekpos < 0 ) || (seekpos > (max) ))
+//						{
+//							break;
+//						}
 					}
 					if (frameimgs > 0)
 					{
@@ -164,11 +164,13 @@ public class JackGraphic {
 							}
 							catch(Exception e)
 							{
-								break;
+								continue;
 							}
 					}
-						seekpos =oldseek;
+//						seekpos =oldseek;
 					}
+					seekpos =oldseek;
+
 				}
 				visframes.add(new JackFrame(jsflist,frametxt.toString()));
 			}

@@ -472,8 +472,15 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	    							{
 	    								if (!recalldata.containsKey(ftype+'_'+id))
    										{
-		    								stuff = new String(stuff,"MACROMAN").trim().replaceAll("\\{", "").replaceAll("\u2211" , "ß").getBytes();
-		    								if (!parents.containsKey(ftype))
+//	    									byte[] oldstuff = stuff;
+//	    									String out = new String(stuff,"MACROMAN").trim().replaceAll("\\{", "").replaceAll("\u2211" , "ß");
+//	    								
+//	    									if (!out.contains(" "))
+//	    									{
+//	    										out = new String(oldstuff,"MS932").trim();
+//	    									}
+//	    									stuff = out.getBytes("MS932");
+	    									if (!parents.containsKey(ftype))
 		    								{
 		    									parents.put(ftype, "string");
 		    								}	
