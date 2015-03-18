@@ -140,6 +140,7 @@ public class ChunkSpec extends Vector<FieldSpec> {
 		return bp;
 	}
 	
+	@SuppressWarnings("incomplete-switch")
 	public Header createHeader() {
 		Header h = new Header();
 		for (FieldSpec fs : this) {

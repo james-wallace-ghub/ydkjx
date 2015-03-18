@@ -62,7 +62,7 @@ public class BerkeleyResourceFile extends MacResourceProvider {
 	private RandomAccessFile raf;
 	private boolean readOnly = false;
 	private int resMap, resData;
-	private int resMapLen, resDataLen;
+	private int resMapLen;
 	private String textEncoding = "MACROMAN";
 	private Hashtable<Integer, Long> typeoffs = new Hashtable<Integer,Long>();
 	private String gps(int b) {
@@ -147,7 +147,6 @@ public class BerkeleyResourceFile extends MacResourceProvider {
 			resMapLen = raf.readInt();
 			resData = resMapLen +11;
 			resMap = 12;
-			resDataLen = totalfile - resData;
 			raf.seek(resMap);
 			getTypes();
 		}

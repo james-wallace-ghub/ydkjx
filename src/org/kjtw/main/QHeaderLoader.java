@@ -1,6 +1,7 @@
 package org.kjtw.main;
 
 import java.awt.EventQueue;
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -20,13 +21,13 @@ import org.kjtw.categories.Gibberish;
 import org.kjtw.categories.GuestHostQuestion;
 import org.kjtw.categories.JackAttack;
 import org.kjtw.categories.PictureQuestion;
-import org.kjtw.categories.QHeadProcess;
-import org.kjtw.categories.QHeader;
 import org.kjtw.categories.StandardQuestion;
 import org.kjtw.categories.SuperAudioQuestion;
 import org.kjtw.categories.ThreeWay;
 import org.kjtw.categories.Whatshisname;
-import org.kjtw.main.SRFProcess;
+import org.kjtw.process.QHeadProcess;
+import org.kjtw.process.SRFProcess;
+import org.kjtw.structures.QHeader;
 
 import com.kreative.ksfl.KSFLUtilities;
 import com.kreative.rsrc.BerkeleyResourceFile;
@@ -43,7 +44,9 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
 import javax.swing.JPanel;
+
 import java.awt.CardLayout;
 
 public class QHeaderLoader implements TreeSelectionListener {
@@ -218,7 +221,7 @@ public class QHeaderLoader implements TreeSelectionListener {
 
             QHeadSetInDirectory();
             try {
-                qhp = new QHeadProcess(rp,fpath);
+                qhp = new QHeadProcess(file, rp,fpath);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }       

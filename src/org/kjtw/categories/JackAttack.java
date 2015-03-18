@@ -1,14 +1,16 @@
 package org.kjtw.categories;
 
 import javax.swing.JPanel;
-import java.awt.GridBagLayout;
 
+import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
 import javax.swing.JButton;
 
-import org.kjtw.main.AudioPlayer;
-import org.kjtw.main.SRFLoad;
+import org.kjtw.process.AudioPlayer;
+import org.kjtw.process.SRFLoad;
+import org.kjtw.structures.QHeader;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -45,7 +47,7 @@ public class JackAttack extends JPanel {
 	 */
 	public JackAttack(final QHeader qhd) throws IOException {
 		supplements = new Hashtable<String, byte[]>();
-		QData = new SRFLoad(qhd.path);
+		QData = new SRFLoad(qhd.getPath());
 		supplements = QData.getData(); 
 		strings = QData.getStrs();
 		String[] strsa = strings.get("STR_130");
@@ -96,7 +98,7 @@ public class JackAttack extends JPanel {
 		gbc_btnPlayTitle.gridy = 0;
 		add(btnPlayTitle, gbc_btnPlayTitle);
 		
-		Title = new JLabel(qhd.title);
+		Title = new JLabel(qhd.getTitle());
 		GridBagConstraints gbc_Title = new GridBagConstraints();
 		gbc_Title.gridwidth = 2;
 		gbc_Title.insets = new Insets(0, 0, 5, 0);
@@ -131,10 +133,13 @@ public class JackAttack extends JPanel {
 		int position = Integer.valueOf(strs[ansval])-48;
 		Rootval.setText(roots[position-1]);
 		mtchval.setText(match[position-1]);
-		dc1.setText(decoy[position-1]);
-		dc2.setText(decoy[position+7-1]);
-		dc3.setText(decoy[position+14-1]);
+//		dc1.setText(decoy[position-1]);
+//		dc2.setText(decoy[position+7-1]);
+//		dc3.setText(decoy[position+14-1]);
 		
+		dc1.setText(decoy[position-1]);
+		dc2.setText(decoy[position]);
+		dc3.setText(decoy[position+1]);
 		
 		btnNextAnswer = new JButton("Next Answer (1 of 7)");
 		GridBagConstraints gbc_btnNextAnswer = new GridBagConstraints();

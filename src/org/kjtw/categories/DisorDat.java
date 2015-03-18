@@ -1,16 +1,18 @@
 package org.kjtw.categories;
 
 import javax.swing.JPanel;
-import java.awt.GridBagLayout;
 
+import java.awt.GridBagLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
-import org.kjtw.main.AudioPlayer;
-import org.kjtw.main.SRFLoad;
+import org.kjtw.process.AudioPlayer;
+import org.kjtw.process.SRFLoad;
+import org.kjtw.structures.QHeader;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
+
 import java.awt.Font;
 
 public class DisorDat extends JPanel {
@@ -54,7 +57,7 @@ public class DisorDat extends JPanel {
 	 */
 	public DisorDat(final QHeader qhd) throws IOException {
 		supplements = new Hashtable<String, byte[]>();
-		QData = new SRFLoad(qhd.path);
+		QData = new SRFLoad(qhd.getPath());
 		supplements = QData.getData(); 
 		strings = QData.getStrs();
 		String[] strs = strings.get("STR#_3");
@@ -105,7 +108,7 @@ public class DisorDat extends JPanel {
 		gbc_btnPlayTitle.gridy = 0;
 		add(btnPlayTitle, gbc_btnPlayTitle);
 		
-		Title = new JLabel(qhd.title);
+		Title = new JLabel(qhd.getTitle());
 		GridBagConstraints gbc_Title = new GridBagConstraints();
 		gbc_Title.gridwidth = 2;
 		gbc_Title.insets = new Insets(0, 0, 5, 0);

@@ -14,8 +14,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.kjtw.main.SRFProcess;
+import org.kjtw.displays.JackGFX;
+import org.kjtw.displays.JackQheader;
+import org.kjtw.displays.JackTemplate;
+import org.kjtw.process.AudioPlayer;
+import org.kjtw.process.SRFProcess;
+import org.kjtw.structures.GameTemplate;
+import org.kjtw.structures.JackGraphic;
+import org.kjtw.structures.QHeader;
+import org.kjtw.structures.QHeaderout;
 
+import com.google.gson.Gson;
 import com.kreative.ksfl.KSFLUtilities;
 import com.kreative.rsrc.BerkeleyResourceFile;
 import com.kreative.rsrc.MacResource;
@@ -27,12 +36,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JScrollPane;
 
+import java.awt.CardLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -259,17 +270,19 @@ public class UI implements TreeSelectionListener, ActionListener {
         String filenamenoext = filenameunq.substring(0, filenameunq.length()-4);
 
         Hashtable<String, byte[]> data = srfp.getData();
-        Hashtable<String, byte[]> save = srfp.getSaves();
         Hashtable<String, String> parents = srfp.getParents();
         Enumeration<String> enumKey = data.keys();
-        while(enumKey.hasMoreElements()) {
+		List<QHeaderout> qh = new ArrayList<QHeaderout>();
+		List<QHeaderout> qh2 = new ArrayList<QHeaderout>();
+		boolean firstpass=true;
+		while(enumKey.hasMoreElements()) {
             String key = enumKey.nextElement();
             String nametype = key.substring(0, key.indexOf('_'));
+        	File typedir = new File (dir+File.separator+filenamenoext+File.separator+nametype);
             String type = parents.get(nametype);
             String suffix="";
             byte[] val = null;
         	String id = key.substring(key.indexOf('_')+1);
-        	File typedir = new File (dir+File.separator+filenamenoext+File.separator+nametype);
        		typedir.mkdirs();
             if (type.equals("audio"))
             {
@@ -313,32 +326,16 @@ public class UI implements TreeSelectionListener, ActionListener {
           	  System.gc();
           	  jgfx = new JackGraphic(r.data);
 
-          	  
-          	  if (gfxpanel.getStrip().isRaw())
           	  {
-	          	  List<JackRawImage> list = jgfx.getJri();
-	          	  int canvas =0;
 	          	  
-	          	  for (JackRawImage jri : list)
-	          	  {
-	          		  File outputimage = new File(typedir, id+"_"+canvas+".png");
-	          		  try {
-	          			  if (gfxpanel.getStrip().getStripPalette() != null)
-	          			  {
-	          				  ImageIO.write(jri.getImgout(gfxpanel.getStrip().getStripPalette()), "png", outputimage);
-	          			  }
-	          			  else 
-	          			  {
-	          				ImageIO.write(jri.getImgout(jgfx.GetPalette()), "png", outputimage);
-	          			  }
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-		            	canvas++;
-	          	  }
 	          	File outputimage = new File(typedir, id+".gif");
 	    		  try {
+	    			  	if (gfxpanel.getStrip() == null)
+	    			  	{
+	        				  ImageIO.write(jgfx.toGif(jgfx.GetPalette()), "gif", outputimage);	    			  		
+	    			  	}
+	    			  	else
+	    			  	{
 	        			  if (gfxpanel.getStrip().getStripPalette() != null)
 	        			  {
 	        				  ImageIO.write(jgfx.toGif(gfxpanel.getStrip().getStripPalette()), "gif", outputimage);
@@ -347,86 +344,93 @@ public class UI implements TreeSelectionListener, ActionListener {
 	        			  {
 	        				  ImageIO.write(jgfx.toGif(jgfx.GetPalette()), "gif", outputimage);
 	        			  }
-	
+	    			  	}	
+					} catch (NullPointerException e) {
+      				  try {
+						ImageIO.write(jgfx.toGif(jgfx.GetPalette()), "gif", outputimage);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}	    			  		
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 	    		  
-		            try {
-		                File output = new File(typedir, id+".js");
+	  	            try {
+		                File output = new File(typedir, id+"t.json");
 		                output.createNewFile();
 		                PrintWriter out = new PrintWriter(output);
-		                out.print(jgfx.getJS());
+		                out.print(jgfx.getTileJSON());
 		                out.close();
 		            } catch (IOException e) {
 		                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
 		            }
-          	  }
-          	  else
-          	  {
-	          	  
-	          	  for (int i=0; i < jgfx.getFrameSize(); i++)
-	          	  {
-	          		  File outputimage = new File(typedir, id+"_f"+i+".png");
-	          		  try {
-	          			  if (gfxpanel.getStrip().getStripPalette() != null)
-	          			  {
-	          				  ImageIO.write(jgfx.getFrameImg(i,gfxpanel.getStrip().getStripPalette()), "png", outputimage);
-	          			  }
-	          			  else 
-	          			  {
-	          				  ImageIO.write(jgfx.getFrameImg(i,jgfx.GetPalette()), "png", outputimage);
-	          			  }
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-	          	  }
-  
+
+    	            try {
+    	                File output = new File(typedir, id+"f.json");
+    	                output.createNewFile();
+    	                PrintWriter out = new PrintWriter(output);
+    	                out.print(jgfx.getFrameJSON());
+    	                out.close();
+    	            } catch (IOException e) {
+    	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+    	            }
+
           	  }
             }
             else if (type.equals("template"))
             {
-            	val = data.get(key);
-                suffix=".tmpl";
-                
-                
-	            try {
-	                File output = new File(typedir, id+".txt");
-	                output.createNewFile();
-	                FileOutputStream fos = new FileOutputStream(output);
-	                fos.write(data.get(key));
-	                fos.close();
-	            } catch (IOException e) {
-	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
-	            }
-	              int ftype = KSFLUtilities.fcc(nametype);
+           		int ftype = KSFLUtilities.fcc(nametype);
 
-	          	  BerkeleyResourceFile rp = srfp.getBRF();
-	          	  MacResource r = rp.get(ftype, Short.parseShort(id));
-	            
-            	val = r.data;
-                suffix=".tpl";
+           		BerkeleyResourceFile rp = srfp.getBRF();
+            	  
+           		List<GameTemplate>gt = new ArrayList<GameTemplate>();
+           		for (short id2 : rp.getIDs(ftype))
+           		{
+                	  MacResource r = rp.get(ftype, (short) id2);
+                	  gt.add(new GameTemplate(r.data));
+           		}
+           		
+                try {
+                    File output = new File(typedir, nametype+".json");
+                    if (!output.exists())
+                    {
+    	                output.createNewFile();
+    	        		Gson gson = new Gson();
+    	        		String json = gson.toJson(gt); 
+    	                PrintWriter out = new PrintWriter(output);
+    	                out.print(json);
+    	                out.close();
+                    }
+                } catch (IOException e) {
+                    System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+                }
 
             }
-            else if (!type.equals("qheader"))
+            else if (type.equals("qheader"))
             {
-	            try {
-	                File output = new File(typedir, filenamenoext+".csv");
-	                if (!output.exists())
-	                {
-		                output.createNewFile();
-		                FileOutputStream fos = new FileOutputStream(output);
-		                fos.write(save.get("qhdr"));
-		                fos.close();
-	                }
-	            } catch (IOException e) {
-	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
-	            }
 
+            	if (firstpass ==true)
+            	{
+	            	BerkeleyResourceFile rp = srfp.getBRF();
+	            	int ftype = KSFLUtilities.fcc("qhdr");
+            		
+					for (int id2 : rp.getfullIDs(ftype)) 
+					{
+						MacResource r = rp.getFromFullID(ftype, id2);
+						QHeader qh1 = new QHeader(id2,r.data,file);
+						qh.add(new QHeaderout (qh1,true));
+						qh2.add(new QHeaderout (qh1,false));
+					}
+					firstpass = false;
+            	}					
+	        }
+            else
+            {
             	val = data.get(key);
-                suffix=".txt";
+              suffix=".txt";
+            	
             }
             if (val != null)
             { 
@@ -441,6 +445,41 @@ public class UI implements TreeSelectionListener, ActionListener {
 	            }
             }
         }
+        if (qh.size() > 0)
+        {
+        	File typedir = new File (dir+File.separator+filenamenoext+File.separator);
+            try {
+                File output = new File(typedir, filenamenoext+".json");
+                if (!output.exists())
+                {
+	                output.createNewFile();
+	        		Gson gson = new Gson();
+	        		String json = gson.toJson(qh); 
+	                PrintWriter out = new PrintWriter(output);
+	                out.print(json);
+	                out.close();
+                }
+            } catch (IOException e) {
+                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+            }
+            
+            try {
+                File output = new File(typedir, filenamenoext+"J.json");
+                if (!output.exists())
+                {
+	                output.createNewFile();
+	        		Gson gson = new Gson();
+	        		String json = gson.toJson(qh2); 
+	                PrintWriter out = new PrintWriter(output);
+	                out.print(json);
+	                out.close();
+                }
+            } catch (IOException e) {
+                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+            }
+
+        }
+
     }
     
         private void SRFSave1(String currentselect) {
@@ -562,10 +601,10 @@ public class UI implements TreeSelectionListener, ActionListener {
                 if (type.equals("gfx"))
                 {
     	            try {
-    	                File output = new File(typedir, id+".js");
+    	                File output = new File(typedir, id+"t.json");
     	                output.createNewFile();
     	                PrintWriter out = new PrintWriter(output);
-    	                out.print(gfxpanel.getStrip().getJS());
+    	                out.print(gfxpanel.getStrip().getTileJSON());
     	                out.close();
     	            } catch (IOException e) {
     	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
@@ -638,7 +677,7 @@ public class UI implements TreeSelectionListener, ActionListener {
 	        	  if (type != null)
 	        	  {
 	        		  mntmSaveJsanimationInfo.setEnabled(false);
-		        	  if (!type.equals("qhdr"))
+		        	  if (!type.equals("qheader"))
 		        	  {
 			        	  r = rp.get(ftype, Short.parseShort(id));
 		        	  }              
@@ -649,36 +688,80 @@ public class UI implements TreeSelectionListener, ActionListener {
 		              }
 		              else if (type.equals("gfx"))
 		              {
-		            	  gfxpanel.removeAll();
-		            	  jgfx = new JackGraphic(r.data);
-		            	  gfxpanel = new JackGFX(jgfx);
-		                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
+		            	  frmYdkjExtractor.getContentPane().remove(gfxpanel); 
+
+		                  gfxpanel = new JackGFX(new CardLayout());
+		                  gbc_gfxpanel = new GridBagConstraints();
+		                  gbc_gfxpanel.fill = GridBagConstraints.BOTH;
+		                  gbc_gfxpanel.gridx = 1;
+		                  gbc_gfxpanel.gridy = 1;
+
 		                  frmYdkjExtractor.revalidate();
+			              frmYdkjExtractor.repaint();
+
+		            	  jgfx = new JackGraphic(r.data);
+		            	  gfxpanel.add(new JackGFX(jgfx),"Panel");
 		                  mntmSaveJsanimationInfo.setEnabled(true);
 		              }
 		              else if (type.equals("template"))
 		              {
-		            	  gfxpanel.removeAll();
-									 
-		            	  gfxpanel = new JackTemplate(srfp.getData().get(currentselect),srfp.getSaves().get(currentselect));
-		                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
+		            	  frmYdkjExtractor.getContentPane().remove(gfxpanel); 
+
+		                  gfxpanel = new JackGFX(new CardLayout());
+		                  gbc_gfxpanel = new GridBagConstraints();
+		                  gbc_gfxpanel.fill = GridBagConstraints.BOTH;
+		                  gbc_gfxpanel.gridx = 1;
+		                  gbc_gfxpanel.gridy = 1;
+
 		                  frmYdkjExtractor.revalidate();
+			              frmYdkjExtractor.repaint();
+
+		            	  gfxpanel.add(new JackTemplate(srfp.getData().get(currentselect),srfp.getSaves().get(currentselect)),"Panel");
 		                  mntmSaveJsanimationInfo.setEnabled(true);
 
 		              }
-			              else
+		              else if (type.equals("qheader"))
+		              {
+		            	  frmYdkjExtractor.getContentPane().remove(gfxpanel); 
+
+		                  gfxpanel = new JackGFX(new CardLayout());
+		                  gbc_gfxpanel = new GridBagConstraints();
+		                  gbc_gfxpanel.fill = GridBagConstraints.BOTH;
+		                  gbc_gfxpanel.gridx = 1;
+		                  gbc_gfxpanel.gridy = 1;
+
+		                  frmYdkjExtractor.revalidate();
+			              frmYdkjExtractor.repaint();
+									 
+		            	  gfxpanel.add(new JackQheader(srfp.getStr().get(currentselect),srfp.getStr().get(currentselect+"j")),"Panel");
+		                  mntmSaveJsanimationInfo.setEnabled(true);
+
+		              }
+			          else
 		              {
 			              byte[] data = srfp.getData().get(currentselect); 
 			                            
 			              if (data != null)
 			              {
-			            	  gfxpanel.removeAll();
-								 
-			            	  gfxpanel = new JackTemplate(data);
-			                  frmYdkjExtractor.getContentPane().add(gfxpanel, gbc_gfxpanel);
+			            	  frmYdkjExtractor.getContentPane().remove(gfxpanel); 
+
+			                  gfxpanel = new JackGFX(new CardLayout());
+			                  gbc_gfxpanel = new GridBagConstraints();
+			                  gbc_gfxpanel.fill = GridBagConstraints.BOTH;
+			                  gbc_gfxpanel.gridx = 1;
+			                  gbc_gfxpanel.gridy = 1;
+
 			                  frmYdkjExtractor.revalidate();
+				              frmYdkjExtractor.repaint();
+								 
+			            	  gfxpanel.add(new JackTemplate(data),"Panel");
 			              }
 		              }
+			          	frmYdkjExtractor.getContentPane().add(gfxpanel,gbc_gfxpanel);
+			            CardLayout cl = (CardLayout)(gfxpanel.getLayout());
+			            cl.show(gfxpanel,"Panel");
+		                frmYdkjExtractor.revalidate();
+			            frmYdkjExtractor.repaint();
 		          }
               }
         }

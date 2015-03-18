@@ -100,6 +100,7 @@ public enum FieldSize {
 		}
 	}
 	
+	@SuppressWarnings("incomplete-switch")
 	public void writeBE(DataOutput out, Number n) throws IOException {
 		switch (this) {
 		case BYTE: out.writeByte(n.byteValue()); break;
@@ -119,6 +120,7 @@ public enum FieldSize {
 		}
 	}
 	
+	@SuppressWarnings("incomplete-switch")
 	public void writeLE(DataOutput out, Number n) throws IOException {
 		switch (this) {
 		case BYTE: out.writeByte(n.byteValue()); break;

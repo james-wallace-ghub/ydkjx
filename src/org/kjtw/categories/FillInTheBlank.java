@@ -1,16 +1,18 @@
 package org.kjtw.categories;
 
 import javax.swing.JPanel;
-import java.awt.GridBagLayout;
 
+import java.awt.GridBagLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
-import org.kjtw.main.AudioPlayer;
-import org.kjtw.main.SRFLoad;
+import org.kjtw.process.AudioPlayer;
+import org.kjtw.process.SRFLoad;
+import org.kjtw.structures.QHeader;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
+
 import java.awt.event.ItemListener;
 
 public class FillInTheBlank extends JPanel {
@@ -55,12 +58,12 @@ public class FillInTheBlank extends JPanel {
 	 */
 	public FillInTheBlank(final QHeader qhd) throws IOException {
 		supplements = new Hashtable<String, byte[]>();
-		QData = new SRFLoad(qhd.path);
+		QData = new SRFLoad(qhd.getPath());
 		supplements = QData.getData(); 
-		if (qhd.forced != null)
+		if (qhd.getForced() != null)
 		{
-			qhd.titlea= new String(supplements.get("STR_18"));
-			qhd.titleb= new String(supplements.get("STR_19"));
+			qhd.setTitlea(new String(supplements.get("STR_18")));
+			qhd.setTitleb(new String(supplements.get("STR_19")));
 		}
 		titleval =0;
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -97,7 +100,7 @@ public class FillInTheBlank extends JPanel {
 			}
 		});
 		
-		lblNewLabel = new JLabel("Value:"+qhd.value+"000");
+		lblNewLabel = new JLabel("Difficulty:"+qhd.getDiff());
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.gridwidth = 2;
@@ -112,7 +115,7 @@ public class FillInTheBlank extends JPanel {
 		gbc_btnPlayTitle.gridy = 1;
 		add(btnPlayTitle, gbc_btnPlayTitle);
 		
-		Title = new JLabel(qhd.title);
+		Title = new JLabel(qhd.getTitle());
 		GridBagConstraints gbc_Title = new GridBagConstraints();
 		gbc_Title.gridwidth = 2;
 		gbc_Title.insets = new Insets(0, 0, 5, 0);
@@ -308,7 +311,7 @@ public class FillInTheBlank extends JPanel {
 					Spellings.setText(spelltext);
 					validate();
 
-					switch (qhd.answer)
+					switch (qhd.getAnswer())
 					{
 						case 1:
 						txt1.setForeground(Color.GREEN);
@@ -369,7 +372,7 @@ public class FillInTheBlank extends JPanel {
 			btnClosingRemark.setEnabled(false);
 		}
 
-		if (qhd.titlea != null)
+		if (qhd.getTitlea() != null)
 		{
 			btnPlayTitle.setText("Play Title 1");
 			btnToggleAltTitles = new JButton("Toggle alt titles");
@@ -388,19 +391,19 @@ public class FillInTheBlank extends JPanel {
 						default:
 						{
 							btnPlayTitle.setText("Play Title 1");
-							Title.setText(qhd.title);
+							Title.setText(qhd.getTitle());
 							break;
 						}
 						case 1:
 						{
 							btnPlayTitle.setText("Play Title 2");
-							Title.setText(qhd.titlea);
+							Title.setText(qhd.getTitlea());
 							break;
 						}
 						case 2:
 						{
 							btnPlayTitle.setText("Play Title 3");
-							Title.setText(qhd.titleb);
+							Title.setText(qhd.getTitleb());
 							break;
 						}
 					}

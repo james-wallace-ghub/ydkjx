@@ -1,15 +1,17 @@
 package org.kjtw.categories;
 
 import javax.swing.JPanel;
-import java.awt.GridBagLayout;
 
+import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
-import org.kjtw.main.AudioPlayer;
-import org.kjtw.main.SRFLoad;
+import org.kjtw.process.AudioPlayer;
+import org.kjtw.process.SRFLoad;
+import org.kjtw.structures.QHeader;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
+
 import java.awt.event.ItemListener;
 import java.awt.Font;
 
@@ -53,7 +56,7 @@ public class Gibberish extends JPanel {
 	 * @throws IOException 
 	 */
 	public Gibberish(final QHeader qhd) throws IOException {
-		QData = new SRFLoad(qhd.path);
+		QData = new SRFLoad(qhd.getPath());
 		supplements = QData.getData(); 
 		final String spelltext = "<html><body style='width:100%'>"+"Alternate spellings: "+new String(supplements.get("Wrds_128"));
 		final String questiontext = "<html><body style='width:100%'>"+new String(supplements.get("STR_130"));
@@ -334,7 +337,7 @@ public class Gibberish extends JPanel {
 		add(btnClosingRemark, gbc_btnClosingRemark);
 
 		Qtext.setText(questiontext);
-		Title.setText(qhd.title);
+		Title.setText(qhd.getTitle());
 
 		chckbxNewCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -354,10 +357,10 @@ public class Gibberish extends JPanel {
 			}
 		});
 
-		if (qhd.forced != null)
+		if (qhd.getForced() != null)
 		{
-			qhd.titlea= new String(supplements.get("STR_18"));
-			qhd.titleb= new String(supplements.get("STR_19"));
+			qhd.setTitlea(new String(supplements.get("STR_18")));
+			qhd.setTitleb(new String(supplements.get("STR_19")));
 		}
 		
 		if (supplements.get("snd_16")==null)
