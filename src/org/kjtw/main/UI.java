@@ -21,6 +21,7 @@ import org.kjtw.process.AudioPlayer;
 import org.kjtw.process.SRFProcess;
 import org.kjtw.structures.GameTemplate;
 import org.kjtw.structures.JackGraphic;
+
 import org.kjtw.structures.QHeader;
 import org.kjtw.structures.QHeaderout;
 
