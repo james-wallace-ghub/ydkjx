@@ -10,6 +10,9 @@ import org.kjtw.process.SRFLoad;
 public class GibberishOut extends YDKJQ {
 
 	String title;
+	String titlea;
+	String titleb;
+
 	String text;
 	
 	String h1;
@@ -78,6 +81,12 @@ public class GibberishOut extends YDKJQ {
 		}
 
 		title = qh.getTitle();
+        if (qh.getForced() != null)
+		{
+			titlea =(new String(supplements.get("STR_128")));
+			titleb=(new String(supplements.get("STR_129")));
+		}
+
 	}
 
 }

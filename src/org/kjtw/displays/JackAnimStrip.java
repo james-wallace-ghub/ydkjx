@@ -15,10 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
@@ -96,7 +93,7 @@ public class JackAnimStrip extends JackGfxStrip implements ActionListener {
 
 
 
-		String[] palettes = { "YDKJ 1", "YDKJ 2", "YDKJ 3", "YDKJ 4 (The Ride)", "HeadRush", "Offline", "Louder! Faster! Funnier!" };
+		String[] palettes = { "YDKJ 1", "YDKJ 2", "YDKJ 3", "YDKJ 4 (The Ride)", "HeadRush", "Offline", "Louder! Faster! Funnier!", "Movies/TV/Sports" };
 
 		panel = new JackGFXPanel(currentimage);
 		panel.setBackground(Color.white);
@@ -233,7 +230,8 @@ public class JackAnimStrip extends JackGfxStrip implements ActionListener {
     	JComboBox cb = (JComboBox)arg0.getSource();
         String pal = (String)cb.getSelectedItem();
         
-    	jgfx.SetPalette(new YDKJPalettes().getPalettes().get(pal));
+    	new YDKJPalettes();
+		jgfx.SetPalette(YDKJPalettes.getPalettes().get(pal));
 		currentimage = jgfx.getFrameImg(canvascount,jgfx.GetPalette());
 		panel.setImage(currentimage);
         }

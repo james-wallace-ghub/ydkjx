@@ -100,7 +100,7 @@ Hashtable<String,QHeader> headtree = new Hashtable<String,QHeader>();
 		    								twy.add(q);
 		    								break;
 		    							default:
-		    								unk.add(q);
+		    								norm.add(q);
 		    								break;
             						}
             						qfound=true;

@@ -16,7 +16,7 @@ public class JackQheader extends JackGFX {
 
 	private static final long serialVersionUID = -7319512477022269566L;
 
-	public JackQheader(final String eu, final String japan) {
+	public JackQheader(final String eu, final String japan, final String nuke) {
 		GridBagLayout gridBagLayout = (GridBagLayout) getLayout();
 		gridBagLayout.rowHeights = new int[]{508, 20};
 		gridBagLayout.columnWidths = new int[]{587};
@@ -32,7 +32,7 @@ public class JackQheader extends JackGFX {
 		add(scrollPane, gbc_scrollPane);
 		
 		final JTextPane textPane = new JTextPane();
-		textPane.setText(eu);
+		textPane.setText(nuke+eu);
 		textPane.setEditable(false);
 		scrollPane.setViewportView(textPane);
 		
@@ -48,11 +48,11 @@ public class JackQheader extends JackGFX {
 			public void actionPerformed(ActionEvent e) {
 				if (tglbtnJapaneseMode.isSelected())
 				{
-					textPane.setText(japan);
+					textPane.setText(nuke+japan);
 				}
 				else
 				{
-					textPane.setText(eu);
+					textPane.setText(nuke+eu);
 				}
 			}
 		});

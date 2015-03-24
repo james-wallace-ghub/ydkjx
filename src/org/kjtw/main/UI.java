@@ -21,7 +21,6 @@ import org.kjtw.process.AudioPlayer;
 import org.kjtw.process.SRFProcess;
 import org.kjtw.structures.GameTemplate;
 import org.kjtw.structures.JackGraphic;
-
 import org.kjtw.structures.QHeader;
 import org.kjtw.structures.QHeaderout;
 
@@ -704,6 +703,24 @@ public class UI implements TreeSelectionListener, ActionListener {
 		            	  gfxpanel.add(new JackGFX(jgfx),"Panel");
 		                  mntmSaveJsanimationInfo.setEnabled(true);
 		              }
+		              else if (type.equals("qheadnuke"))
+		              {
+		            	  frmYdkjExtractor.getContentPane().remove(gfxpanel); 
+
+		                  gfxpanel = new JackGFX(new CardLayout());
+		                  gbc_gfxpanel = new GridBagConstraints();
+		                  gbc_gfxpanel.fill = GridBagConstraints.BOTH;
+		                  gbc_gfxpanel.gridx = 1;
+		                  gbc_gfxpanel.gridy = 1;
+
+		                  frmYdkjExtractor.revalidate();
+			              frmYdkjExtractor.repaint();
+		            	  gfxpanel.add(new JackTemplate(srfp.getData().get(currentselect)),"Panel");
+
+//		            	  gfxpanel.add(new JackStringArray(new String (srfp.getData().get(currentselect))),"Panel");
+		                  mntmSaveJsanimationInfo.setEnabled(true);
+
+		              }
 		              else if (type.equals("template"))
 		              {
 		            	  frmYdkjExtractor.getContentPane().remove(gfxpanel); 
@@ -717,7 +734,7 @@ public class UI implements TreeSelectionListener, ActionListener {
 		                  frmYdkjExtractor.revalidate();
 			              frmYdkjExtractor.repaint();
 
-		            	  gfxpanel.add(new JackTemplate(srfp.getData().get(currentselect),srfp.getSaves().get(currentselect)),"Panel");
+		            	  gfxpanel.add(new JackTemplate(srfp.getData().get(currentselect)),"Panel");
 		                  mntmSaveJsanimationInfo.setEnabled(true);
 
 		              }
@@ -734,7 +751,15 @@ public class UI implements TreeSelectionListener, ActionListener {
 		                  frmYdkjExtractor.revalidate();
 			              frmYdkjExtractor.repaint();
 									 
-		            	  gfxpanel.add(new JackQheader(srfp.getStr().get(currentselect),srfp.getStr().get(currentselect+"j")),"Panel");
+			              String nuke ="";
+			              
+			              nuke +=srfp.getStr().get("nuke");
+			              String nk ="";
+			              if (nuke.contains(id))
+			              {
+			            	  nk = "Question is in nuke list"+System.lineSeparator();
+			              }
+		            	  gfxpanel.add(new JackQheader(srfp.getStr().get(currentselect),srfp.getStr().get(currentselect+"j"),nk),"Panel");
 		                  mntmSaveJsanimationInfo.setEnabled(true);
 
 		              }

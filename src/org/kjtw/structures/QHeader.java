@@ -33,6 +33,10 @@ public class QHeader {
 		int subtype = stuff[11];
 		this.setSubType(subtype);
 
+		if (subtype == 8)
+		{
+			this.hidetext = true;
+		}
 		byte[] titleconst = KSFLUtilities.copy(stuff, 16, 63);
 
 		byte[] pathconst = KSFLUtilities.copy(stuff, 81, 63);
@@ -57,42 +61,107 @@ public class QHeader {
 		if (stuff.length > 146)
 		{
 			this.setAnswer((int)stuff[146]);
-			this.hidetext = (stuff[149] == 0x4c);
 		}
 		else
 		{
 			this.setAnswer(0);
 		}
 
-		
+		if (stuff.length >149)
+		{
+			if (this.hidetext != true)
+			{
+				this.hidetext = (stuff[149] == 0x4c);
+			}
+		}
 		if (stuff.length >152)
 		{
-
-			if (stuff[150] != 0)
+			if (this.getType() == 2)
 			{
-				//forcing a question after this one.
-				byte[] forceconst = KSFLUtilities.copy(stuff, 150, 4);
-				String forcestr="";
-				try {
-					forcestr = new String(forceconst, "MACROMAN").trim();
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if (stuff[146] != 0)
+				{
+					//forcing a question after this one.
+					byte[] forceconst = KSFLUtilities.copy(stuff, 146, 4);
+					String forcestr="";
+					try {
+						forcestr = new String(forceconst, "MACROMAN").trim();
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					this.setForcing(forcestr);
 				}
-				this.setForcing(forcestr);
+				if (stuff[150] != 0)
+				{
+					//This was a forced question, don't display it.
+					byte[] forceconst = KSFLUtilities.copy(stuff, 150, 4);
+					String forcestr="";
+					try {
+						forcestr = new String(forceconst, "MACROMAN").trim();
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					this.setForced(forcestr);
+				}
 			}
-			if (stuff[154] != 0)
+			else if (this.getType() == 3)
 			{
-				//This was a forced question, don't display it.
-				byte[] forceconst = KSFLUtilities.copy(stuff, 154, 4);
-				String forcestr="";
-				try {
-					forcestr = new String(forceconst, "MACROMAN").trim();
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if (stuff[148] != 0)
+				{
+					//forcing a question after this one.
+					byte[] forceconst = KSFLUtilities.copy(stuff, 148, 4);
+					String forcestr="";
+					try {
+						forcestr = new String(forceconst, "MACROMAN").trim();
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					this.setForcing(forcestr);
 				}
-				this.setForced(forcestr);
+				if (stuff[152] != 0)
+				{
+					//This was a forced question, don't display it.
+					byte[] forceconst = KSFLUtilities.copy(stuff, 152, 4);
+					String forcestr="";
+					try {
+						forcestr = new String(forceconst, "MACROMAN").trim();
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					this.setForced(forcestr);
+				}
+			}
+			else
+			{
+				if (stuff[150] != 0)
+				{
+					//forcing a question after this one.
+					byte[] forceconst = KSFLUtilities.copy(stuff, 150, 4);
+					String forcestr="";
+					try {
+						forcestr = new String(forceconst, "MACROMAN").trim();
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					this.setForcing(forcestr);
+				}
+				if (stuff[154] != 0)
+				{
+					//This was a forced question, don't display it.
+					byte[] forceconst = KSFLUtilities.copy(stuff, 154, 4);
+					String forcestr="";
+					try {
+						forcestr = new String(forceconst, "MACROMAN").trim();
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					this.setForced(forcestr);
+				}
 			}
 		}        						
 	}
@@ -217,6 +286,17 @@ public class QHeader {
 			case 6:
 				subtypedef = "Guest host question";
 				break;
+
+			case 8:
+				subtypedef = "Normal 4 answer question (spellings)";
+				break;
+			case 9:
+				subtypedef = "Normal 4 answer question (description)";
+				break;
+			case 10:
+				subtypedef = "Normal 4 answer question (trash)";
+				break;
+
 			default:
 				subtypedef = ""+subtype;
 				break;

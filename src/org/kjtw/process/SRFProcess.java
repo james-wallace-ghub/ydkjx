@@ -24,7 +24,6 @@ public class SRFProcess {
 Hashtable<String,String> parents = new Hashtable<String,String>();
 Hashtable<String, byte[]> recallsave = new Hashtable<String, byte[]>();
 Hashtable<String, String> recallstr = new Hashtable<String, String>();
-
 Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	JTree tree = null;
 	BerkeleyResourceFile rp;
@@ -102,25 +101,36 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
    						}
     					else if (ftype.equals("Nuke"))
    						{
-    						MacResource r = rp.get(type, "128");
-    						stuff = KSFLUtilities.copy(r.data, 4, r.data.length-4 );
-			    			recalldata.put(ftype+'_'+128, stuff);    								
-
-	    					if (!parents.containsKey(ftype))
-							{
-								parents.put(ftype, "qheadused");
-							}								
+	    					for (short id : rp.getIDs(type)) 
+	    					{
+        						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+id);
+        						ti.add(ti2);
+	    						MacResource r = rp.get(type, id);
+	    						stuff = KSFLUtilities.copy(r.data, 4, r.data.length-4 );
+				    			recalldata.put(ftype+'_'+id, stuff);    								
+	    						recallstr.put("nuke", new String(stuff));
+	
+		    					if (!parents.containsKey(ftype))
+								{
+									parents.put(ftype, "qheadnuke");
+								}
+	    					}
    						}
     					else if (ftype.equals("Used"))
    						{
-    						MacResource r = rp.get(type, "1");
-    						stuff = r.data;
-			    			recalldata.put(ftype+'_'+1, stuff);    								
+	    					for (short id : rp.getIDs(type)) 
+	    					{
+        						DefaultMutableTreeNode ti2 = new DefaultMutableTreeNode(""+id);
+        						ti.add(ti2);
+	    						MacResource r = rp.get(type, id);
+	    						stuff = r.data;
+	    						recalldata.put(ftype+'_'+id, stuff);    								
 
-	    					if (!parents.containsKey(ftype))
-							{
-								parents.put(ftype, "qheadused");
-							}								
+		    					if (!parents.containsKey(ftype))
+								{
+									parents.put(ftype, "qheadused");
+								}
+	    					}
    						}
     					else if (ftype.equals("qhdr"))
    						{

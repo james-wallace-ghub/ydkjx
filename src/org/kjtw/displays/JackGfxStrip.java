@@ -162,7 +162,7 @@ public class JackGfxStrip extends JPanel implements ActionListener {
 		gbc_label.gridy = 3;
 		add(label, gbc_label);
 		
-		String[] palettes = { "YDKJ 1", "YDKJ 2", "YDKJ 3", "YDKJ 4 (The Ride)", "HeadRush", "Offline", "Louder! Faster! Funnier!" };
+		String[] palettes = { "YDKJ 1", "YDKJ 2", "YDKJ 3", "YDKJ 4 (The Ride)", "HeadRush", "Offline", "Louder! Faster! Funnier!","Movies/TV/Sports" };
 
 		comboBox = new JComboBox(palettes);
 		comboBox.setSelectedIndex(1);
@@ -232,7 +232,8 @@ public class JackGfxStrip extends JPanel implements ActionListener {
     	JComboBox cb = (JComboBox)arg0.getSource();
         String pal = (String)cb.getSelectedItem();
         
-    	jgfx.SetPalette(new YDKJPalettes().getPalettes().get(pal));
+    	new YDKJPalettes();
+		jgfx.SetPalette(YDKJPalettes.getPalettes().get(pal));
 		currentimage = jgfx.getFrameImg(canvascount,jgfx.GetPalette());
 		panel.setImage(currentimage);
        }

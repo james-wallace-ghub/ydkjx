@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.RandomAccessFile;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,23 +25,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
-import org.kjtw.categories.Gibberish;
 import org.kjtw.process.SRFProcess;
+import org.kjtw.resources.YDKJPalettes;
 import org.kjtw.structures.CCCOut;
 import org.kjtw.structures.DisorDatOut;
-import org.kjtw.structures.FITB;
 import org.kjtw.structures.FiberOpticOut;
 import org.kjtw.structures.FillintheBlankOut;
 import org.kjtw.structures.GameTemplate;
@@ -67,6 +63,7 @@ import com.kreative.rsrc.MacResourceFile;
 import com.kreative.rsrc.SoundResource;
 
 import javax.swing.JProgressBar;
+import javax.swing.JComboBox;
  
 public class BatchProcessor extends JPanel
                              implements ActionListener, 
@@ -76,13 +73,6 @@ public class BatchProcessor extends JPanel
     private JTextArea taskOutput;
     private Task task;
     private JLabel lblPaletteusEngine;
-    private JRadioButton y1;
-    private JRadioButton y2;
-    private JRadioButton radioButton;
-    private JRadioButton radioButton_1;
-    private JRadioButton radioButton_2;
-    private JRadioButton radioButton_3;
-    private JRadioButton radioButton_4;
     private JButton button;
   	private static String dirin;
   	private static String dirout;
@@ -91,6 +81,7 @@ public class BatchProcessor extends JPanel
 	static ArrayList<String> fileNames;
 	static ArrayList<String> qhnames;
 	static ArrayList<QHeader> qheads;
+	private JComboBox comboBox;
 
 	class Task extends SwingWorker<Void, Void> {
         /*
@@ -291,97 +282,45 @@ public class BatchProcessor extends JPanel
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{116, 58, 0, 0, 0, 0, 0, 0, 0};
         gridBagLayout.rowHeights = new int[]{33, 0, 227, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
-		ButtonGroup group = new ButtonGroup();
                       
-                      lblPaletteusEngine = new JLabel("Palette: (US Engine)");
+                      lblPaletteusEngine = new JLabel("Palette");
                       GridBagConstraints gbc_lblPaletteusEngine = new GridBagConstraints();
                       gbc_lblPaletteusEngine.insets = new Insets(0, 0, 5, 5);
                       gbc_lblPaletteusEngine.gridx = 0;
                       gbc_lblPaletteusEngine.gridy = 0;
                       add(lblPaletteusEngine, gbc_lblPaletteusEngine);
                       
-                      y1 = new JRadioButton("YDKJ 1");
-                      group.add(y1);
-                      y1.setActionCommand("org/kjtw/resources/YDKJ1PAL.bmp");
-                      y1.addActionListener(this);
-                      GridBagConstraints gbc_y1 = new GridBagConstraints();
-                      gbc_y1.insets = new Insets(0, 0, 5, 5);
-                      gbc_y1.gridx = 1;
-                      gbc_y1.gridy = 0;
-                      add(y1, gbc_y1);
-                      
-                      y2 = new JRadioButton("YDKJ 2");
-                      group.add(y2);
-                      y2.setSelected(true);
-                      y2.addActionListener(this);
-                      y2.setActionCommand("org/kjtw/resources/YDKJ2PAL.bmp");
-                      pal = "org/kjtw/resources/YDKJ2PAL.bmp";
-                      GridBagConstraints gbc_y2 = new GridBagConstraints();
-                      gbc_y2.insets = new Insets(0, 0, 5, 5);
-                      gbc_y2.gridx = 2;
-                      gbc_y2.gridy = 0;
-                      add(y2, gbc_y2);
-                      
-                      radioButton = new JRadioButton("YDKJ 3");
-                      group.add(radioButton);
-                      radioButton.setActionCommand("org/kjtw/resources/YDKJ3PAL.bmp");
-                      radioButton.addActionListener(this);
-                      GridBagConstraints gbc_radioButton = new GridBagConstraints();
-                      gbc_radioButton.insets = new Insets(0, 0, 5, 5);
-                      gbc_radioButton.gridx = 3;
-                      gbc_radioButton.gridy = 0;
-                      add(radioButton, gbc_radioButton);
-                      
-                      radioButton_1 = new JRadioButton("YDKJ 4");
-                      group.add(radioButton_1);
-                      radioButton_1.addActionListener(this);
-                      radioButton_1.setActionCommand("org/kjtw/resources/YDKJ4PAL.bmp");
-                      GridBagConstraints gbc_radioButton_1 = new GridBagConstraints();
-                      gbc_radioButton_1.insets = new Insets(0, 0, 5, 5);
-                      gbc_radioButton_1.gridx = 4;
-                      gbc_radioButton_1.gridy = 0;
-                      add(radioButton_1, gbc_radioButton_1);
-                      
-                      radioButton_2 = new JRadioButton("HeadRush");
-                      group.add(radioButton_2);
-                      radioButton_2.addActionListener(this);
-                      radioButton_2.setActionCommand("org/kjtw/resources/HRUSHP.bmp");
-                      GridBagConstraints gbc_radioButton_2 = new GridBagConstraints();
-                      gbc_radioButton_2.insets = new Insets(0, 0, 5, 5);
-                      gbc_radioButton_2.gridx = 5;
-                      gbc_radioButton_2.gridy = 0;
-                      add(radioButton_2, gbc_radioButton_2);
-                      
-                      radioButton_3 = new JRadioButton("Offline");
-                      group.add(radioButton_3);
-                      radioButton_3.addActionListener(this);
-                      radioButton_3.setActionCommand("org/kjtw/resources/OFFLINEP.bmp");
-                      GridBagConstraints gbc_radioButton_3 = new GridBagConstraints();
-                      gbc_radioButton_3.insets = new Insets(0, 0, 5, 5);
-                      gbc_radioButton_3.gridx = 6;
-                      gbc_radioButton_3.gridy = 0;
-                      add(radioButton_3, gbc_radioButton_3);
-                      
-                      radioButton_4 = new JRadioButton("L!F!F!");
-                      group.add(radioButton_4);
-                      radioButton_4.addActionListener(this);
-                      radioButton_4.setActionCommand("org/kjtw/resources/LFFP.bmp");
-                      GridBagConstraints gbc_radioButton_4 = new GridBagConstraints();
-                      gbc_radioButton_4.insets = new Insets(0, 0, 5, 0);
-                      gbc_radioButton_4.gridx = 7;
-                      gbc_radioButton_4.gridy = 0;
-                      add(radioButton_4, gbc_radioButton_4);
-                      
                       button = new JButton("Input Directory");
                       button.addActionListener(new ActionListener() {
-
 						public void actionPerformed(ActionEvent e) {
 							SetInDirectory();
                       	}
                       });
+                      
+              		String[] palettes = { "YDKJ 1", "YDKJ 2", "YDKJ 3", "YDKJ 4 (The Ride)", "HeadRush", "Offline", "Louder! Faster! Funnier!","Movies/TV/Sports" };
+
+                      comboBox = new JComboBox(palettes);
+              		comboBox.setSelectedIndex(1);
+            		comboBox.addActionListener(new ActionListener() {
+            	    public void actionPerformed(ActionEvent arg0) {
+            	    	JComboBox cb = (JComboBox)arg0.getSource();
+            	        String p = (String)cb.getSelectedItem();
+            	        
+            	        new YDKJPalettes();
+						pal = YDKJPalettes.getPalettes().get(p);
+            	    }
+            	       });
+            		
+            		GridBagConstraints gbc_comboBox = new GridBagConstraints();
+                      gbc_comboBox.gridwidth = 6;
+                      gbc_comboBox.insets = new Insets(0, 0, 5, 5);
+                      gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
+                      gbc_comboBox.gridx = 1;
+                      gbc_comboBox.gridy = 0;
+                      add(comboBox, gbc_comboBox);
                       GridBagConstraints gbc_button = new GridBagConstraints();
                       gbc_button.anchor = GridBagConstraints.WEST;
                       gbc_button.insets = new Insets(0, 0, 5, 5);

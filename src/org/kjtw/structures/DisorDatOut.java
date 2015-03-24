@@ -11,6 +11,9 @@ import com.kreative.ksfl.KSFLUtilities;
 
 public class DisorDatOut extends YDKJQ {
 	String title;
+	String titlea;
+	String titleb;
+
 	String text;
 	boolean opt3needed=false;
 	String[] questions;
@@ -54,5 +57,11 @@ public class DisorDatOut extends YDKJQ {
 		}
 
 		title = qh.getTitle();
+        if (qh.getForced() != null)
+		{
+			titlea =(new String(supplements.get("STR_5")));
+			titleb=(new String(supplements.get("STR_6")));
+		}
+
 	}
 }

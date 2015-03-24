@@ -18,13 +18,14 @@ public class QHeaderout {
 	protected String forced;
 	protected String forcing;
 	protected int answer;
-
+	protected boolean autohide;
+	
 	public QHeaderout(QHeader qh1, boolean jmode) {
 		qname = qh1.getName();
 		diff = qh1.getValue();
 		type = qh1.getType();
 		subtype = qh1.getSubType();
-		
+		autohide = qh1.hidetext;
 		path = qh1.getPath();
 		forced = qh1.getForced();
 		if (jmode==true)

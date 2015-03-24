@@ -17,7 +17,7 @@ public class YDKJPalettes {
 		palettelist.put("HeadRush","org/kjtw/resources/HRUSHP.bmp");
 		palettelist.put("Offline","org/kjtw/resources/OFFLINEP.bmp");
 		palettelist.put("Louder! Faster! Funnier!","org/kjtw/resources/LFFP.bmp");
-		
+		palettelist.put("Movies/TV/Sports","org/kjtw/resources/STM.bmp");
 		
 	}
 
