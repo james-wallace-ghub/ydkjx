@@ -633,6 +633,7 @@ public class UI implements TreeSelectionListener, ActionListener {
             SRFSetInDirectory();
             try {
                 srfp = new SRFProcess(file);
+                System.out.println(file);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }       

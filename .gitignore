@@ -1,3 +1,5 @@
 .classpath
 bin/
 .settings/org.eclipse.jdt.core.prefs
+/nbproject/private/
+/build/

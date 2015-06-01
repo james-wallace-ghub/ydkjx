@@ -4,6 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -16,7 +20,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 public class AudioPlayer implements Runnable{
-
+ExecutorService soundPool = Executors.newFixedThreadPool(1);
 	private byte[] audio;
 	
     private AudioInputStream audioStream = null;
@@ -28,9 +32,6 @@ public class AudioPlayer implements Runnable{
     private volatile boolean isPlayingFlag = false;
     private volatile float volume_dB = 0.0f;
 
-    public AudioPlayer()
-    {
-    }
     
 
     public AudioPlayer(byte[] bytes)
@@ -110,18 +111,33 @@ public class AudioPlayer implements Runnable{
 	{
 		stopFlag = false;
 		pauseFlag = false;
-		
-		try {
-			playSound();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedAudioFileException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}	
+
+            Runnable soundPlay = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    playSound();
+                } catch (UnsupportedAudioFileException ex) {
+                    Logger.getLogger(AudioPlayer.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(AudioPlayer.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (LineUnavailableException ex) {
+                    Logger.getLogger(AudioPlayer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+               };
+            soundPool.execute(soundPlay);
+//		try {
+//			playSound();
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (UnsupportedAudioFileException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (LineUnavailableException e) {
+//			e.printStackTrace();
+//		}	
 	}
 	
 	public void play() 

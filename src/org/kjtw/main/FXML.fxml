@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TitledPane collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" text="Jack Segue Player" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kjtw.main.SegueFXML">
+   <content>
+      <SplitPane dividerPositions="0.8342245989304813" orientation="VERTICAL" prefHeight="400.0" prefWidth="400.0">
+        <items>
+          <AnchorPane>
+               <children>
+                  <Pane fx:id="gfx" prefHeight="480.0" prefWidth="640.0" />
+               </children></AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <ChoiceBox fx:id="Palettecode" layoutX="14.0" layoutY="30.0" prefWidth="150.0">
+                  <items>
+                    <FXCollections fx:factory="observableArrayList">
+                      <String fx:value="YDKJ 1" />
+                      <String fx:value="YDKJ 2" />
+                      <String fx:value="YDKJ 3" />
+                      <String fx:value="YDKJ 4 (The Ride)" />
+                      <String fx:value="HeadRush" />
+                      <String fx:value="Offline" />
+                      <String fx:value="Louder! Faster! Funnier!" />
+                      <String fx:value="Movies/TV/Sports" />
+                    </FXCollections>
+                  </items>
+                  </ChoiceBox>
+                  <ChoiceBox fx:id="Segbank" layoutX="188.0" layoutY="30.0" prefWidth="150.0">
+                  <items>
+                    <FXCollections fx:factory="observableArrayList">
+                      <Integer fx:value="1" />
+                      <Integer fx:value="2" />
+                      <Integer fx:value="3" />
+                    </FXCollections>
+                  </items>
+                  </ChoiceBox>                      
+                  <Button fx:id="Playbut" layoutX="532.0" layoutY="30.0" mnemonicParsing="false" text="Play" />
+                  <ChoiceBox fx:id="Segnum" layoutX="357.0" layoutY="30.0" prefWidth="150.0">
+                  <items>
+                    <FXCollections fx:factory="observableArrayList">
+                      <Integer fx:value="1" />
+                      <Integer fx:value="2" />
+                      <Integer fx:value="3" />
+                      <Integer fx:value="4" />
+                      <Integer fx:value="5" />
+                      <Integer fx:value="6" />
+                      <Integer fx:value="7" />
+                      <Integer fx:value="8" />
+                      <Integer fx:value="9" />
+                      <Integer fx:value="10" />
+                      <Integer fx:value="11" />
+                      <Integer fx:value="12" />
+                      <Integer fx:value="13" />
+                      <Integer fx:value="14" />
+                      <Integer fx:value="15" />
+                      <Integer fx:value="16" />
+                      <Integer fx:value="17" />
+                      <Integer fx:value="18" />
+                      <Integer fx:value="19" />
+                      <Integer fx:value="20" />
+                    </FXCollections>
+                  </items>
+                  </ChoiceBox>                      
+                  <Label layoutX="14.0" layoutY="14.0" text="Palette" />
+                  <Label layoutX="188.0" layoutY="14.0" text="Segue Bank" />
+                  <Label layoutX="357.0" layoutY="14.0" text="Segue Number" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </content>
+</TitledPane>

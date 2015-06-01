@@ -48,8 +48,8 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
     				System.err.println("Error: Invalid file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
     				return;
     			}
-    			
-    				for (int type : rp.getTypes()) {
+
+    			for (int type : rp.getTypes()) {
    						byte[] stuff = new byte[0];
 
     					String ftype = KSFLUtilities.fccs(type).trim();

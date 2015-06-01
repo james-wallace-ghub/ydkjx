@@ -163,6 +163,7 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	
 	    							MacResource r = rp.get(type, id);
 	    							stuff = r.data;
+//	    							KSFLUtilities.fcc("off4");
 	    							if (ftype.equals("off4"))
 	    							{
 	    								if (!parents.containsKey(ftype))
