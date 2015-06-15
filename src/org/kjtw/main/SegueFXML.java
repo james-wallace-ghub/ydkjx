@@ -65,7 +65,7 @@ public class SegueFXML implements Initializable {
         	{
 		        JFileChooser chooser = new JFileChooser("C:\\ydkj");
 		        chooser.setDialogTitle("Open a QNUMBERS.SRF");
-		        chooser.setFileFilter(new FileNameExtensionFilter("QHEADERS.SRF", "srf"));
+		        chooser.setFileFilter(new FileNameExtensionFilter("QNUMBERS.SRF", "srf"));
 		        chooser.showOpenDialog(null);
 		        file = chooser.getSelectedFile();
 		        indir = file.getPath();
