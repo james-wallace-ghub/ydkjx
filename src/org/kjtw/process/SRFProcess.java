@@ -25,6 +25,8 @@ Hashtable<String,String> parents = new Hashtable<String,String>();
 Hashtable<String, byte[]> recallsave = new Hashtable<String, byte[]>();
 Hashtable<String, String> recallstr = new Hashtable<String, String>();
 Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
+Hashtable<Short, byte[]> RLEP = null;
+
 	JTree tree = null;
 	BerkeleyResourceFile rp;
 	public SRFProcess(File file) throws IOException
@@ -59,6 +61,19 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
     					String ftype = KSFLUtilities.fccs(type).trim();
     					DefaultMutableTreeNode ti = new DefaultMutableTreeNode(ftype);
     					top.add(ti);
+
+    					if (ftype.equals ("RLEP"))
+    					{
+    						if (RLEP == null)
+    						{
+    							RLEP = new Hashtable<Short, byte[]>();
+    						}
+	    					for (short id : rp.getIDs(type)) 
+	    					{
+    							MacResource r = rp.get(type, id);
+	    						RLEP.put(id, r.data);
+	    					}
+    					}
     					if ( (ftype.contains("GT")) || ( (ftype.contains("t07") && !ftype.equals("Mt07"))))
    						{
 	    					for (short id : rp.getIDs(type)) 
@@ -163,7 +178,6 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	
 	    							MacResource r = rp.get(type, id);
 	    							stuff = r.data;
-//	    							KSFLUtilities.fcc("off4");
 	    							if (ftype.equals("off4"))
 	    							{
 	    								if (!parents.containsKey(ftype))
@@ -172,6 +186,14 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	    								}
 	    								
 	    							}
+	    							if (ftype.equals("off3"))
+	    							{
+	    								if (!parents.containsKey(ftype))
+	    								{
+	    									parents.put(ftype, "legacygfx");
+	    								}	    								
+	    							}
+
 	    							if (( ftype.equals("3SEx") || ftype.contains("#")) && !ftype.equals("ANS#"))
 	    							{
 	    								StringListResource rstr = r.shallowRecast(StringListResource.class);
@@ -320,5 +342,9 @@ Hashtable<String, byte[]> recalldata = new Hashtable<String, byte[]>();
 	public Hashtable<String, String> getStr() {
 		// TODO Auto-generated method stub
 		return recallstr;
+	}
+	public byte[] getRLEP(short stripid) {
+		// TODO Auto-generated method stub
+		return RLEP.get(stripid);
 	}
 	}

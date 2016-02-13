@@ -15,7 +15,14 @@ public class JackRawImage {
 		this.setWidth(width);
 		this.setHeight(height);
 
-		bitmap = decodegfx(KSFLUtilities.copy(data, offset, 307200),width*height,width,height);
+		if ((data.length - offset) > 307199)
+		{
+			bitmap = decodegfx(KSFLUtilities.copy(data, offset, 307200),width*height,width,height);
+		}
+		else
+		{
+			bitmap = decodegfx(KSFLUtilities.copy(data, offset, data.length),width*height,width,height);
+		}
 	}
 
 	public JackRawImage() {

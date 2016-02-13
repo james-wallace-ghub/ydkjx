@@ -21,6 +21,8 @@ import org.kjtw.process.AudioPlayer;
 import org.kjtw.process.SRFProcess;
 import org.kjtw.structures.GameTemplate;
 import org.kjtw.structures.JackGraphic;
+import org.kjtw.structures.JackGraphicLegacy;
+import org.kjtw.structures.JackGraphicOff3;
 import org.kjtw.structures.QHeader;
 import org.kjtw.structures.QHeaderout;
 
@@ -325,6 +327,16 @@ public class UI implements TreeSelectionListener, ActionListener {
           	  jgfx=null;
           	  System.gc();
           	  jgfx = new JackGraphic(r.data);
+
+	            try {
+	                File output = new File(typedir, id+suffix);
+	                output.createNewFile();
+	                FileOutputStream fos = new FileOutputStream(output);
+	                fos.write(r.data);
+	                fos.close();
+	            } catch (IOException e) {
+	                System.err.println("Error: Cannot write file ("+e.getClass().getSimpleName()+": "+e.getMessage()+")");
+	            }
 
           	  {
 	          	  
@@ -633,7 +645,7 @@ public class UI implements TreeSelectionListener, ActionListener {
             SRFSetInDirectory();
             try {
                 srfp = new SRFProcess(file);
-                System.out.println(file);
+//                System.out.println(file);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }       
@@ -701,6 +713,23 @@ public class UI implements TreeSelectionListener, ActionListener {
 			              frmYdkjExtractor.repaint();
 
 		            	  jgfx = new JackGraphic(r.data);
+		            	  gfxpanel.add(new JackGFX(jgfx),"Panel");
+		                  mntmSaveJsanimationInfo.setEnabled(true);
+		              }
+		              else if (type.equals("legacygfx"))
+		              {
+		            	  frmYdkjExtractor.getContentPane().remove(gfxpanel); 
+
+		                  gfxpanel = new JackGFX(new CardLayout());
+		                  gbc_gfxpanel = new GridBagConstraints();
+		                  gbc_gfxpanel.fill = GridBagConstraints.BOTH;
+		                  gbc_gfxpanel.gridx = 1;
+		                  gbc_gfxpanel.gridy = 1;
+
+		                  frmYdkjExtractor.revalidate();
+			              frmYdkjExtractor.repaint();
+
+		            	  jgfx = new JackGraphicOff3(r.data,srfp);
 		            	  gfxpanel.add(new JackGFX(jgfx),"Panel");
 		                  mntmSaveJsanimationInfo.setEnabled(true);
 		              }
