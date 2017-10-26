@@ -67,7 +67,7 @@ public class JackRawImage {
 		    {
 		      status = (widebf & 0x100) >> 8;
 		      widebf = widebf << 1;
-		      if (status == 0)  // Pixel copié tel quel
+		      if (status == 0)  // Pixel copied as is
 		      {
 		        if ((l == nextbg-extrapixels) || (bglength != -1))
 		        {
@@ -81,20 +81,20 @@ public class JackRawImage {
 		        bitmap[l]=(indata[pos]&0xff);
 		        pos++;
 		        l++;
-		      } else { // Répétition
+		      } else { // RÃ©pÃ©tition
 		        infos[0]=(indata[pos]&0xff);
 		        pos++;
 		        infos[1]=(indata[pos]&0xff);
 		        pos++;
-		        if ((infos[1] & 0xF0) == 0 ){ // Répétition à 3 octets
+		        if ((infos[1] & 0xF0) == 0 ){ // repeat 3 bytes
 		          infos[2]=(indata[pos]&0xff);
 		          pos++;
 		          nbrepeat=infos[2]+0x10;
-		        } else { // Répétition à 2 octets
+		        } else { // Repeat 2 bytes
 		          nbrepeat=infos[1] & 0xF0;
 		          nbrepeat=nbrepeat >> 4;
 		        }
-		        offset=l-(infos[0]+0x100*(infos[1] & 0x0F));  // Répétition, offset : line[0]+0x100*LO(line[1]), qté = HI(line[1])+2
+		        offset=l-(infos[0]+0x100*(infos[1] & 0x0F));  // Repeat, offset : line[0]+0x100*LO(line[1]), val = HI(line[1])+2
 		        if (offset < 0) offset=0;
 		        for (int i=1 ; i < nbrepeat+3 ; i++) {
 		          if ((l == nextbg-extrapixels) || (bglength != -1)) {
@@ -115,7 +115,7 @@ public class JackRawImage {
 		  nextbg=0;
 		  bglength=-1;
 
-		  // Extraction à partir de bitmap
+		  // Extraction from bitmap
 		  pos=0;
 		  for ( int i=0; i < l; i++) {
 		    if (bglength != -1) {
@@ -127,7 +127,7 @@ public class JackRawImage {
 				output[column][row] =500;//transparency set to impossible colour
 		        pos++;
 		        bglength--;
-		        if (pos >= 307200) break; // TODO: QNUMBERS.SRF, image n°48 (la dernière) fait dépasser la valeur de la position...
+		        if (pos >= 307200) break; // TODO: QNUMBERS.SRF, image nÂ°48 (last image) causes value of positon to be exceeded
 		      }
 		      bglength=-1;
 		    } else if (pos==nextbg) {
